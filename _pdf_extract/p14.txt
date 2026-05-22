@@ -1,0 +1,27 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 14 of 68
+4. Format continuation headings to include the sequential parent section or step
+number followed by (continued) (see Figure 5, Sample Continuation Header).
+6.4.1 (continued)
+c. RECORD M&TE information on Attachment 1, Tracking Form. ________
+d. RECORD Stopwatch ID Number on Attachment 2, Instrument ________
+Datasheet.
+Figure 5, Sample Continuation Header
+4.9 Step Numbering Scheme
+1. Provide a consistent step numbering scheme for all procedures. This numbering
+scheme should be readable and intuitive.
+2. Step numbering schemes should be automatically generated and systematically
+maintained by the procedure template or authoring program.
+3. Step numbering schemes should differentiate between steps and substeps of the
+procedure by providing identifiable differences from one level or step level to the
+next (see Figure 6, Sample Numbering Scheme and Figure 7, Sample
+Numbering Scheme with Procedure Text).
+1.0 TITLE (Section)
+1.1 Subtitle (Subsection Level 1 or step)
+1.1.1 Subtitle (Subsection Level 2 or step)
+1. Step text (Step Level 1)
+a. Step text (Step Level 2)
+(1) Step text (Step Level 3)
+(a) Step text (Step Level 4)
+Figure 6, Sample Numbering Scheme

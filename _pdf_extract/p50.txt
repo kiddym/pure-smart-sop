@@ -1,0 +1,28 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 50 of 68
+5. See Figure 41, Sample Data Collection Table for a sample data collection table.
+4. ADJUST input to AEFT0510 as listed below and RECORD AEFT0510
+output (as read on DMM) in the As Found column.
+Input (psig) Required (VDC) As Found (VDC) As Left (VDC)
+0.0 0.980 to 1.020
+14.62 1.980 to 2.020
+29.24 2.990 to 3.010
+43.85 3.990 to 4.010
+58.47 4.980 to 5.020
+43.58 3.990 to 4.010
+29.24 2.990 to 3.010
+14.62 1.980 to 2.020
+0.0 0.980 to 1.020 _________
+Figure 41, Sample Data Collection Table
+4.27 Numerals, Symbols, Units, and Tolerances
+4.27.1 Numerals
+1. Use Arabic numbers.
+2. For numbers less than one, precede the decimal point by a zero (0.25 rather
+than .25).
+3. Avoid placing numerals in parentheses after spelled out number (for example,
+three (3) operators).
+4. Write out numbers from zero to nine except when followed by a unit of measure
+or symbols.
+5. Use commas in numbers with five or more digits.
+6. If a sentence begins with a number, then spell out the number.

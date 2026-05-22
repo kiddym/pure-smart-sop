@@ -1,0 +1,22 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 43 of 68
+4.18 Hold Points
+1. Clearly identify action steps requiring hold points.
+2. Ensure the words Hold Point are a part of the notation label and are uniquely
+emphasized (see Figure 36, Sample Hold Point Notation).
+3. If the hold point is a specific type of hold point, then place identifying information
+before the words Hold Point (for example, QC Hold Point).
+4. If the hold point is applicable to one step, then place the hold point notation
+before the step requiring the hold point.
+Nonspecific Hold Point:
+HOLD POINT
+2. WHEN system is filled,
+THEN REQUEST Foreman check no leaks are observed at flanges.
+Foreman Signature Date
+Specific Hold Point:
+QC HOLD POINT
+4. REQUEST QC check Class E Cleanliness per MSI-0-000-PRO001 for
+new part installation.
+QC Inspector Signature Date
+Figure 36, Sample Hold Point Notation

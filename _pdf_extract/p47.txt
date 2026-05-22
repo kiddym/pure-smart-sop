@@ -1,0 +1,29 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 47 of 68
+6. Avoid vague terms such as the following that require judgment on part of the
+user. Examples are:
+• Approximately
+• Slowly
+• Often
+• Frequently
+• Gradually
+• Quickly
+• Equivalent to
+• As (if) required
+• As (if) applicable
+• As (if) needed
+• As (if) desired
+7. Avoid words that sound similar when read aloud such as increase and decrease.
+8. Facilities should maintain a list of commonly used facility-specific action verbs
+(see Attachment 1, Action Verbs, for standard action verbs used by the industry).
+4.24 Tables, Calculations, Graphs and Figures
+4.24.1 General Requirements
+1. Tables, calculations, graphs, and figures:
+• Shall be legible, reproducible, and easily understandable.
+• Shall comply with page margin requirements.
+• Should be located after the applicable step, preferably on the same page.
+2. Avoid including action steps in tables, calculations, graphs, and figures.
+3. If it is necessary to refer to tables, calculations, graphs, and figures several times
+in a procedure, consider placing the material in an attachment rather than at
+each cited step.

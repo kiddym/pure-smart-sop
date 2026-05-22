@@ -1,0 +1,26 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 58 of 68
+d. Use parentheses ( ) to indicate an additional train or unit in common
+procedures (see Figure 50, Parentheses).
+• RHR Pump A (B)
+• SG 1A (2A)
+Figure 50, Parentheses
+4. Do not use periods in acronyms, units, and listed items (see Figure 51, Periods).
+Acronyms: Incorrect: A.T.W.A.S.
+Correct: ATWAS
+Units: Incorrect: lbm.
+Correct: lbm
+Figure 51, Periods
+a. Avoid semicolons in the procedure body because they promote long
+sentences (see Figure 52, Semicolons).
+Incorrect:
+5. STOP permit process; NOTIFY Chemistry. ________
+________________________________ __________
+Person Contacted Date
+Correct:
+5. STOP permit process. ________
+6. NOTIFY Chemistry. ________
+________________________________ __________
+Person Contacted Date
+Figure 52, Semicolons

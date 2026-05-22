@@ -1,0 +1,28 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 41 of 68
+4.17 Signoffs and Placekeeping
+1. White space should be reserved at the left or right margin for any signoffs and
+placekeeping. All examples in this document use white space in the right margin
+for signoffs and placekeeping.
+2. Provide initial lines for traceability in procedure steps that require verification of
+performance or conditions (see Figure 32, Sample Initial Lines for Concurrent
+Verification).
+2. LIFT lead from 2-RLY-10 terminals 2 and 3.
+Initials CV
+2. LIFT lead from 2-RLY-10 terminals 2 and 3.
+Initials
+CV
+Figure 32, Sample Initial Lines for Concurrent Verification
+a. Explicitly identify the type of verification next to the initial line.
+b. Provide an adequate number of initial lines so each person has their own
+line.
+c. If initials are in the right margin, then align the spaces or lines to the last
+line of the step.
+3. Initial lines, check boxes, or signature lines may also be used for placekeeping
+as shown in Figure 33, Sample Placekeeping.
+7. CHECK HC-204-1, Letdown Flow Interlock, is in AUTO. 
+7. PLACE HC-204-1, Letdown Flow Interlock, in AUTO.
+7. PLACE HC-204-1, Letdown Flow Interlock, in AUTO.
+CRS
+Figure 33, Sample Placekeeping

@@ -1,0 +1,27 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 30 of 68
+b. Summary of Alterations:
+(1) The Summary of Alterations provides a description of alterations for
+the current revision (see Figure 23, Summary of Alterations). A
+summary shall be provided, but is not required to be a procedure
+section. Instead, it may be provided as part of the procedure
+alteration package.
+Rev. No. Change Description
+34 In attachments 3 and 4, added tagging 4160 V breaker for personnel protection.
+Figure 23, Summary of Alterations
+(2) Include a description of material being deleted that is adequate for
+reviewers without reference to the previous revision.
+(3) If any step numbers are referenced within the Summary of
+Alterations, they should be the step numbers of the revision being
+issued and not the step numbers of the previous revision.
+4.13.13 Attachments
+1. The Attachments section is optional but it should always be the last section in
+the procedure.
+2. Each attachment shall be:
+• Uniquely identified by title and attachment identifier
+• Ordered with a sequential identifier
+• Displayed using the unique attachment page number and total attachment
+page count
+• Referenced within the body of the procedure
+3. Continue the parent procedure header throughout all attachments.

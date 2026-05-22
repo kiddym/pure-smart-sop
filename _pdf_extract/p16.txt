@@ -1,0 +1,26 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 16 of 68
+4.10 Step Structure
+1. Recognize that alphanumeric steps should be performed in the order written
+unless otherwise stated (see Figure 8, Sample Alphanumeric Steps).
+1. PERFORM this step first. ________
+2. PERFORM this step second:
+a. PERFORM this substep first. ________
+b. PERFORM this substep second. ________
+Figure 8, Sample Alphanumeric Steps
+2. Recognize that bulleted steps within a single alphanumeric step may be
+performed in any order and shall be completed prior to proceeding to next
+alphanumeric step (see Figure 9, Sample Bulleted Steps).
+1. PERFORM this step first. ________
+2. PERFORM this step second:
+• PERFORM this substep first, second, or third. ________
+•
+• PERFORM this substep first, second or third. ________
+• PERFORM this substep first, second or third. ________
+Figure 9, Sample Bulleted Steps
+3. A note may be placed prior to a sequence of steps or a step with substeps
+(presented using alphanumeric characters) to provide special performance
+information such as the following:
+• Allow the sequence to be performed in a different order
+• Allow the concurrent performance of steps

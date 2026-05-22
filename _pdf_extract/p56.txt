@@ -1,0 +1,30 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 56 of 68
+6. Write action steps as positive statements using definitive wording and present
+tense (see Figure 46, Sample Action Step with a Positive Action).
+Incorrect:
+7. DO NOT cool down greater than 100°F/hr. ________
+Correct:
+7. MAINTAIN cool down rate less than 100°F/hr. ________
+Figure 46, Sample Action Step with a Positive Action
+7. An action step should contain only one idea or objective followed by one or two
+related objects of the action. Three or more objects should be listed in bullet form
+below the step.
+8. As shown in Figure 47, Sample Action Steps, there are three specific types of
+action steps used in procedures. The following three types of action steps cover
+most procedure writing needs:
+• Single Action Step - Contain a single action verb.
+• Multiple Action Steps - Contain actions that are functionally related and
+have to be performed simultaneously to obtain a single result.
+• Action Step with a Modifying Phrase - Contain information important for
+the user to know prior to performing the action. In this case, the modifying
+phrase is placed at the beginning of the sentence.
+Single action:
+8. PLACE old filter cartridge in plastic bag. _______
+Multiple actions:
+7. DEPRESS and HOLD 2-HS-082-0001A until 2-FCV-082-0001A,
+BYPASS FLOW CONTROL VALVE, is fully OPEN. _______
+Action with a modifying phrase:
+6. Using calibrated torque wrench, TORQUE nut to 30 in-lbs (30 to 32). _______
+Figure 47, Sample Action Steps

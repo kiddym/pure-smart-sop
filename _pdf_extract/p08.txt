@@ -1,0 +1,38 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 8 of 68
+6. Administrative Procedure: A document that specifies requirements and
+actions necessary to implement a program or process (definition of Procedure
+provides additional details).
+7. Alteration: A generic term used to describe types of activities that modify
+approved procedures.
+8. Attachment: Information separated from the main body of the procedure used
+in the performance or understanding of a procedure such as graphs, figures,
+tables, sketches, and forms. Appendices and enclosures are equivalent terms.
+9. Bases: The source of information for or the rationale behind procedure step(s)
+or sequence of steps.
+10. Branching: A step that directs the user to other steps or sections in the same or
+another procedure and the user does not return to the original step.
+11. Caution: A statement placed immediately before applicable step(s) that informs
+users of undesirable equipment results such as potential for equipment damage,
+plant transients, or conditions that may adversely affect plant operation.
+12. Checklist: A procedural attachment listing specific actions to be performed.
+Check-off list and check list are equivalent terms.
+13. Commitment: A uniquely identified requirement that ensures future alterations
+do not inadvertently remove the requirement. Source Requirement is the DOE
+equivalent term for Commitment.
+14. Concurrent Verification: A series of actions by two individuals working
+together at the same time and place to separately confirm the condition of a
+component before, during, and after an action, when the consequences of an
+incorrect action would lead to immediate and possibly irreversible harm to the
+plant or personnel. [Section 5.0 Step 5]
+15. Conditional Step: An action step based on plant condition or combination of
+conditions to be satisfied prior to the performance of an action.
+16. Consistency: Showing steady conformity to character or method allowing users
+to move through documents without having to waste effort interpreting the style
+of presentation for each section they encounter. Comprehension is improved
+when users can concentrate on the actual performance of the instructions.
+17. Continuous Action Step: Steps continuously performed during a specific task
+or time period. The performer continues with the procedure while these steps are
+being performed. Typically, continuous action steps begin with the words
+'WHILE' or 'IF AT ANY TIME'.

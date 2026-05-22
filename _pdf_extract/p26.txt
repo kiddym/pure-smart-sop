@@ -1,0 +1,28 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 26 of 68
+4.13.8 Prerequisites
+1. Place the Prerequisites section immediately before the Instructions section.
+2. Prerequisites shall identify the activities to be completed by the performer and
+requirements that shall be met prior to procedure performance (see Figure 19,
+Sample Prerequisites).
+5.0 PREREQUISITES
+1. Ensure Instrument Air System is aligned per OP-0101, Instrument Air.
+Figure 19, Sample Prerequisites
+3. The following are examples of prerequisites:
+• Initial conditions
+• Preliminary actions
+• Special tools, Measuring and Test Equipment, parts, and supplies
+• Field preparations
+• Approvals and notifications - See Section 4.17, Signoffs and
+Placekeeping for examples of approval and notification steps.
+• Prejob briefs
+4.13.9 Instructions
+1. Place the Instructions section after the Purpose, Scope, Prerequisites, and
+Precautions and Limitations sections. This section is mandatory.
+a. In an administrative procedure, the Instructions section contains the
+program and process steps.
+b. In a technical procedure, the Instructions section contains the task
+performance and restoration steps.
+c. In DOE procedures, the section title 'Performance' is an equivalent term
+for 'Instructions'.

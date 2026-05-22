@@ -1,0 +1,30 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 36 of 68
+4.15 Notes, Cautions and Warnings
+1. Notes, Cautions and Warnings should be placed within uniquely formatted boxes
+that are different from each other and the procedure text. See Figure 28, Sample
+Notes, Cautions, and Warnings for formatting examples.
+2. Notes, Cautions, and Warnings assigned to a single step should be sequenced
+in the following order (see Figure 28, Sample Notes, Cautions, and Warnings).
+This places the most important information closest to the step.
+• Note
+• Caution
+• Warning
+NOTE
+Steps in Section 6.1 may be performed in any order.
+CAUTION
+Starting a Reactor Coolant Pump with either Pressurizer Spray Valve open will increase spray
+flow and affect Reactor Coolant System pressure.
+WARNING
+Electric shock hazard exists as the circuit may be energized.
+Figure 28, Sample Notes, Cautions, and Warnings
+3. Multiple Notes that apply to the same step or section should be numbered or
+bulleted within the same box. The same recommendation applies to Cautions
+and Warnings (see Figure 29, Sample Note).
+NOTE
+• The PRT to Vent Header path isolates at 10 psig.
+• PRT rupture disc pressure is 100 psig.
+Figure 29, Sample Note
+4. Place Cautions and Warnings generic to the entire procedure in the Precautions
+and Limitations section.

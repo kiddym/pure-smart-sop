@@ -1,0 +1,35 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 7 of 68
+1.0 PURPOSE
+1. The purpose of this Procedure Writers’ Manual is to provide a nuclear industry
+consensus standard for writing human factored procedures. This standard
+should be used in conjunction with PPA AP-907-001, Procedure Process
+Description, and INPO 11-003, Guideline for Excellence in Procedure and Work
+Instruction Use and Adherence.
+2. This document should be considered for incorporation into facility specific
+procedures with a recognition of corporate and facility specific policies and
+requirements. Each facility is encouraged to assess its own procedure writing
+process and to adapt this information as appropriate to best meet its unique
+needs.
+2.0 SCOPE
+1. This document primarily applies to the writing of human factored technical
+procedures. However, the basic elements of this standard also apply to the
+writing of administrative procedures.
+2. In this standard a consistent method for emphasis is applied to examples from
+technical procedures. This is not meant to imply that this is the only method that
+is acceptable, as bounded by other requirements for emphasis within this
+standard.
+3. This document does not apply to Emergency Operating Procedures, Abnormal
+Operating Procedures, or Annunciator Response Procedures.
+3.0 DEFINITIONS
+1. Abbreviation: A shortened version of a word or phrase that represents the full
+form of the word.
+2. Acceptance Criteria: Quantitative or qualitative criteria against which the
+success or failure of a testing activity will be judged.
+3. Acronym: A shortened form derived from the initial letters of words that make
+up the complete form.
+4. Action Step: An instruction written in active voice that directs the user to
+perform an action and contains an action verb and an object.
+5. Action Verb: A verb that directs the action within a step to be taken by the
+performer.

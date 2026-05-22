@@ -1,0 +1,18 @@
+-r requirements.txt
+
+# 测试
+pytest>=8.3,<9.0
+pytest-cov>=6.0,<7.0
+pytest-asyncio>=0.24,<1.0
+httpx>=0.27,<1.0
+
+# Lint / format / type
+ruff>=0.7,<1.0
+mypy>=1.13,<2.0
+
+# 安全扫描
+bandit>=1.7,<2.0
+
+# 开发工具
+ipython>=8.29,<9.0
+pre-commit>=4.0,<5.0

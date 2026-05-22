@@ -1,0 +1,37 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 9 of 68
+18. Emphasis: Special formatting applied to text to convey importance or
+prominence.
+19. Hold Point: A pre-selected step in a procedure that identifies a point beyond
+which work may not proceed until the required action is performed.
+20. Independent Verification: A series of actions by two individuals working
+independently to confirm the condition of a component after the original act that
+placed it in that condition (see INPO 06-002, Human Performance Tools for
+Workers).
+21. Level of Detail: The technical detail necessary within a procedure step to
+successfully interface the individual user's knowledge to the technology being
+used or task being performed.
+22. May: Denotes permission and is neither a requirement nor a recommendation.
+23. Note: Statements that provide explanatory information to support a procedure
+step or series of steps.
+24. Placekeeping: The process used to help users track performance of steps
+within a procedure by physically marking steps in a procedure that have been
+completed or are not applicable.
+25. Procedure: A controlled document designed to improve human performance by
+clearly providing the purpose, specific intent, and sequenced direction for an
+activity, program, or process.
+26. Referencing: A step that directs the user to other steps, sections, supplemental
+information within the same procedure or to another document and the user
+returns to the original step.
+27. Shall: Denotes a requirement.
+28. Should: Denotes a recommendation.
+29. Source Requirement: See definition for 'Commitment'. Source Requirement is
+the DOE equivalent term for Commitment.
+30. Style: Specific word selection and physical attributes (such as emphasis
+techniques, punctuation, capitalization) used in procedures.
+31. Supplemental Information: Procedure content that supports a procedure step
+or series of steps and provides explanatory information.
+32. Technical Procedure: A document that outlines a series of steps for the
+operation, maintenance, or testing of a structure, system, or component
+(definition of Procedure, provides additional details).

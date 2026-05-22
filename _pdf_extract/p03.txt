@@ -1,0 +1,43 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 3 of 68
+REVISION SUMMARY
+Revision 2 Non-DOE Changes:
+• 2.0 Step 2: New statement dealing with consistent methods for emphasis shown in examples for technical procedures.
+• 4.11 Step 2: Revised step for clarity.
+• 4.12 Step 1.d: Revised step for clarity.
+• Figure 11: Updated items in example.
+• Figure 14: Added new Step 1 to show to whom the procedure applies.
+• Figures 16, 19, 20: Revised examples to show current procedure standards.
+• 4.13.2 Step 2: Added 'the last' and 'in the procedure body'.
+• Figure 28: New example of a multiple NOTE; renumbered remaining figures.
+• 4.15 Step 3: Clarified step by adding 'such that the most important is located closest to the step'.
+• 4.20 Step 2: Added clarifying statement.
+• 4.23 Step 6 bullets: Added 'Approximately'.
+• 4.27.2 Step 2 bullets: Deleted 'Approximately equal to'.
+• Figures 43, 44: Updated examples to current industry standards.
+• Attachment 1: Added verb 'Verify' along with a description around use of Check, Ensure, and Verify by a facility.
+• Attachment 1: Replaced verb 'Depress' with 'Press'.
+Revision 2 Changes in Support of DOE Adoption/Alignment
+• 3.0 step 13 - Added Source Requirement to definition as DOE equivalent term.
+• 3.0 step 17 - Added definition for Continuous Action Step
+• 3.0 step 29 - Added Source Requirement as defined term equivalent to Commitment.
+• 4.13.8 step 3 - Added references to DOE Attachment for Tools and Equipment and to Placekeeping Section for examples of
+approvals by other groups.
+• 4.13.9 step 1.c - New step defining Performance Section as equivalent to Instructions Section.
+• 4.13.9 step 3 - Added additional detail on restoration steps
+• 4.13.12 step 2 - Added flexibility on where the Summary of Alterations is placed.
+• 4.31 - Added specific example of sign-off by someone other than the primary procedure performer.
+Revision 1 - In 2010, the Procedure Professionals Association (PPA) assumed ownership and
+maintenance responsibilities for AP-907-001 (Procedure Process) and AP-907-005 (Procedure
+Writers’ Manual). PPA is an industry working group for procedure related interests and is
+composed of subject matter experts from the U.S. commercial nuclear field, the U.S Department
+of Energy, and other similar business interests. PPA is an open forum for procedure related
+issues and accepts membership from a variety of business entities.
+In November 2010, PPA formed a standards committee and commenced work on a revision to
+AP-907-001 and AP-907-005. These revisions were completed and published in August 2011.
+Revision 0 - In June 2006, at the direction of the Nuclear Information Management Strategic
+Leadership (NIMSL) steering committee, an Institute of Nuclear Power Operations (INPO)
+Community of Practice (CoP), an industry task force was chartered to address the scope of a
+Procedure Writers’ Manual through the development of an industry standard. This task force
+was composed of representatives from the NIMSL CoP and industry subject matter experts.

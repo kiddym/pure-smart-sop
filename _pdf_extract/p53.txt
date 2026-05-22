@@ -1,0 +1,34 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 53 of 68
+4.29 Consistency
+1. Maintain consistency in procedure style, form, and organization, both within and
+among procedures.
+a. Consistency allows users to move through documents without the effort of
+interpreting the style of presentation for each section they encounter.
+b. Consistency facilitates comprehension and allows users to concentrate on
+the actual performance of the instructions.
+2. Maintain consistency in the use of terminology, acronyms, nomenclature, etc.
+Inconsistencies can result in users attributing differences in meaning to spurious
+differences in presentation.
+4.30 Branching and Referencing
+4.30.1 General Requirements
+1. Conditions within a procedure may require the use of a different procedure or
+supplemental information. Referencing and branching direct these actions.
+2. Avoid referencing and branching to the greatest extent possible. Use referencing
+and branching only when necessary to direct the performer to information vital to
+the performance of a task and incorporation of the referenced or branched
+material is not practical.
+3. If any of the following criteria are met, then consider incorporating the material in
+the originating document:
+• The material can be inserted in a logical sequence.
+• The material is difficult to locate or use in other documents.
+• The material requires signoffs or data collection which, if not incorporated
+into the same document, could result in failure to retain essential records.
+• The steps can be easily incorporated rather than referenced.
+• The likelihood of human error is increased.
+• The user could bypass any precautions or limitations.
+4. If the procedure being referenced or branched to contains relevant prerequisites,
+precautions, or warnings that may be overlooked by the user, then reference the
+entire procedure instead of individual steps or sections.
+5. Each facility should use referencing and branching terms consistently.

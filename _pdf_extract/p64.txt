@@ -1,0 +1,40 @@
+Procedure Writer's Manual PPA AP-907-005
+Rev. 2
+Page 64 of 68
+ATTACHMENT 1
+Page 5 of 8
+Action Verbs
+VERB DEFINITION
+GRIND Pulverize, polish, wear down, sharpen, or smooth.
+GROUND Connect al electrical circuit to ground.
+GUIDE Manage or direct the movement of.
+HANDLE Manipulate objects manually or with specially designated equipment such as hoists.
+HANG Fasten to some elevated point without support from below; suspend.
+HEAT Increase the temperature of.
+HOLD Maintain something at a given level or position.
+IDENTIFY Make know or establish the identity of.
+IMMERSE Plunge into something that surrounds or covers.
+IMPLEMENT Commence a program or series of procedures.
+INCLUDE Contain within.
+INDICATE State or express briefly.
+INFORM Communicate information.
+INHIBIT Block an automatic action or disable a component function.
+INITIAL Affix one’s initials.
+INITIATE Begin activity function or process.
+INJECT Drive fluid into.
+Force into by pumping action.
+INSERT Push, move, or activate a component or system inward.
+INSPECT Measure observe evaluate a featured against specified limits.
+INSTALL Establish an indicated place or setup for use or service.
+ISOLATE Separate, set apart, seal off, or close boundary.
+JOG Apply momentary electrical force to a motor to check rotation direction.
+JUMPER Bypass or cause to leap over.
+LAND Replace a lifted lead back into original position.
+LATCH Secure with device or reset the function of machinery.
+LEVEL Cause equipment to become even or parallel with the plane of the horizon.
+LIFT Remove or pickup.
+Disconnect an electrical lead from a terminal point.
+LIMIT Restrict or set bounds.
+LINE UP Establish the perquisites necessary for system operation.
+LOAD Connect an electrical component or unit to a source of electrical energy.
+LOCATE Determine place or position.

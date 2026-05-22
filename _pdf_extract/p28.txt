@@ -1,0 +1,29 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 28 of 68
+3. When writing restoration steps, include the following:
+• Steps required to return the affected structures, systems, or equipment to
+the configuration appropriate for plant conditions (see Figure 21, Sample
+Restoration Steps)
+• Return of tools and equipment
+• Disposal or storage of consumables
+• Notification of appropriate personnel of system return to service
+6.7 Restoration
+1. NOTIFY SM overspeed trip maintenance was performed and trip
+valve was left tripped.
+Maintenance Signature Date
+2. SIGN OFF equipment clearance.
+Maintenance Signature Date
+Figure 21, Sample Restoration Steps
+4.13.10 Acceptance Criteria
+1. The Acceptance Criteria section should follow the Instructions section.
+2. The Acceptance Criteria section shall provide a basis for determining the
+success or failure of an activity. It is the parameter against which collected data
+is compared to determine satisfactory completion of or adherence to the
+following:
+• Equipment operability conditions
+• Conditions for functionality
+• Technical Specifications
+• Regulatory requirements
+• Design bases criteria
+• Post maintenance testing

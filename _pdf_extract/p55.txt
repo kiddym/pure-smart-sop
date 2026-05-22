@@ -1,0 +1,27 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 55 of 68
+4. The first time a procedure or procedure attachment is referenced in a section,
+include both the procedure or attachment number and title.
+5. Guidance should be provided in the referencing instructions to tell the user when
+to return to the initial procedure or step.
+4.31 Action Steps
+1. Only write action steps in the following sections of a procedure:
+• Prerequisites
+• Instructions
+• Attachments
+2. An action step clearly and concisely communicates instructions for performance
+of a specific action or task to the intended user(s) of the procedure.
+3. An action step answers the following questions:
+• WHO performs the specific task?
+• WHAT task is to be performed?
+• HOW to correctly perform the task in a safe and efficient manner?
+4. An action step, in its simplest form, has the following two parts:
+• An action verb
+• One or more objects of the action verb (items that receive the action)
+5. In addition, an action step may contain other information about the action verb or
+its object, including the following:
+• Location of the action
+• Type of action
+• Name of the component or the component identification number
+• Who is to perform the action

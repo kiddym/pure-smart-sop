@@ -1,0 +1,30 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 57 of 68
+4.32 Steps for Multiple Components
+1. If writing procedures which describe action sequences for two or more trains or
+components, and the trains are not identical (task steps are not identical), then
+provide separate procedures or procedure sections for each train.
+2. If a single procedure is used for identically designed components or trains, then
+the format shall support human error reduction techniques.
+4.33 Punctuation
+1. Use the standard American English rules for punctuation.
+2. Use punctuation consistently.
+3. The following exceptions to the standard rules are practiced within the nuclear
+industry:
+a. Quote equipment labels, drawings, and other plant documents verbatim,
+including punctuation.
+b. Use brackets ( [ ] ) to avoid a double set of parentheses (see Figure 48,
+Brackets).
+3. Updated Final Safety Analysis Report [includes QA Program ________
+Manual (UFSAR Chapter 17)]
+Figure 48, Brackets
+c. Do not break words, component numbers, or procedure numbers with
+hyphens from one line to another (see Figure 49, Hyphens).
+Incorrect:
+2. In Cubicle 3, INSTALL jumper from LN-01 (wire #11) to LN-
+02 (wire #21). ________
+Correct:
+2. In Cubicle 3, INSTALL jumper from LN-01 (wire #11) to ________
+LN-02 (wire #21).
+Figure 49, Hyphens

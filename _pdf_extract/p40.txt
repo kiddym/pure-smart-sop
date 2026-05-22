@@ -1,0 +1,28 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 40 of 68
+6. Consider using additional white space to add emphasis to conditional statements
+by placing the condition and action on separate lines as shown in Figure 30,
+Sample Logic Term Emphasis.
+1. IF As Found values are acceptable,
+THEN PERFORM the following:
+a. COMPLETE As Left columns. ________
+b. GO TO step 7.2.8. ________
+Figure 30, Sample Logic Term Emphasis
+7. Do not use the AND/OR construction in the logic statement of a action step.
+8. If three or more conditions are described, then consider using a decision table or
+listing format.
+9. For a negative condition, use the conditional term NOT. Avoid using NOT if a
+single word can be used and the condition can be stated in a positive manner
+(see Figure 31, Sample Logic Term Usage).
+2. IF RCP oil lift pump is running AND RCP shaft has been hand
+rotated,
+THEN STOP RCP oil lift pump.
+________
+Incorrect:
+1. IF CWS-V-335-1 (Bypass isolation valve) is NOT CLOSED,
+THEN CLOSE CWS-V-335-1. ________
+Correct:
+1. IF CWS-V-335-1 (Bypass isolation valve) is OPEN,
+THEN CLOSE CWS-V-335-1. ________
+Figure 31, Sample Logic Term Usage

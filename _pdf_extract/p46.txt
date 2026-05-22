@@ -1,0 +1,27 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 46 of 68
+5. Avoid using emphasis techniques such as italics, shading, highlighting, and
+quotes.
+6. Use a mixture of both upper and lower case text. Only capitalize single words or
+phrases for emphasis, and not an entire block of text.
+4.21 Use of Color
+1. Only use color and colored photographs when the ability for both of the following
+is provided:
+• Printing of color copies for the execution of procedures
+• Including color documents in the records management system
+2. Avoid using soft and pastel colors for text.
+4.22 Abbreviations and Acronyms
+1. Facilities should maintain a list of commonly used facility-specific abbreviations,
+acronyms, symbols, and units of measure that are not required to be written out.
+2. Acronyms and abbreviations not on the list should be spelled out the first time
+they are used in a section of the procedure.
+3. If an abbreviation or acronym can potentially represent two different terms, then
+spell out the term completely.
+4.23 Vocabulary
+1. Use simple, commonly understood words.
+2. Use words consistently throughout the document.
+3. Keep the use of articles (such as a, an, the) to a minimum in technical procedure
+action steps. Use articles only as necessary to make sentence more readable.
+4. Avoid pronouns in action steps.
+5. Do not use contractions.

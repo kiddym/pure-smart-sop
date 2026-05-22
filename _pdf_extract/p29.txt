@@ -1,0 +1,29 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 29 of 68
+4.13.11 Retention of Records
+1. Place the Retention of Records section after the Instructions section.
+2. This section shall clearly identify only those records generated as a result of the
+performance of the procedure.
+4.13.12 Summary of Alterations
+1. The Summary of Alterations section is optional for all procedure types.
+2. The Summary of Alterations section may either appear after the cover page or
+as the last numbered section in the procedure body before the Attachments.
+3. Provide a clear and simple means of identifying the alterations (additions,
+corrections, or deletions) to the procedure. Revision bars and the summary of
+alterations remain until the next procedure revision. Common methods include
+the following:
+a. Revision Bars:
+(1) Use revision bars unless the extent of the alteration (major
+revision) diminishes their benefit (see Figure 22, Alteration with
+Revision Bars).
+6.4.1 (continued)
+4. RECORD M&TE information on Attachment 1, Tracking Form. ________
+5. RECORD Stopwatch ID Number on Attachment 2, Instrument ________
+Datasheet.
+Figure 22, Alteration with Revision Bars
+(2) If the alteration is significant and revision bars are not used, then
+state it in the summary of alterations.
+(3) Revision bars are not recommended for the cover page, table of
+contents, headers, footers, or renumbering due to additions or
+deletions.

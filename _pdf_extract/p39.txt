@@ -1,0 +1,35 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 39 of 68
+2. If describing a condition in an action step, then use the following conditional
+terms as defined in Table 2:
+• IF
+• WHEN
+• THEN
+3. If describing logic within a condition, then use the following logic terms as
+defined in Table 2:
+• AND
+• OR
+• NOT
+4. If describing a continuous action step, then use the following continuous action
+terms as defined in Table 2.
+• IF AT ANY TIME
+• WHILE
+IF Introduce a condition that may or may not be true. User stops until met or NA.
+IF AT ANY Introduces a condition that may occur. User continues and takes action when met.
+TIME
+THEN Use between the condition and the action. Do not use between actions.
+WHEN Introduce conditions that are expected to occur.
+IF NOT For a performer to respond to the second of two possible conditions. Avoid double
+negatives.
+AND Use between two required conditions when both conditions must be met (see
+Figure 31, Sample Logic Term Usage).
+OR Use between alternative combinations of conditions (inclusive). Inclusive OR
+means that any one or all conditions may be present.
+OR
+Use between alternative actions that are equally acceptable (exclusive). Use of the
+exclusive OR requires the phrase BUT NOT BOTH.
+WHILE Introduces a condition that may occur. User continues and takes action when met.
+Table 2, Conditional and Logic Terms
+5. Use consistent emphasis for conditional and logic terms throughout a procedure
+set (see Section 4.20, Emphasis Techniques).

@@ -1,0 +1,29 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 21 of 68
+4.13.2 Purpose
+1. Place the Purpose section as the first section of the procedure. This section is
+mandatory, but it may be combined with the Scope section.
+2. If writing the Purpose section in an administrative procedure, then clearly and
+briefly state the primary objective of the procedure (see Figure 12, Sample
+Administrative Procedure Purpose Statement).
+1.0 PURPOSE
+1. This procedure:
+• Establishes administrative controls governing adherence to written instructions in
+support of excellent human performance.
+• Identifies actions to be taken when adherence to written instructions is not
+possible or is unsafe.
+• Describes requirements for checking activities affecting alignment or status of
+safety related systems or components or portions of systems.
+Figure 12, Sample Administrative Procedure Purpose Statement
+3. If writing the Purpose section in a technical procedure, then clearly describe the
+objectives to be achieved by performance of the procedure (see Figure 13,
+Sample Technical Procedure Purpose Statement).
+1.0 PURPOSE
+1. This procedure describes the disassembly, inspection, rework, and reassembly of the
+auxiliary feedwater pump turbines in support of 18 month turbine preventative
+maintenance routines.
+Figure 13, Sample Technical Procedure Purpose Statement
+4. Clearly state the primary objective of the procedure without simply repeating the
+title of the procedure. This is accomplished by answering what, when, and why
+as appropriate.

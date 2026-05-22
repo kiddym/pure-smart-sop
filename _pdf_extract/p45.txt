@@ -1,0 +1,30 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 45 of 68
+4.19 Commitment Referencing
+1. Commitments should be referenced at the step level and uniquely identified so
+they will not be inadvertently removed (see Figure 38, Sample Commitment
+Reference).
+1. ASSEMBLE rebuild valve disc assembly as follows:
+a. ASSEMBLE disc and disc arm. ________
+b. INSTALL washer and disc nut. ________
+c. INSTALL new locking device. [PER 257317] ________
+Figure 38, Sample Commitment Reference
+4.20 Emphasis Techniques
+1. Use all methods of emphasis sparingly.
+2. Apply emphasis techniques consistently across all technical procedures.
+a. In this standard a consistent method for emphasis is applied to examples
+from technical procedures. This is not meant to imply that this is the only
+method that is acceptable, as bounded by other requirements for
+emphasis within this standard.
+3. Emphasis should be used for the following items, and a different emphasis
+should be applied to each:
+• Action verbs
+• Conditional and logic terms
+• Component positions and noun names
+• Notes, cautions, and warnings
+4. Acceptable emphasis techniques include but are not limited to, capitalization,
+bolding, and underlining as shown in Figure 39, Sample Emphasis Techniques.
+ENSURE Ensure
+ENSURE ENSURE
+Figure 39, Sample Emphasis Techniques

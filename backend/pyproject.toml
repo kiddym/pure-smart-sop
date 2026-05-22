@@ -1,0 +1,51 @@
+[project]
+name = "smart-sop-backend"
+version = "0.1.0"
+description = "Smart SOP backend (FastAPI + SQLAlchemy)"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["alembic/versions"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "N", "SIM", "RUF"]
+# E501 由 formatter 处理；RUF001-003 = 全角中文标点「歧义字符」，本项目中文为主，
+# 注释 / docstring 用全角标点是正确的，故忽略（项目级 Chinese-only 决策）。
+ignore = ["E501", "RUF001", "RUF002", "RUF003"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*" = ["S101"]
+# B008：FastAPI 依赖注入惯例就是在参数默认值里调用 Depends() / Query()，非真实 bug。
+"app/routers/**/*" = ["B008"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+exclude = ["alembic/versions", "tests"]
+
+[[tool.mypy.overrides]]
+module = ["docx.*", "reportlab.*", "lxml.*", "yaml", "apscheduler.*", "PIL.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+addopts = "-v --strict-markers"
+markers = [
+  "unit: unit tests",
+  "integration: integration tests",
+  "slow: slow tests",
+]
+
+[tool.coverage.run]
+source = ["app"]
+omit = ["app/main.py", "alembic/*", "tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "if TYPE_CHECKING:",
+  "raise NotImplementedError",
+]

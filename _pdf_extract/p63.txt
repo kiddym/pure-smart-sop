@@ -1,0 +1,39 @@
+Procedure Writer's Manual PPA AP-907-005
+Rev. 2
+Page 63 of 68
+ATTACHMENT 1
+Page 4 of 8
+Action Verbs
+VERB DEFINITION
+DISCHARGE Give outlet to, vent, or remove electrical energy from.
+DISENGAGE Release or detach interlocking parts; unfasten.
+DISPATCH Send personnel outside control room.
+DISSOLVE Cause of pass into solution.
+DISTRIBUTE Deliver or divide among several or many.
+DOG Restrain a device or component to maintain it in particular position.
+DON Bear or have on one’s person; wear.
+DOWN RANGE Select lower range on an instrument which has multirange selection capabilities.
+DRAIN Draw or flow off a liquid.
+DUMP Discharge or remove the contents of a vessel.
+ELIMINATE Get rid of or set aside as unimportant.
+EMPTY Transfer by emptying or discharging contents.
+ENERGIZE Supply electrical energy to component.
+EQUALIZE Make the value of a given parameter equal to the value of another parameter.
+ENSURE Perform a comparison with stated requirements and take action as necessary to satisfy
+the requirements.
+ESTABLISH Make arrangements for a stated condition.
+ESTIMATE Approximate the size extent or nature of a variable.
+EVACUATE Vacate.
+EVALUATE Examine and decide with respect to some criteria.
+EXAMINE Look at critically or carefully.
+EXCEED Go above a given value.
+EXECUTE Carry out or put into effect.
+EXIT Leave or withdraw.
+EXTEND Cause to be drawn out to a greater length.
+EXTINGUISH Cause to cease burning.
+FABRICATE Construct from standardized parts.
+FILL Occupy with an object or substance.
+FOLD Lay one part over another.
+FORCE Exert strength or power to overcome resistance.
+GAG Act of restraining a service or component.
+GO TO Proceed or move on.

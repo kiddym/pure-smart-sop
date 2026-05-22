@@ -1,0 +1,41 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 60 of 68
+ATTACHMENT 1
+Page 1 of 8
+Action Verbs
+1. The following is a list of action verbs used within the nuclear industry. These
+words apply to multiple procedure types such as administrative, instrument and
+control, electrical, operations, maintenance, radiation protection, and emergency
+planning. This list is not all inclusive and is not required to be adopted in its
+entirety.
+2. Each station or company should maintain a list applicable for their plant,
+procedure series, and regional dialect. Definitions may be worded differently
+from those presented here provided the intent of the definition remains the same.
+3. Check, Ensure, and Verify are verbs which are frequently used to establish the
+type of action to be taken in a specific step. These verbs have been used
+interchangeably by facilities with some facilities defining Ensure and Verify
+differently between groups at the same facility. This type of inconsistency can
+lead to worker confusion on expectations and consequential errors in step
+execution. PPA defines all three of these verbs in this list with check and verify
+being defined the same. Facilities should select the combination of two verbs
+that best fits the facilities historical use of these verbs and apply those two verbs
+consistently.
+VERB DEFINITION
+ACKNOWLEDGE Recognize an alarm.
+ACTIVATE Formally institute a special activity/function.
+ACTUATE Put into action or motion.
+ADAPT Fit in a new situation or use.
+ADD Increase the size or quantity.
+ADJUST Regulate or bring to a more satisfactory state.
+ADVANCE Move forward or ahead.
+ALERT Warn; call to a state of readiness.
+ALIGN Arrange components into a desired configuration, bring into line, or come into precise
+alignment or correct relative position.
+ALLOW Permit a stated condition to be achieved prior to proceeding.
+ALTERNATE Wrap out of service component and an in service component such that the out of service
+component is placed in service.
+ANALYZE Examine or interpret test or inspection results.
+ANNOUNCE Make known publicly.
+APPLY Put, lay, or spread on.
+ARRANGE Order, group according to quality, value, or other characteristics.

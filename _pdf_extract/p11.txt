@@ -1,0 +1,27 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 11 of 68
+2. Establish standard margins such that if the procedure is copied or hole-punched,
+information is not lost even if double-sided. The following margins are
+recommended:
+• Right: 0.8 inch
+• Left: 0.8 inch
+• Top: 0.5 inch
+• Bottom: 0.5 inch
+3. Consider using page borders if there is a risk of losing information when the
+procedure is copied. Setting margins appropriately usually eliminates the need
+for page borders.
+4. If the content will not fit within the margins established for a portrait page, then
+place it in a landscape page as an attachment.
+5. If a nonstandard paper size must be used, then place the material in an
+attachment.
+4.4 Fonts
+1. Establish a standard font type and size for all procedures that is readable under
+the worst anticipated conditions. Ensure the type size is large enough for users
+to read the procedure at all anticipated distances and lighting conditions.
+2. The following are acceptable font types and sizes for the procedure body and
+attachment steps:
+• Arial 11 or 12 point
+• Times New Roman 12 point
+3. Only use one font type within the body of the procedure. However, supplemental
+information may use a different font type to improve procedure performance.

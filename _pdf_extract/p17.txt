@@ -1,0 +1,18 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 17 of 68
+4.11 Cover Page
+1. Include the following elements on the cover page (first page) of the procedure to
+provide the user a means to check that the procedure is appropriate for the task
+at hand:
+• Procedure title
+• Procedure number
+• Revision number
+• Level of use
+2. The following additional information may be included (list is not all inclusive):
+• Safety or quality classification
+• Reactivity statement
+• Effective date
+• Approver name
+• Preparer name
+• Station identification

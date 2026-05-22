@@ -1,0 +1,31 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 49 of 68
+4.25 Checklists
+1. Checklists are any number of user aids designed to provide the user with a
+method of capturing data or information in a tabular form. Checklist, check list,
+and check off list are used interchangeably and mean the same thing.
+2. Consider using checklists for the following:
+• Component lineup and alignment
+• Data collection (e.g., battery specific gravity checks)
+• Content inventory (e.g., field monitoring equipment)
+3. Checklist for component manipulations developed in accordance with ANSI
+N18.7/ANS 3.2 are considered to be procedures.
+4. Checklists shall be maintained by their parent procedures unless other
+programmatic controls are provided.
+4.26 Data Collection
+1. Consider the following when providing for data collection:
+a. Design data collection to be easy and efficient for the user. Accordingly,
+an integrated data collection method within the procedure instructions is
+typically the preferred method for effective human performance.
+b. Also consider the needs of the reviewer and approver.
+c. After the needs of the user, reviewer, and approver have been addressed,
+consider the cost of documentation that must be retained as a record.
+However, consider using a separate data package if a small amount of
+data is collected or a few signoffs are recorded in a long procedure.
+2. Attempt to structure data collection such that the data is recorded in vertical
+columns rather than horizontal rows.
+3. Provide sufficient space to allow the user to enter the requested data to the
+required level of accuracy in normal handwriting.
+4. Ensure adequate separation to easily distinguish between groups of information
+and data.

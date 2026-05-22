@@ -1,0 +1,28 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 52 of 68
+4.28 Level of Detail
+1. Provide a level of detail that takes into account the following variables:
+• Experience and Qualification Level of the User - An appropriate level of
+detail is necessary in order for the inexperienced, qualified user to
+successfully complete the task with no direct supervision.
+• Skill of the Craft - Step by step instructions are not needed for activities
+determined to be skill of the craft for the discipline that will be performing
+the procedure.
+• Complexity of Task - As task complexity increases, the level of detail in
+the instruction should increase. Individual instructions should remain as
+simple as practical.
+• Frequency of Task Performance - As task frequency increases, the level
+of detail may decrease.
+• Consistency of Task Performance - The level of detail varies directly with
+the degree of standardization desired. Increasing the level of detail
+provides for more standardization and produces a more consistent result.
+• Consequence of Error - The level of detail should increase as the risk of
+personal injury, equipment damage, reduction in effectiveness of safety
+related systems, and potential regulatory challenge increases.
+2. Conditional steps are considered in-field decisions. When creating conditional
+steps, provide sufficient detail to ensure the performer makes the correct
+decision. State the condition in a concise and precise manner.
+3. Providing the component location within a procedure step is optional; however, if
+used, place within parentheses after the component name for the users'
+convenience.

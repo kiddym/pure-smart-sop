@@ -1,0 +1,29 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 20 of 68
+4.13 Procedure Structure and Sections
+4.13.1 General Requirements
+1. Use a standard procedure structure that is consistently maintained for all
+procedure types.
+2. The following Table 1 designates the required (R) and optional (O) sections for
+each procedure type and lists these sections in the recommended order:
+Procedure Type
+Procedure Section
+Testing Maintenance Operating Admin
+Purpose R R R R
+Scope R R R R
+References and Commitments R R R R
+Definitions O O O O
+Responsibilities O O O O
+Precautions and Limitations R R R NA
+Prerequisites R R R NA
+Instructions R R R R
+Acceptance Criteria R O NA NA
+Retention of Records O O O O
+Summary of Alterations O O O O
+Attachments O O O O
+Table legend: R - Required O - Optional NA - Not Applicable
+Table 1, Procedure Structure
+3. Do not omit required sections. Use None or NA when no information is needed
+for a required section.
+4. Some sections may be combined; however, address the intent of each section.

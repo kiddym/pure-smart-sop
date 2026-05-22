@@ -1,0 +1,24 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 25 of 68
+4. Include limitations to the performance of Instructions section steps or sections.
+a. Limitation statements describe regulatory or site administrative limits that
+the procedure is bound by.
+b. If limitations are required, then provide specific limits on parameters being
+controlled and the appropriate corrective measures to return the
+parameters to the normal control band (see Figure 18, Sample
+Limitations).
+4.0 LIMITATIONS
+1. Maximum differential temperature between cylinders is 200°F with D/G loaded greater
+than 1000 KW.
+2. Maximum turbocharger speed is 15,000 rpm.
+Figure 18, Sample Limitations
+5. Be aware of the following when evaluating precautions and limitations:
+• Radiation or contamination
+• High temperature or high pressure fluids
+• Dangerous chemical or hazardous materials
+• Electrical shock
+• High noise levels
+• Confined space hazards
+• Moving equipment
+• Fire hazards

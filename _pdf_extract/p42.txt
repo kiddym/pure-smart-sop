@@ -1,0 +1,27 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 42 of 68
+4. If writing steps containing the term REPEAT, then consider the following:
+a. Provide adequate space for placekeeping or data collection for each
+evolution. See Figure 34, Sample Repetitive Placekeeping for an
+example.
+1 2 3
+1. APPLY input equal to minimum element range. ____ ____ ____
+2. POSITION pointer for minimum reading using zero ____ ____ ____
+adjustment.
+3. APPLY input equal to maximum element range. ____ ____ ____
+4. IF pointer does not read correctly,
+THEN ADJUST span adjustment to reposition pointer ____ ____ ____
+about halfway toward correct reading.
+5. REPEAT steps 6.4.1 through 6.4.4 until zero and span
+readings are correct OR three iterations have been ____ ____ ____
+completed.
+Figure 34, Sample Repetitive Placekeeping
+b. Ensure the placekeeping or data collection format is clear and
+understandable.
+5. Provide signature lines for authorization or approvals requiring the signature of
+specific personnel by placing the position title beneath a solid line (see
+Figure 35, Sample Signature Line).
+2. OBTAIN permission from Unit Supervisor to perform test.
+Unit Supervisor Signature Date
+Figure 35, Sample Signature Line

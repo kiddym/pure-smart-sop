@@ -1,0 +1,29 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 15 of 68
+6.0 INSTRUCTIONS
+6.1 Emergency Diesel Generator 1A
+1. CHECK standby lineup as follows:
+a. PERFORM visual inspection of piping fittings and components
+for leakage or signs of deterioration on the following systems:
+• Engine Coolant ________
+• Fuel Oil ________
+• Lube Oil ________
+• Starting Air ________
+b. CHECK the following:
+(1) LO CLR LUBE OIL OUTLET TEMP, 0-TI-8235A, is
+greater than 85°F. ________
+(2) Lube Oil Circulating Pump is operating with NO apparent
+problems. ________
+Figure 7, Sample Numbering Scheme with Procedure Text
+4. Use the same numbering scheme and visual layout for steps and narrative
+paragraphs.
+a. Do not use un-numbered paragraphs except for supplemental information
+in attachments.
+b. Bulleted steps are not considered to be un-numbered paragraphs.
+5. Limit numbered steps to four levels of detail. If the task will exceed four
+numbered step levels, then consider rewriting the task. Sections and
+sub-sections are not included in the four levels of detail.
+6. Ensure the numbering scheme indentation maintains a five word minimum at the
+lowest level to avoid challenging the right margin restrictions and provide for an
+adequate instruction at the lowest step level.

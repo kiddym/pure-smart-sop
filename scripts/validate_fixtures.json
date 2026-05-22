@@ -1,0 +1,547 @@
+[
+  {
+    "name": "1_程序模板.docx",
+    "size_kb": 57,
+    "opc": {
+      "headers": [
+        "word/header1.xml",
+        "word/header2.xml",
+        "word/header3.xml",
+        "word/header4.xml",
+        "word/header5.xml",
+        "word/header6.xml",
+        "word/header7.xml"
+      ],
+      "footers": [
+        "word/footer1.xml",
+        "word/footer2.xml",
+        "word/footer3.xml",
+        "word/footer4.xml",
+        "word/footer5.xml"
+      ],
+      "footnotes": false,
+      "comments": false,
+      "numbering": true,
+      "styles": true,
+      "media": [
+        "word/media/",
+        "word/media/image1.png"
+      ],
+      "embeddings": []
+    },
+    "body_top_level": {
+      "count": 129,
+      "tags": {
+        "tbl": 5,
+        "p": 117,
+        "bookmarkEnd": 6,
+        "sectPr": 1
+      }
+    },
+    "content": {
+      "p_total": 231,
+      "p_non_empty": 60,
+      "tbl_total": 5,
+      "sdt": 0,
+      "drawing": 1,
+      "pict_legacy": 0,
+      "txbxContent": 0,
+      "oMath": 0
+    },
+    "img_detail": {
+      "inline": 1,
+      "anchor": 0,
+      "DPMS_anchor_lost": 0,
+      "multi_image_paragraphs": 0,
+      "DPMS_extra_imgs_lost": 0,
+      "table_inner_images": 1,
+      "DPMS_table_imgs_lost": 1
+    },
+    "table_detail": {
+      "top_level_tbl": 5,
+      "nested_tbl": 0,
+      "DPMS_nested_lost": 0,
+      "vMerge_restart": 0,
+      "vMerge_continue": 0,
+      "DPMS_vmerge_rowspan_wrong": 0,
+      "gridSpan": 1
+    },
+    "heading_signals": {
+      "pStyle_top10": [
+        [
+          "28",
+          58
+        ],
+        [
+          "18",
+          11
+        ],
+        [
+          "2",
+          8
+        ],
+        [
+          "31",
+          8
+        ],
+        [
+          "21",
+          5
+        ],
+        [
+          "14",
+          1
+        ],
+        [
+          "3",
+          1
+        ],
+        [
+          "4",
+          1
+        ],
+        [
+          "5",
+          1
+        ],
+        [
+          "6",
+          1
+        ]
+      ],
+      "outlineLvl": {}
+    },
+    "find_body_start": {
+      "total_children": 129,
+      "signal_3_first_h1": null,
+      "signal_4_early_sectpr_threshold": 25,
+      "signal_4_early_sectpr": 13,
+      "signal_1_toc_field_end": 18,
+      "signal_2_bookmark_toc_end": 75,
+      "candidates": [
+        18,
+        75,
+        13
+      ],
+      "chosen_body_start_idx": 75,
+      "skipped_blocks": 75,
+      "skipped_ratio": 0.581
+    }
+  },
+  {
+    "name": "TP试验程序.docx",
+    "size_kb": 300,
+    "opc": {
+      "headers": [
+        "word/header1.xml",
+        "word/header2.xml",
+        "word/header3.xml",
+        "word/header4.xml"
+      ],
+      "footers": [
+        "word/footer1.xml",
+        "word/footer2.xml"
+      ],
+      "footnotes": false,
+      "comments": false,
+      "numbering": true,
+      "styles": true,
+      "media": [
+        "word/media/",
+        "word/media/image1.png",
+        "word/media/image2.png"
+      ],
+      "embeddings": []
+    },
+    "body_top_level": {
+      "count": 189,
+      "tags": {
+        "tbl": 6,
+        "p": 182,
+        "sectPr": 1
+      }
+    },
+    "content": {
+      "p_total": 840,
+      "p_non_empty": 329,
+      "tbl_total": 6,
+      "sdt": 0,
+      "drawing": 2,
+      "pict_legacy": 0,
+      "txbxContent": 0,
+      "oMath": 1
+    },
+    "img_detail": {
+      "inline": 2,
+      "anchor": 0,
+      "DPMS_anchor_lost": 0,
+      "multi_image_paragraphs": 0,
+      "DPMS_extra_imgs_lost": 0,
+      "table_inner_images": 0,
+      "DPMS_table_imgs_lost": 0
+    },
+    "table_detail": {
+      "top_level_tbl": 6,
+      "nested_tbl": 0,
+      "DPMS_nested_lost": 0,
+      "vMerge_restart": 3,
+      "vMerge_continue": 4,
+      "DPMS_vmerge_rowspan_wrong": 4,
+      "gridSpan": 193
+    },
+    "heading_signals": {
+      "pStyle_top10": [
+        [
+          "13",
+          681
+        ],
+        [
+          "14",
+          65
+        ]
+      ],
+      "outlineLvl": {}
+    },
+    "find_body_start": {
+      "total_children": 189,
+      "signal_3_first_h1": null,
+      "signal_4_early_sectpr_threshold": 37,
+      "signal_4_early_sectpr": 5,
+      "signal_1_toc_field_end": null,
+      "signal_2_bookmark_toc_end": null,
+      "candidates": [
+        5
+      ],
+      "chosen_body_start_idx": 5,
+      "skipped_blocks": 5,
+      "skipped_ratio": 0.026
+    }
+  },
+  {
+    "name": "公司运营管理.docx",
+    "size_kb": 62,
+    "opc": {
+      "headers": [
+        "word/header1.xml",
+        "word/header2.xml",
+        "word/header3.xml",
+        "word/header4.xml",
+        "word/header5.xml",
+        "word/header6.xml"
+      ],
+      "footers": [
+        "word/footer1.xml",
+        "word/footer2.xml",
+        "word/footer3.xml",
+        "word/footer4.xml",
+        "word/footer5.xml"
+      ],
+      "footnotes": false,
+      "comments": true,
+      "numbering": true,
+      "styles": true,
+      "media": [
+        "word/media/",
+        "word/media/image1.png"
+      ],
+      "embeddings": []
+    },
+    "body_top_level": {
+      "count": 90,
+      "tags": {
+        "tbl": 5,
+        "p": 84,
+        "sectPr": 1
+      }
+    },
+    "content": {
+      "p_total": 195,
+      "p_non_empty": 72,
+      "tbl_total": 5,
+      "sdt": 0,
+      "drawing": 1,
+      "pict_legacy": 0,
+      "txbxContent": 0,
+      "oMath": 0
+    },
+    "img_detail": {
+      "inline": 1,
+      "anchor": 0,
+      "DPMS_anchor_lost": 0,
+      "multi_image_paragraphs": 0,
+      "DPMS_extra_imgs_lost": 0,
+      "table_inner_images": 1,
+      "DPMS_table_imgs_lost": 1
+    },
+    "table_detail": {
+      "top_level_tbl": 5,
+      "nested_tbl": 0,
+      "DPMS_nested_lost": 0,
+      "vMerge_restart": 0,
+      "vMerge_continue": 0,
+      "DPMS_vmerge_rowspan_wrong": 0,
+      "gridSpan": 1
+    },
+    "heading_signals": {
+      "pStyle_top10": [
+        [
+          "29",
+          19
+        ],
+        [
+          "32",
+          18
+        ],
+        [
+          "19",
+          6
+        ],
+        [
+          "2",
+          4
+        ],
+        [
+          "22",
+          3
+        ],
+        [
+          "3",
+          3
+        ]
+      ],
+      "outlineLvl": {}
+    },
+    "find_body_start": {
+      "total_children": 90,
+      "signal_3_first_h1": null,
+      "signal_4_early_sectpr_threshold": 18,
+      "signal_4_early_sectpr": 13,
+      "signal_1_toc_field_end": 18,
+      "signal_2_bookmark_toc_end": 77,
+      "candidates": [
+        18,
+        77,
+        13
+      ],
+      "chosen_body_start_idx": 77,
+      "skipped_blocks": 77,
+      "skipped_ratio": 0.856
+    }
+  },
+  {
+    "name": "公司运营管理_表格图片.docx",
+    "size_kb": 126,
+    "opc": {
+      "headers": [
+        "word/header1.xml",
+        "word/header2.xml",
+        "word/header3.xml",
+        "word/header4.xml",
+        "word/header5.xml",
+        "word/header6.xml"
+      ],
+      "footers": [
+        "word/footer1.xml",
+        "word/footer2.xml",
+        "word/footer3.xml",
+        "word/footer4.xml",
+        "word/footer5.xml"
+      ],
+      "footnotes": false,
+      "comments": false,
+      "numbering": true,
+      "styles": true,
+      "media": [
+        "word/media/",
+        "word/media/image1.png",
+        "word/media/image2.png"
+      ],
+      "embeddings": []
+    },
+    "body_top_level": {
+      "count": 93,
+      "tags": {
+        "tbl": 6,
+        "p": 86,
+        "sectPr": 1
+      }
+    },
+    "content": {
+      "p_total": 209,
+      "p_non_empty": 75,
+      "tbl_total": 6,
+      "sdt": 0,
+      "drawing": 2,
+      "pict_legacy": 0,
+      "txbxContent": 0,
+      "oMath": 0
+    },
+    "img_detail": {
+      "inline": 2,
+      "anchor": 0,
+      "DPMS_anchor_lost": 0,
+      "multi_image_paragraphs": 0,
+      "DPMS_extra_imgs_lost": 0,
+      "table_inner_images": 1,
+      "DPMS_table_imgs_lost": 1
+    },
+    "table_detail": {
+      "top_level_tbl": 6,
+      "nested_tbl": 0,
+      "DPMS_nested_lost": 0,
+      "vMerge_restart": 0,
+      "vMerge_continue": 0,
+      "DPMS_vmerge_rowspan_wrong": 0,
+      "gridSpan": 1
+    },
+    "heading_signals": {
+      "pStyle_top10": [
+        [
+          "33",
+          32
+        ],
+        [
+          "30",
+          19
+        ],
+        [
+          "19",
+          6
+        ],
+        [
+          "2",
+          4
+        ],
+        [
+          "22",
+          3
+        ],
+        [
+          "3",
+          3
+        ]
+      ],
+      "outlineLvl": {}
+    },
+    "find_body_start": {
+      "total_children": 93,
+      "signal_3_first_h1": null,
+      "signal_4_early_sectpr_threshold": 18,
+      "signal_4_early_sectpr": 13,
+      "signal_1_toc_field_end": 18,
+      "signal_2_bookmark_toc_end": 80,
+      "candidates": [
+        18,
+        80,
+        13
+      ],
+      "chosen_body_start_idx": 80,
+      "skipped_blocks": 80,
+      "skipped_ratio": 0.86
+    }
+  },
+  {
+    "name": "电厂管理巡视规定.docx",
+    "size_kb": 267,
+    "opc": {
+      "headers": [
+        "word/header1.xml"
+      ],
+      "footers": [],
+      "footnotes": false,
+      "comments": false,
+      "numbering": true,
+      "styles": true,
+      "media": [
+        "word/media/",
+        "word/media/image1.jpeg",
+        "word/media/image2.emf"
+      ],
+      "embeddings": [
+        "word/embeddings/",
+        "word/embeddings/oleObject1.bin"
+      ]
+    },
+    "body_top_level": {
+      "count": 147,
+      "tags": {
+        "tbl": 5,
+        "p": 126,
+        "bookmarkEnd": 15,
+        "sectPr": 1
+      }
+    },
+    "content": {
+      "p_total": 521,
+      "p_non_empty": 287,
+      "tbl_total": 5,
+      "sdt": 0,
+      "drawing": 1,
+      "pict_legacy": 0,
+      "txbxContent": 0,
+      "oMath": 0
+    },
+    "img_detail": {
+      "inline": 1,
+      "anchor": 0,
+      "DPMS_anchor_lost": 0,
+      "multi_image_paragraphs": 0,
+      "DPMS_extra_imgs_lost": 0,
+      "table_inner_images": 1,
+      "DPMS_table_imgs_lost": 1
+    },
+    "table_detail": {
+      "top_level_tbl": 5,
+      "nested_tbl": 0,
+      "DPMS_nested_lost": 0,
+      "vMerge_restart": 9,
+      "vMerge_continue": 9,
+      "DPMS_vmerge_rowspan_wrong": 9,
+      "gridSpan": 64
+    },
+    "heading_signals": {
+      "pStyle_top10": [
+        [
+          "38",
+          44
+        ],
+        [
+          "25",
+          18
+        ],
+        [
+          "3",
+          18
+        ],
+        [
+          "36",
+          15
+        ],
+        [
+          "22",
+          8
+        ],
+        [
+          "2",
+          8
+        ]
+      ],
+      "outlineLvl": {}
+    },
+    "find_body_start": {
+      "total_children": 147,
+      "signal_3_first_h1": null,
+      "signal_4_early_sectpr_threshold": 29,
+      "signal_4_early_sectpr": null,
+      "signal_1_toc_field_end": 6,
+      "signal_2_bookmark_toc_end": 143,
+      "candidates": [
+        6,
+        143
+      ],
+      "chosen_body_start_idx": 143,
+      "skipped_blocks": 143,
+      "skipped_ratio": 0.973
+    }
+  }
+]

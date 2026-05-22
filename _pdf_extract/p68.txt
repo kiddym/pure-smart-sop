@@ -1,0 +1,36 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 68 of 68
+ATTACHMENT 2
+Page 1 of 1
+Acknowledgements
+The Procedure Professionals Association wishes to thank the following standards committee
+members and their organizations for providing the resources necessary to develop and revise
+this document.
+Revision 2 Standards Committee
+Annie Hackett, Tennessee Valley Authority David Linders, Absolute Consulting Inc.
+Bill Benthall, Dominion Generation Co Kathy Gille, NEC, Inc
+Jack Hardy, Global Procedures Solutions Randall Webb, Tennessee Valley Authority
+Darlene McCord, Procedure Solution Management, LLC Roger Elmgreen, DOE, Savannah River Site
+Dwight Hargett, Duke Energy Roxy Gwynn, Dominion Generation Co.
+Steve McCord, Procedure Solutions Management, LLC
+Revision 1 Standards Committee
+Darlene Bennett, Procedure Solutions Mgmt David Linders, Absolute Consulting Inc.
+Bill Benthall, Dominion Generation Co. Linda Mar, Energy Northwest
+Michael Brewer, Pacific Gas & Electric Co. Steve McCord, Procedure Solutions Mgmt
+Donna Collins, Constellation Energy William Robinson, Progress Energy
+Richard Eickelman, AmerenUE William Russell, STP Nuclear Operating Co.
+Michael Grigsby, Arizona Public Service Co. George Turner, Constellation Energy
+Annie Hackett, Tennessee Valley Authority Anne Ward, Xcel Energy
+Jack Hardy, Global Procedures Solutions George Wisner, DOE, Savannah River Site
+Dwight Hargett, Duke Energy
+Revision 0 Standards Committee
+Rick Albertson, Duke Energy Rick Kiley, Entergy
+Darlene Bennett, Constellation Energy Gerald Lewis, STP Nuclear Operating Co.
+Bishop Blackwell, Entergy Steve McCord, Constellation Energy
+Bruce Bredeman, AmerenUE Megan McGuire, Dominion
+Barry Carpenter, Energy Northwest Dianna Miller, Entergy
+Ron Cutlip, Texas Utilities Alan Rabe, FirstEnergy
+Jack Hardy, Scientech William Russell, STP Nuclear Operating Co.
+Wayne Jackson, SCE&G Randal Webb, TVA
+Jeff Kimberlin, TVA Len West, PPL

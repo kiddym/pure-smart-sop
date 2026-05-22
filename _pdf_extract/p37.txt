@@ -1,0 +1,27 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 37 of 68
+5. Notes, Cautions and Warnings should:
+• Be written such that, if removed from the procedure, the procedure
+performance would not be affected
+• Be contained on one page and not expand onto two pages
+• Appear on the same page as the impacted step
+• Not contain an implied instruction or action step
+• Be written in a passive voice
+• Be written as short and concise statements
+• Be placed prior to steps to which they apply
+• Be worded the same when appearing in multiple places in a procedure or
+in multiple procedures
+6. Notes may be used for the following (not an inclusive list):
+• Provide supplemental information
+• Provide descriptive or explanatory facts
+• Coordinate responsibilities
+• Denote time dependent steps
+• Denote concurrent steps
+• Denote component locations
+7. Cautions may be used for the following (not an inclusive list):
+• Attract attention to information that is essential to prevent damage to
+equipment
+• Identify the specific nature and location of a hazard
+• State the cause of the condition(s) and the effect of the condition(s)
+• Identify critical time constraints

@@ -1,0 +1,20 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 12 of 68
+4.5 Page Headers and Footers
+1. Include on each page of the procedure, including all attachment pages, a page
+header that clearly identifies the following information (see Figure 2, Sample
+Header):
+• Procedure title
+• Procedure number
+• Revision number
+• Page number
+2OST-CC-14 Component Cooling System Revision 13
+Quarterly Flow Test Page 23 of 36
+Figure 2, Sample Header
+2. Page headers for technical procedures should have a means for identifying the
+unit to which it applies.
+3. Page headers are not required for the cover page, provided the same
+information contained within the page header is presented on the cover page.
+4. Page footers are optional and may be used for supplemental information (for
+example, record retention, attachment page control, and form numbers).

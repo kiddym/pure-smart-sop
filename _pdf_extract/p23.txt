@@ -1,0 +1,24 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 23 of 68
+4.13.4 References and Commitments
+1. Place the References and Commitments section before or after the Instructions
+section; however, it should be consistent for all procedure types.
+2. The References and Commitments section shall identify the documents used in
+the development of the procedure or required for procedure performance. For
+example:
+• Regulatory documents
+• Operating experience (internal and external)
+4.13.5 Definitions
+1. Place the Definitions section before or after the Instructions section; however,
+the section placement should be consistent for all procedure types.
+2. List definitions in alphabetical order. Numbering definitions is optional.
+3. Ensure definitions are consistent with those provided in other procedures.
+4. Avoid duplication if terms are defined in a referenced, available document.
+5. Definitions should be used to define the following items:
+• Terms or phrases which have a special or limited meaning when applied
+to the context of the procedure.
+• Terms or phrases used in the procedure that are unique to the procedure.
+6. Do not provide direction in definitions.
+7. Avoid defining terms that are self-explanatory.
+8. Avoid using the word being defined in the definition.

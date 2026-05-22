@@ -1,0 +1,22 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 27 of 68
+2. General rules for writing instructional steps are:
+a. Write the instructional steps in a logical order in which they will be
+performed.
+b. Divide the tasks into manageable groups of subordinate sections and
+related actions.
+c. Use headings reflective of the sectionalized tasks.
+d. Include any provision necessary to facilitate recording data, signoffs,
+placekeeping marks, and remarks (as applicable).
+e. Include step by step instructions for performing required tasks and
+subtasks (see Figure 20, Sample Technical Procedure Instructions
+Section Steps).
+4. REMOVE X Relay Trip Lever Window. ________
+5. MEASURE and RECORD as-found thickness of the lower section of
+X Relay Trip Lever Window.
+As-found thickness: ________
+6. IF as-found thickness is less than 0.180 inches,
+THEN REPLACE X Relay Lever per 0-MNT-005, Relay
+Replacement. ________
+Figure 20, Sample Technical Procedure Instructions Section Steps

@@ -1,0 +1,15 @@
+/* 设计令牌单一来源（节选，权威见 docs/design-system.md §2.1 / Q317）。
+   新增配色请先回填 design-system.md，禁止散落 hex。 */
+:root {
+  /* 状态色（暖盘） */
+  --st-draft: #a89a86;
+  --st-published: #88b07a;
+  --st-archived: #6b635a;
+  --st-deprecated: #d9685e;
+
+  /* 壳色 / 强调 */
+  --accent: #d97757;
+  --bg-surface: #211e1b;
+  --bg-elevated: #2a2622;
+  --text-primary: #ece6dd;
+}

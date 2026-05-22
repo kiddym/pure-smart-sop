@@ -1,0 +1,62 @@
+"""独立 scheduler 进程（§53.1 / Q331）。
+
+APScheduler BlockingScheduler，replicas=1（单实例天然单次执行，无需分布式锁、
+无 broker）。临时上传清理每 1h；asset GC 每日 ``CLEANUP_HOUR``。
+CLI：``python -m app.tasks.scheduler``。
+"""
+
+from __future__ import annotations
+
+import logging
+
+from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.triggers.cron import CronTrigger
+from apscheduler.triggers.interval import IntervalTrigger
+
+from app.config import settings
+from app.db import SessionLocal
+from app.logging_config import configure_logging
+from app.tasks import asset_gc, cleanup_uploads
+
+logger = logging.getLogger(__name__)
+
+
+def _run_cleanup_uploads() -> None:
+    cleanup_uploads.run()
+
+
+def _run_asset_gc() -> None:
+    db = SessionLocal()
+    try:
+        asset_gc.run(db)
+    finally:
+        db.close()
+
+
+def build_scheduler() -> BlockingScheduler:
+    """装配 scheduler（不启动），便于测试。"""
+    sched = BlockingScheduler(timezone=None)
+    sched.add_job(
+        _run_cleanup_uploads,
+        IntervalTrigger(hours=1),
+        id="cleanup_uploads",
+        replace_existing=True,
+    )
+    sched.add_job(
+        _run_asset_gc,
+        CronTrigger(hour=settings.cleanup_hour, minute=0),
+        id="asset_gc",
+        replace_existing=True,
+    )
+    return sched
+
+
+def main() -> int:  # pragma: no cover — 长驻进程
+    configure_logging()
+    logger.info("scheduler 启动：cleanup_uploads@1h, asset_gc@%02d:00", settings.cleanup_hour)
+    build_scheduler().start()
+    return 0
+
+
+if __name__ == "__main__":  # pragma: no cover
+    raise SystemExit(main())

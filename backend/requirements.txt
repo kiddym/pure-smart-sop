@@ -1,0 +1,29 @@
+# Web 框架
+fastapi>=0.115,<0.116
+uvicorn[standard]>=0.32,<0.33
+gunicorn>=23.0,<24.0
+
+# 数据校验
+pydantic>=2.9,<3.0
+pydantic-settings>=2.6,<3.0
+
+# 数据库
+SQLAlchemy>=2.0.36,<2.1
+alembic>=1.14,<2.0
+PyMySQL>=1.1,<2.0
+
+# Word 解析（Phase 6）
+python-docx>=1.1,<2.0
+lxml>=5.0,<7.0          # 直接遍历 document.xml（不走 doc.paragraphs）
+Pillow>=10.0,<13.0      # 图片尺寸 / 校验
+PyYAML>=6.0,<7.0        # heading_synonyms.yaml 内置词典
+
+# PDF 生成
+reportlab>=4.2,<5.0
+
+# 后台任务调度（独立 scheduler 进程，§53）
+APScheduler>=3.10,<4.0
+
+# 工具
+python-multipart>=0.0.12,<1.0
+python-dotenv>=1.0,<2.0

@@ -1,0 +1,30 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 22 of 68
+4.13.3 Scope
+1. Place the Scope section as second section of the procedure. This section is
+mandatory, but it may be combined with the Purpose section.
+2. For administrative procedures, use the Scope section to describe to whom the
+procedure applies and what the procedure covers (the extent of its boundaries).
+See Figure 14, Sample Administrative Procedure Scope Statement.
+2.0 SCOPE
+1. This procedure applies to all employees and all supplemental personnel supporting
+plant operations.
+2. This procedure applies to emergent plant issues that potentially challenge plant safety,
+regulatory compliance, or continued full power operation.
+3. This procedure does not apply to activities previously evaluated during the normal
+development process for the plant work schedule.
+Figure 14, Sample Administrative Procedure Scope Statement
+3. For technical procedures, use the Scope section to describe the activities
+covered by the procedure and, if necessary, to address the limitations or
+boundaries of the procedure (see Figure 15, Sample Technical Procedure Scope
+Statement). Include the following types of items in this section:
+• The extent to which any technical requirements are fulfilled.
+• Any exceptions or specific boundaries in the applicability of the procedure,
+including personnel and types of equipment.
+2.0 SCOPE
+1. This procedure verifies the opening capability of check valves in the Emergency Core
+Cooling System (ECCS) identified on attachments 1 and 2, thus demonstrating their
+operational readiness as required by AP-ZZ-003, Pump and Valve In-service Testing
+Program.
+Figure 15, Sample Technical Procedure Scope Statement

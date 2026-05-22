@@ -1,0 +1,24 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 44 of 68
+5. If the hold point is applicable to more than one step (see Figure 37, Multiple Step
+Hold Point):
+a. Provide the hold point notation at the first step to which it is applicable.
+b. Place a note before the hold point steps specifying how the hold point is
+to be applied and to which steps it is applicable.
+c. Place a signature line or signoff after the last hold point step.
+QC HOLD POINT
+NOTE
+QC Inspector is required to be present for performance of Step 6.10.1 and all
+substeps.
+1. REFURBISH non-conforming leads as follows: _______
+a. REMOVE old lug by cutting lead as close as possible to existing
+hardware barrel. _______
+b. REMOVE insulation from last 1/2 inch of lead. _______
+c. INSERT lead fully into new hardware barrel. _______
+d. CRIMP lug on lead. _______
+e. RECORD the following:
+Hardware Size: _________ Lead Size: ___________
+Crimper ID No.: _________ Cal Due Date: ___________
+QC Inspector Signature Date
+Figure 37, Multiple Step Hold Point

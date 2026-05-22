@@ -1,0 +1,81 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.egg-info/
+dist/
+build/
+
+# Node
+node_modules/
+.npm/
+.pnpm-store/
+.yarn/
+*.tsbuildinfo
+
+# Vite / frontend build
+frontend/dist/
+frontend/.vite/
+
+# Env files
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+
+# Uploads (run-time)
+uploads/
+tmp/
+
+# PDF cache
+*.pdf
+!docs/**/*.pdf
+!backend/app/assets/**/*.pdf
+
+# Secrets
+*.pem
+*.key
+*.crt
+secrets/
+
+# Local development overrides
+docker-compose.override.yml
+
+# Claude Code (machine-local)
+.claude/settings.local.json
+
+# Large downloaded fonts (regenerable via _font_tmp/dl.py)
+_font_tmp/*.ttf

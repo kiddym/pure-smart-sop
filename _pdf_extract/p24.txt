@@ -1,0 +1,32 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 24 of 68
+4.13.6 Responsibilities
+1. Place the Responsibilities section prior to the Instructions section and following
+the Purpose and Scope sections.
+2. The Responsibilities section shall describe the individuals and organizations that
+have responsibilities for implementing the procedure. This section should be a
+high-level summary rather than a definitive list and should not repeat procedural
+requirements (see Figure 16, Sample Responsibilities Section).
+3.0 RESPONSIBILITIES
+3.1 Duty Department Manager
+1. Provides the personnel necessary to support evaluation and resolution of emergent
+issues. For example:
+• Completing an Engineering Work Request
+• Performing simulator scenarios as necessary to evaluate emergent issues
+Figure 16, Sample Responsibilities Section
+4.13.7 Precautions and Limitations
+1. Place the Precautions and Limitations section prior to the Instructions section
+and following the Purpose and Scope sections. This section may be split into a
+separate Precautions section and a separate Limitations section.
+2. Do not provide direction in this section.
+3. Include precautions to alert the procedure user to those measures that protect
+equipment, personnel, and the general public from abnormal or emergency
+situations (see Figure 17, Sample Precautions).
+a. Precautions apply generically to the entire document.
+b. Do not repeat caution statements in this section that are listed
+immediately preceding the step to which they apply.
+PRECAUTONS
+3.0
+1. Charged circuit breaker springs can lead to a pinch hazard.
+Figure 17, Sample Precautions

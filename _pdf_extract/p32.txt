@@ -1,0 +1,30 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 32 of 68
+e. Place table notes at the end of the table.
+f. Ensure the table remains within the page margins.
+g. Consider using an exposed grid structure. Vertical lines within the table
+may be eliminated if there is sufficient spacing.
+h. Use shading or N/A to indicate cells that require no entries.
+i. Provide adequate space for entering values and data.
+j. Include units of measure in headings where applicable.
+k. Carry over the column titles if a table continues onto an additional page.
+Temperature Speed Discharge Pressure
+Minute Interval (°F) (rpm) (psig)
+1 100.01 1800 645
+2 * NA NA NA
+3 102.78 1800 645
+4 ** 102.78 NA 645
+Table 1. Bearing Temperature Stability
+* No data required at 2 minutes
+** Speed data not required
+Figure 24, Sample Table
+8. If the supplemental information is a flow chart, then:
+a. Use consistent flow chart methods and symbols.
+b. Ensure the flowchart and procedure body are in agreement.
+c. Consider that flow charts should not contain as much detail as the actual
+procedure process.
+9. If the supplemental information is a graph, then (see Figure 25, Sample Graph):
+a. Provide sufficient space for notations and values.
+b. Present layout information in readily readable format.
+c. Label axes appropriately.

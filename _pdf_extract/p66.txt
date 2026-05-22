@@ -1,0 +1,41 @@
+Procedure Writer's Manual PPA AP-907-005
+Rev. 2
+Page 66 of 68
+ATTACHMENT 1
+Page 7 of 8
+Action Verbs
+VERB DEFINITION
+PURGE Get rid of or eliminate.
+Force flow through an enclosed volume.
+PUSH Move equipment or actuate equipment away from motivating force.
+RACK IN Place an electrical circuit breaker in place by physically connecting it to associated power
+source.
+RACK OUT Disconnect an electrical circuit breaker by physically removing from associated power
+source.
+RAISE Increase the amount; move to higher position.
+RECORD Document specified condition data or characteristic.
+REDUCE Cause a parameter to decrease in value.
+REFURBISH Brighten or freshen up; make like new.
+REMOVE Transfer or move, take off, out of, or away.
+REPEAT Say or do again.
+REPLACE Substitute; put back into former position or place.
+REQUEST Ask for.
+RESET Remove an active output signal from retentive logic device even with the input signal still
+present.
+RESTORE Bring a specified parameter or component back within specified limits or original condition
+RETRACT Draw back.
+RETURN Move backwards, bring, go, or send.
+SAMPLE Take a representative portion for the purpose of examination.
+SECURE Fasten, make safe, or tie; remove from service; stop a device.
+SELECT Choose from among several.
+SET Physically adjust and adjustable feature to a specified value.
+SHAKE Move or cause to go to and from in a quick jerky manner; agitate.
+SHIELD Provide with protective cover or barrier.
+SHIFT Change mode of operation, usually speed.
+SHUT DOWN Stop operating equipment and place in standby.
+START Initiate operation of an electrical or mechanical device either directly or by remote control.
+STOP Shut down equipment, terminate operation, or cease.
+STROKE Operate a valve over its full travel.
+Go through a motion as in a valve or damper movement.
+SURVEY Investigate an area, generally for radiological purposes.
+SYNCHRONIZE Make exactly simultaneous in operation.

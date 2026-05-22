@@ -1,0 +1,18 @@
+Procedure Writer's Manual PPA AP-907-005
+Rev. 2
+Page 67 of 68
+ATTACHMENT 1
+Page 8 of 8
+Action Verbs
+VERB DEFINITION
+TAG Label for identification.
+THROTTLE Operate a valve in an intermediate position to obtain certain flow rate up to and including
+full open.
+TORQUE Apply turning or twisting force to specified value.
+TRIP Manually activate or deactivate a semiautomatic feature.
+TROUBLESHOOT Investigate for purpose of locating or eliminating sources of problem.
+TURN Cause to move at an angle or circle.
+USE Put into action or service; employ.
+VENT Permit a gas or liquid contained under pressure to escape from a vent.
+VERIFY Observe an expected condition exist (no actions to correct).
+WITHDRAW Move from a position.

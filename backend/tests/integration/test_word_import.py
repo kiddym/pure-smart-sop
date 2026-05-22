@@ -1,0 +1,209 @@
+"""Word 导入端到端集成测试（M6.4）：upload → parse → import + assets。"""
+
+from __future__ import annotations
+
+import re
+from pathlib import Path
+
+from fastapi.testclient import TestClient
+
+from tests.unit.parser._docx_builder import (
+    empty_sop,
+    styled_sop,
+    tiny_png,
+    unstyled_numbered_sop,
+)
+
+UPLOADS = "/api/v1/uploads"
+PARSE = "/api/v1/parse"
+IMPORT = "/api/v1/procedures/import"
+FOLDER = "/api/v1/folders"
+DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+
+
+def _leaf(client: TestClient, *, name: str = "导入夹", prefix: str = "IM") -> str:
+    return client.post(FOLDER, json={"name": name, "prefix": prefix}).json()["id"]
+
+
+def _upload(client: TestClient, data: bytes, name: str = "a.docx") -> str:
+    resp = client.post(UPLOADS, files={"file": (name, data, DOCX_MIME)})
+    assert resp.status_code == 200, resp.text
+    return resp.json()["upload_token"]
+
+
+def test_upload_rejects_non_docx(client: TestClient, storage_tmp: Path) -> None:
+    resp = client.post(UPLOADS, files={"file": ("x.docx", b"not docx", DOCX_MIME)})
+    assert resp.status_code == 400
+    assert resp.json()["detail"]["code"] == "PARSE_FILE_INVALID"
+
+
+def test_parse_methods(client: TestClient, storage_tmp: Path) -> None:
+    resp = client.get(f"{PARSE}/methods")
+    assert resp.status_code == 200
+    keys = {m["key"] for m in resp.json()}
+    assert keys == {"standard", "smart"}
+
+
+def test_full_standard_flow(client: TestClient, storage_tmp: Path) -> None:
+    leaf = _leaf(client)
+    token = _upload(client, styled_sop())
+
+    parsed = client.post(PARSE, json={"upload_token": token, "parse_mode": "standard"})
+    assert parsed.status_code == 200, parsed.text
+    body = parsed.json()
+    assert body["metadata"]["body_start_detected_by"] == "first_styled_heading"
+    assert body["review_required"] == 0
+    assert len(body["assets"]) >= 1  # 内联图
+
+    imported = client.post(
+        IMPORT,
+        json={"name": "记录控制程序", "folder_id": leaf, "chapters": body["chapters"]},
+    )
+    assert imported.status_code == 201, imported.text
+    proc_id = imported.json()["id"]
+    assert imported.json()["status"] == "DRAFT"
+
+    detail = client.get(f"/api/v1/procedures/{proc_id}").json()
+    chapter_titles = [c["title"] for c in detail["chapters"]]
+    assert "目的" in chapter_titles
+
+    # 临时图已提升为永久 asset，rich_content 指向永久 URL，可被服务
+    flat = _flatten(detail["chapters"])
+    asset_urls = [
+        m.group(0)
+        for n in flat
+        for m in [re.search(r"/api/v1/procedures/[^/\"]+/assets/[0-9a-f-]{36}", n["rich_content"])]
+        if m
+    ]
+    assert asset_urls, "导入后应有永久 asset URL"
+    served = client.get(asset_urls[0])
+    assert served.status_code == 200
+    assert served.content  # 有字节
+
+
+def test_smart_unstyled_review_blocks_import(client: TestClient, storage_tmp: Path) -> None:
+    leaf = _leaf(client)
+    token = _upload(client, unstyled_numbered_sop())
+    parsed = client.post(PARSE, json={"upload_token": token, "parse_mode": "smart"}).json()
+    assert parsed["review_required"] >= 2
+    assert parsed["detected_patterns"]
+
+    # 带 review 直接导入 → 422
+    blocked = client.post(
+        IMPORT, json={"name": "x", "folder_id": leaf, "chapters": parsed["chapters"]}
+    )
+    assert blocked.status_code == 422
+    assert blocked.json()["detail"]["code"] == "REVIEW_NOT_CLEARED"
+
+    # 用户确认（清掉 review）后可导入
+    cleared = _clear_review(parsed["chapters"])
+    ok = client.post(IMPORT, json={"name": "已确认程序", "folder_id": leaf, "chapters": cleared})
+    assert ok.status_code == 201, ok.text
+
+
+def test_standard_no_styled_heading_rejected(client: TestClient, storage_tmp: Path) -> None:
+    token = _upload(client, unstyled_numbered_sop())
+    resp = client.post(PARSE, json={"upload_token": token, "parse_mode": "standard"})
+    assert resp.status_code == 400
+    assert resp.json()["detail"]["code"] == "PARSE_TEMPLATE_INVALID"
+
+
+def test_smart_empty_doc_no_headings(client: TestClient, storage_tmp: Path) -> None:
+    token = _upload(client, empty_sop())
+    resp = client.post(PARSE, json={"upload_token": token, "parse_mode": "smart"})
+    assert resp.status_code == 400
+    assert resp.json()["detail"]["code"] == "PARSE_NO_HEADINGS"
+
+
+def test_invalid_token_rejected(client: TestClient, storage_tmp: Path) -> None:
+    resp = client.post(PARSE, json={"upload_token": "ghost", "parse_mode": "smart"})
+    assert resp.status_code == 400
+    assert resp.json()["detail"]["code"] == "UPLOAD_TOKEN_INVALID"
+
+
+def test_editor_asset_upload_and_serve(client: TestClient, storage_tmp: Path) -> None:
+    leaf = _leaf(client)
+    proc = client.post(
+        "/api/v1/procedures",
+        json={"folder_id": leaf, "name": "图片宿主", "level_of_use": "continuous"},
+    ).json()
+    pid = proc["id"]
+    resp = client.post(
+        f"/api/v1/procedures/{pid}/assets",
+        files={"file": ("p.png", tiny_png(size=20), "image/png")},
+    )
+    assert resp.status_code == 201, resp.text
+    asset = resp.json()
+    assert asset["width"] == 20
+    served = client.get(asset["url"])
+    assert served.status_code == 200
+    assert served.headers["content-type"] == "image/png"
+
+
+def test_editor_asset_rejects_too_large(client: TestClient, storage_tmp: Path) -> None:
+    leaf = _leaf(client)
+    pid = client.post(
+        "/api/v1/procedures",
+        json={"folder_id": leaf, "name": "h", "level_of_use": "continuous"},
+    ).json()["id"]
+    big = b"\x89PNG\r\n" + b"0" * (10 * 1024 * 1024 + 1)
+    resp = client.post(
+        f"/api/v1/procedures/{pid}/assets", files={"file": ("big.png", big, "image/png")}
+    )
+    assert resp.status_code == 413
+    assert resp.json()["detail"]["code"] == "IMAGE_TOO_LARGE"
+
+
+def test_import_rejects_over_deep_tree(client: TestClient, storage_tmp: Path) -> None:
+    """客户端手改出 4 级章节树 → 后端校验拒绝（H1 评审修复）。"""
+    leaf = _leaf(client)
+
+    def chap(title: str, children: list[dict]) -> dict:
+        return {"title": title, "content_type": "chapter", "children": children}
+
+    deep = [chap("L1", [chap("L2", [chap("L3", [chap("L4", [])])])])]
+    resp = client.post(IMPORT, json={"name": "超深", "folder_id": leaf, "chapters": deep})
+    assert resp.status_code == 400
+    assert resp.json()["detail"]["code"] == "CHAPTER_DEPTH_EXCEEDED"
+
+
+def test_import_rejects_content_with_children(client: TestClient, storage_tmp: Path) -> None:
+    """content 节点必须是叶子（H1 评审修复）。"""
+    leaf = _leaf(client)
+    bad = [
+        {
+            "title": "ch",
+            "content_type": "chapter",
+            "children": [
+                {
+                    "content_type": "content",
+                    "rich_content": "<p>x</p>",
+                    "children": [{"content_type": "content", "rich_content": "<p>y</p>"}],
+                }
+            ],
+        }
+    ]
+    resp = client.post(IMPORT, json={"name": "坏树", "folder_id": leaf, "chapters": bad})
+    assert resp.status_code == 400
+    assert resp.json()["detail"]["code"] == "SIBLING_TYPE_CONFLICT"
+
+
+def test_temp_media_404_for_unknown_token(client: TestClient, storage_tmp: Path) -> None:
+    resp = client.get("/api/v1/uploads/ghost/media/x.png")
+    assert resp.status_code == 404
+
+
+def _flatten(nodes: list[dict]) -> list[dict]:
+    out: list[dict] = []
+    for n in nodes:
+        out.append(n)
+        out.extend(_flatten(n.get("children", [])))
+    return out
+
+
+def _clear_review(nodes: list[dict]) -> list[dict]:
+    for n in nodes:
+        if n.get("mark_status") == "review":
+            n["mark_status"] = "unmarked"
+        _clear_review(n.get("children", []))
+    return nodes

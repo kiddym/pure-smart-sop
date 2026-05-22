@@ -1,0 +1,30 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 51 of 68
+4.27.2 Symbols
+1. Use acceptable universally understood symbols. The Gregg Reference Manual
+or any other nationally accepted reference may be used.
+2. For procedure text, write out the following terms:
+• Greater than or equal to
+• Less than or equal to
+• Greater than
+• Less than
+• Equal to
+• Does not equal
+3. The symbols associated with the above terms may be used in a calculation,
+formula, equation, or data sheet.
+4.27.3 Units
+1. Use the same units of measurement that appear on corresponding equipment.
+2. Express exponent values using an upper case E to signify value of 10 (see
+Figure 42, Scientific Notation).
+Incorrect: 2 X 10-6 Correct: 2E-6
+Figure 42, Scientific Notation
+3. Do not specify numbers at a greater precision than can be read from instrument
+panel displays, graphs, or other sources (a user can read to one-half the
+distance between the smallest minor division).
+4.27.4 Tolerances
+1. Do not use a tolerance band with a plus or minus symbol.
+2. Write the required value followed by the upper and lower limits (see Figure 43,
+Tolerances).
+Incorrect: 400 psig ± 2% Correct: 400 psig (392 to 408 psig)
+Figure 43, Tolerances

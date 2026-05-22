@@ -1,0 +1,40 @@
+Procedure Writer's Manual PPA AP-907-005
+Rev. 2
+Page 61 of 68
+ATTACHMENT 1
+Page 2 of 8
+Action Verbs
+VERB DEFINITION
+ASSEMBLE Create by forming combining or altering material; construct.
+ASSIST Give support or help.
+ATTACH Join one item to another.
+AVAILABLE Place into state or condition of being ready and able to be used.
+AVOID Prevent occurrence of or keep away from.
+BACKOFF Cause to go in reverse or backward.
+BACKSEAT Adjust a valve disk against its seat in a fully open position.
+BACKWASH Use a backward flow of air or water to clean or purge.
+BALANCE Adjust controller process signals to equalize parameters or to arrange so weight
+distribution is equal.
+BEGIN Perform the first part of an action.
+BEND Turn by force from straight to curved or circular.
+BLEED Remove fluid from a piece of equipment at a restricted flow rate.
+Extract or let out some or all of a contained substance.
+BLOCK Inhibit an automatic actuation.
+BLOW Send forth air.
+BLOWDOWN Clear out or free of obstruction by forcing air through.
+BORATE Add a borated solution to a system.
+BREAK Destroy the unity or completeness of.
+BYPASS Circumvent a piping system component, a logic system function, or an installed switch.
+CALCULATE Determine a work or value of.
+CALIBRATE Check, adjust, or standardize the graduation of a quantitative measuring instrument.
+CAP Provide with covering.
+CENTER Place in the middle.
+CHANNEL Form, cut, or wear a groove in.
+CHARGE Furnish or fill to capacity.
+Restore active materials in a storage battery.
+CLAMP Fasten grip or support and object.
+CLEAN Rid of dirt impurities or extraneous matter.
+CLEAR Remove from service; move people or objects away from.
+CHECK Observe an expected condition exist (no actions to correct).
+CLOSE Change physical position of a mechanical device to prevent physical access or flow or
+permits passage of electrical current.

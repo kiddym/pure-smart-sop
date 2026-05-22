@@ -1,0 +1,17 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 18 of 68
+3. Figure 10, Sample Cover Page provides an example cover page.
+North American Nuclear Plant
+Unit 0
+Mechanical Corrective Instruction
+MCI-0-068-SEL001
+Reactor Water Recirculation Pump Seal Replacement
+Revision 4
+Quality Related
+Level of Use: Reference Use
+Effective Date: 03-27-10
+Responsible Organization: Mechanical Maintenance
+Prepared By: Jane Doe
+Approved By: John Smith
+Figure 10, Sample Cover Page

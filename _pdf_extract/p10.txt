@@ -1,0 +1,33 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 10 of 68
+33. Time Dependent Step: A step to be completed within a specified time frame.
+34. Tolerance: The permissible deviation from a specified value.
+35. Warning: A statement placed immediately before applicable steps to warn
+users of potential for personnel injury, loss of life, or health hazards.
+4.0 INSTRUCTIONS
+4.1 General
+1. This section of the writers' manual provides tools, techniques, and an overall
+style for procedure writing. Procedures written in this manner will enable newly
+qualified individuals to successfully perform a task in a consistent manner.
+2. This section also defines the minimum human performance attributes for
+procedure format.
+4.2 Procedure Designation
+1. Number procedures in a unique, logical, and intuitive manner (see Figure 1,
+Sample Procedure Designation).
+2-OST-CC-14
+Unit Identifier Procedure Type Identifier System Identifier Sequence Number
+(Unit 2) (Operations Surveillance Test) (Component Cooling
+Water)
+Figure 1, Sample Procedure Designation
+2. The numbering convention may include site, unit, procedure type (e.g., operating
+procedure, maintenance procedure, surveillance procedure, administrative
+procedure), system designator, discipline, and, where applicable, a component
+identifier.
+3. The procedure designation should enable the end-user to determine that the
+appropriate procedure has been obtained for the task to be performed.
+4.3 Page Layout and Orientation
+1. Use paper that meets the following requirements:
+• Size: 8.5 inches by 11 inches
+• Color: White
+• Default Orientation: Portrait

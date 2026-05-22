@@ -1,0 +1,16 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 59 of 68
+5.0 REFERENCES AND COMMITMENTS
+1. ANSI N18.7-1976/ANS-3.2, Administrative Controls and Quality Assurance for
+the Operational Phase of Nuclear Power Plants
+2. DOE-STD-1029-92, Writer's Guide for Technical Procedures
+3. EPRI 1011903, Maintenance Work Package Planning Guidance
+4. IAEA-TECDOC-1058, Good Practices with Respect to the Development and Use
+of Nuclear Power Plant Procedures
+5. INPO 06-002, Human Performance Tools for Workers
+6. INPO 11-003, Guideline for Excellence in Procedure and Work Instruction Use
+and Adherence
+7. NUREG/CR-3968, Study of Operating Procedure in Nuclear Power Plants:
+Practices and Problems
+8. PPA AP-907-001, Procedure Process Description

@@ -1,0 +1,13 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 38 of 68
+8. Warnings may be used for the following (not an inclusive list):
+• Attract attention to information essential to avoid loss of life, personal
+injury, and health hazards
+• Identify the specific nature and location of a hazard
+• State the effect of the condition and the cause of the condition
+• Identify critical time constraints
+4.16 Conditional Steps
+1. Use conditional (action) steps when a decision is based upon the occurrences of
+a condition or combination of conditions to be satisfied prior to the performance
+of an action.

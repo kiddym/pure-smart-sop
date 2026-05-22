@@ -1,0 +1,33 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 13 of 68
+4.6 Page Numbering
+1. Include on each page of the procedure a consecutive page number and total
+page count formatted as Page X of Y (see Figure 3, Sample Page Numbering).
+OP-4 Unit 1 Shutdown Cooling Revision 10
+Page 14 of 16
+Figure 3, Sample Page Numbering
+2. Maintain the page numbering sequence and a separate internal appendix or
+attachment page number (see Figure 4, Sample Attachment Page Numbering).
+OP-4 Unit 1 Shutdown Cooling Revision 10
+Page 15 of 16
+Attachment 1. Data Sheet
+Page 1 of 2
+Figure 4, Sample Attachment Page Numbering
+3. Page numbers are not required for the cover page. However, the cover page
+should be included in the total page count.
+4.7 Line Spacing and Justification
+1. Consider using single line spacing. Avoid tightening text by reducing line spacing
+size.
+2. Separate steps by at least one line of white space (for example, a setting of 12 pt
+after in MS Word) as it improves the readability of a procedure. Adjustments to
+white space may be used to provide visual anchors.
+3. Left justify all section and step text.
+4.8 Page Breaks and Section Breaks
+1. Adjust the placement of sentences and steps such that they are maintained
+unbroken and on the same page.
+2. When possible, then keep associated information or action substeps and lists
+together on the same page.
+3. Use continuation headings when the content of a step or substep continues onto
+another page. If the numbering scheme used is clear, the continuation heading
+may not be necessary.

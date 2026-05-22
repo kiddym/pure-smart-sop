@@ -1,0 +1,318 @@
+"""version_flow_service 单测（Phase 7 / §22 / §31）。"""
+
+from __future__ import annotations
+
+import pytest
+from fastapi import HTTPException
+from sqlalchemy.orm import Session
+
+from app.deps import RequestMeta
+from app.models.folder import Folder
+from app.models.procedure import Procedure
+from app.schemas.procedure import ProcedureUpdate
+from app.services import procedure_service, version_flow_service
+from tests.conftest import Factory
+
+META = RequestMeta(ip_address="203.0.113.20", user_agent="pytest", request_id="r-vf")
+
+
+def _leaf(factory: Factory, name: str = "叶子", prefix: str = "QC") -> Folder:
+    f = factory.folder(name=name, prefix=prefix, full_path=name)
+    factory.sequence(f.id)
+    return f
+
+
+def _deprecated_folder(factory: Factory) -> Folder:
+    return factory.folder(name="废止", system=True, full_path="废止")
+
+
+def _published(factory: Factory, folder: Folder, **kw: object) -> Procedure:
+    return factory.procedure(folder.id, status="PUBLISHED", **kw)
+
+
+# --------------------------------------------------------------------------- #
+# upgrade
+# --------------------------------------------------------------------------- #
+def test_upgrade_forks_new_draft(db: Session, factory: Factory) -> None:
+    factory.settings()
+    folder = _leaf(factory)
+    proc = _published(factory, folder, version=1)
+    factory.chapter(proc.id, title="章A")
+    new = version_flow_service.upgrade_version(db, proc.id, META)
+
+    assert new.version == 2
+    assert new.status == "DRAFT"
+    assert new.is_current is True
+    assert new.procedure_group_id == proc.procedure_group_id
+    assert new.code == proc.code
+    db.refresh(proc)
+    assert proc.is_current is False
+    assert proc.status == "ARCHIVED"
+    # 内容已深拷贝
+    children = version_flow_service._group_records(db, new.procedure_group_id)
+    assert len(children) == 2
+    from app.models.chapter import ProcedureChapter
+
+    cloned = list(
+        db.execute(
+            ProcedureChapter.__table__.select().where(ProcedureChapter.procedure_id == new.id)
+        )
+    )
+    assert len(cloned) == 1
+
+
+def test_upgrade_rejects_non_published(db: Session, factory: Factory) -> None:
+    factory.settings()
+    folder = _leaf(factory)
+    proc = factory.procedure(folder.id, status="DRAFT")
+    with pytest.raises(HTTPException) as exc:
+        version_flow_service.upgrade_version(db, proc.id, META)
+    assert exc.value.detail["code"] == "PROCEDURE_STATUS_INVALID"
+
+
+def test_upgrade_rejects_when_draft_exists(db: Session, factory: Factory) -> None:
+    factory.settings()
+    folder = _leaf(factory)
+    gid = "g-draftcase"
+    proc = _published(factory, folder, version=1, procedure_group_id=gid, is_current=True)
+    factory.procedure(
+        folder.id, status="DRAFT", version=2, procedure_group_id=gid, is_current=False
+    )
+    with pytest.raises(HTTPException) as exc:
+        version_flow_service.upgrade_version(db, proc.id, META)
+    assert exc.value.detail["code"] == "PROCEDURE_DRAFT_EXISTS"
+
+
+def test_upgrade_rejects_at_version_max(db: Session, factory: Factory) -> None:
+    factory.settings(max_version_number=1)
+    folder = _leaf(factory)
+    proc = _published(factory, folder, version=1)
+    with pytest.raises(HTTPException) as exc:
+        version_flow_service.upgrade_version(db, proc.id, META)
+    assert exc.value.detail["code"] == "PROCEDURE_VERSION_MAX"
+
+
+# --------------------------------------------------------------------------- #
+# rollback
+# --------------------------------------------------------------------------- #
+def test_rollback_forks_from_target(db: Session, factory: Factory) -> None:
+    factory.settings()
+    folder = _leaf(factory)
+    gid = "g-rb"
+    factory.procedure(
+        folder.id, name="v1", status="ARCHIVED", version=1, procedure_group_id=gid, is_current=False
+    )
+    cur = _published(factory, folder, name="v2", version=2, procedure_group_id=gid, is_current=True)
+    new = version_flow_service.rollback(db, cur.id, 1, "回退原因", META)
+    assert new.version == 3
+    assert new.status == "DRAFT"
+    assert new.name == "v1"  # 元字段取目标版本
+    assert "回退自 v1" in new.version_update_notes
+    db.refresh(cur)
+    assert cur.status == "ARCHIVED"
+    assert cur.is_current is False
+
+
+def test_rollback_requires_reason(db: Session, factory: Factory) -> None:
+    factory.settings()
+    folder = _leaf(factory)
+    gid = "g-rb2"
+    factory.procedure(
+        folder.id, status="ARCHIVED", version=1, procedure_group_id=gid, is_current=False
+    )
+    cur = _published(factory, folder, version=2, procedure_group_id=gid, is_current=True)
+    with pytest.raises(HTTPException) as exc:
+        version_flow_service.rollback(db, cur.id, 1, "   ", META)
+    assert exc.value.detail["code"] == "ROLLBACK_REASON_REQUIRED"
+
+
+def test_rollback_target_invalid(db: Session, factory: Factory) -> None:
+    factory.settings()
+    folder = _leaf(factory)
+    cur = _published(factory, folder, version=2)
+    with pytest.raises(HTTPException) as exc:
+        version_flow_service.rollback(db, cur.id, 99, "reason", META)
+    assert exc.value.detail["code"] == "ROLLBACK_TARGET_INVALID"
+
+
+# --------------------------------------------------------------------------- #
+# deprecate / restore
+# --------------------------------------------------------------------------- #
+def test_deprecate_moves_group_to_deprecated_folder(db: Session, factory: Factory) -> None:
+    dep = _deprecated_folder(factory)
+    folder = _leaf(factory)
+    proc = _published(factory, folder, version=1)
+    version_flow_service.deprecate(db, proc.id, "废弃原因", META)
+    db.refresh(proc)
+    assert proc.folder_id == dep.id
+    assert proc.deprecated_from_folder_id == folder.id
+    assert proc.deprecated_at is not None
+    assert proc.status == "ARCHIVED"
+
+
+def test_deprecate_twice_rejected(db: Session, factory: Factory) -> None:
+    _deprecated_folder(factory)
+    folder = _leaf(factory)
+    proc = _published(factory, folder)
+    version_flow_service.deprecate(db, proc.id, "r", META)
+    with pytest.raises(HTTPException) as exc:
+        version_flow_service.deprecate(db, proc.id, "r2", META)
+    assert exc.value.detail["code"] == "PROCEDURE_DEPRECATED"
+
+
+def test_restore_preview_and_restore_to_origin(db: Session, factory: Factory) -> None:
+    factory.settings()
+    _deprecated_folder(factory)
+    folder = _leaf(factory)
+    proc = _published(factory, folder, version=1)
+    version_flow_service.deprecate(db, proc.id, "r", META)
+
+    preview = version_flow_service.restore_preview(db, proc.id)
+    assert preview["folder_exists"] is True
+    assert preview["version_count"] == 1
+
+    new = version_flow_service.restore(db, proc.id, "恢复原因", None, META)
+    assert new.status == "DRAFT"
+    assert new.version == 2
+    assert new.folder_id == folder.id
+    assert new.deprecated_at is None
+    db.refresh(proc)
+    assert proc.deprecated_at is None
+    assert proc.folder_id == folder.id
+
+
+def test_restore_missing_folder_requires_target(db: Session, factory: Factory) -> None:
+    factory.settings()
+    _deprecated_folder(factory)
+    folder = _leaf(factory)
+    proc = _published(factory, folder)
+    version_flow_service.deprecate(db, proc.id, "r", META)
+    # 软删原文件夹
+    folder.is_active = False
+    db.flush()
+    with pytest.raises(HTTPException) as exc:
+        version_flow_service.restore(db, proc.id, "恢复", None, META)
+    assert exc.value.detail["code"] == "RESTORE_FOLDER_MISSING"
+
+
+# --------------------------------------------------------------------------- #
+# copy
+# --------------------------------------------------------------------------- #
+def test_copy_creates_new_group(db: Session, factory: Factory) -> None:
+    src_folder = _leaf(factory, name="源", prefix="SRC")
+    dst_folder = _leaf(factory, name="目标", prefix="DST")
+    src = _published(factory, src_folder, name="原程序", version=3)
+    factory.chapter(src.id, title="章")
+    new = version_flow_service.copy_procedure(db, src.id, dst_folder.id, None, META)
+    assert new.procedure_group_id != src.procedure_group_id
+    assert new.version == 1
+    assert new.status == "DRAFT"
+    assert new.name == "原程序 (副本)"
+    assert new.code.startswith("DST-")
+
+
+# --------------------------------------------------------------------------- #
+# discard draft（procedure_service.delete_procedure 特殊路径）
+# --------------------------------------------------------------------------- #
+def test_discard_draft_promotes_previous_archived(db: Session, factory: Factory) -> None:
+    folder = _leaf(factory)
+    gid = "g-dd"
+    v1 = factory.procedure(
+        folder.id, version=1, status="ARCHIVED", procedure_group_id=gid, is_current=False
+    )
+    v2 = factory.procedure(
+        folder.id, version=2, status="DRAFT", procedure_group_id=gid, is_current=True
+    )
+    result = procedure_service.delete_procedure(db, v2.id, "丢弃原因", META)
+    assert result is not None
+    assert result.deleted_id == v2.id
+    assert result.new_current_id == v1.id
+    assert result.new_current_version == 1
+    db.refresh(v1)
+    db.refresh(v2)
+    assert v2.is_active is False
+    assert v1.is_current is True
+
+
+def test_discard_v1_draft_rejected(db: Session, factory: Factory) -> None:
+    folder = _leaf(factory)
+    proc = factory.procedure(folder.id, version=1, status="DRAFT", is_current=True)
+    with pytest.raises(HTTPException) as exc:
+        procedure_service.delete_procedure(db, proc.id, "r", META)
+    assert exc.value.detail["code"] == "PROCEDURE_IS_CURRENT"
+
+
+# --------------------------------------------------------------------------- #
+# deprecated 守卫
+# --------------------------------------------------------------------------- #
+def test_update_rejected_when_deprecated(db: Session, factory: Factory) -> None:
+    _deprecated_folder(factory)
+    folder = _leaf(factory)
+    proc = factory.procedure(folder.id, status="DRAFT", is_current=True)
+    version_flow_service.deprecate(db, proc.id, "r", META)
+    db.refresh(proc)
+    with pytest.raises(HTTPException) as exc:
+        procedure_service.update_procedure(
+            db,
+            proc.id,
+            ProcedureUpdate(name="x", level_of_use="reference"),
+            proc.revision,
+            META,
+        )
+    assert exc.value.detail["code"] == "PROCEDURE_DEPRECATED"
+
+
+# --------------------------------------------------------------------------- #
+# group delete（v1 DRAFT）
+# --------------------------------------------------------------------------- #
+def test_delete_group_v1_draft(db: Session, factory: Factory) -> None:
+    folder = _leaf(factory)
+    proc = factory.procedure(folder.id, version=1, status="DRAFT", is_current=True)
+    gid = proc.procedure_group_id
+    version_flow_service.delete_group(db, gid, "删除原因", META)
+    remaining = version_flow_service._group_records(db, gid)
+    assert remaining == []
+
+
+def test_delete_group_topological_chapter_delete(db: Session, factory: Factory) -> None:
+    """评审 H3：嵌套章节须按真实树深删除，不依赖 level 列。"""
+    folder = _leaf(factory)
+    proc = factory.procedure(folder.id, version=1, status="DRAFT", is_current=True)
+    l1 = factory.chapter(proc.id, title="L1", level=1)
+    l2 = factory.chapter(proc.id, title="L2", parent_id=l1.id, level=2)
+    # content 子节点与 L2 同 level（level 仅展示层级，会暴露按 level 删的缺陷）
+    factory.chapter(proc.id, title="正文", parent_id=l2.id, content_type="content", level=2)
+    version_flow_service.delete_group(db, proc.procedure_group_id, "删", META)
+    assert version_flow_service._group_records(db, proc.procedure_group_id) == []
+
+
+# --------------------------------------------------------------------------- #
+# 评审 C1/C2：fork 版本号取 group 最大值 + 1（防 active_code_version 撞号）
+# --------------------------------------------------------------------------- #
+def test_fork_version_uses_group_max_not_source(db: Session, factory: Factory) -> None:
+    factory.settings()
+    folder = _leaf(factory)
+    gid = "g-maxver"
+    # current 是 v2（PUBLISHED），但 group 内已有更高的 v3（ARCHIVED）——
+    # discard/delete 序列可造成此态。fork 须取 max(3)+1=4，而非 source.version+1=3。
+    factory.procedure(
+        folder.id, version=1, status="ARCHIVED", procedure_group_id=gid, is_current=False
+    )
+    cur = _published(factory, folder, version=2, procedure_group_id=gid, is_current=True)
+    factory.procedure(
+        folder.id, version=3, status="ARCHIVED", procedure_group_id=gid, is_current=False
+    )
+    new = version_flow_service.upgrade_version(db, cur.id, META)
+    assert new.version == 4
+
+
+def test_delete_group_rejects_multi_version(db: Session, factory: Factory) -> None:
+    folder = _leaf(factory)
+    gid = "g-multi"
+    factory.procedure(
+        folder.id, version=1, status="ARCHIVED", procedure_group_id=gid, is_current=False
+    )
+    factory.procedure(folder.id, version=2, status="DRAFT", procedure_group_id=gid, is_current=True)
+    with pytest.raises(HTTPException) as exc:
+        version_flow_service.delete_group(db, gid, "r", META)
+    assert exc.value.detail["code"] == "PROCEDURE_GROUP_DELETE_FORBIDDEN"

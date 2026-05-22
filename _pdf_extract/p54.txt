@@ -1,0 +1,31 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 54 of 68
+4.30.2 Branching
+1. Branching directs the user to another procedure or a step in the same
+procedure, but the user does not return to the original step (see Figure 44,
+Branching Terminology Use).
+3. GO TO OP 2305, Filling Safety Injection Accumulators, to fill 1A Safety
+Injection Accumulator. ________
+Figure 44, Branching Terminology Use
+2. The following are branching terms:
+• Go to
+• Proceed to
+3. If the user is not to return to the original procedure, then provide direction for the
+disposition of the original procedure.
+4.30.3 Referencing
+1. Referencing directs the user to another step or section within the same
+procedure or to another document, and the user returns to the original step (see
+Figure 45, Referencing Terminology Use).
+3. TORQUE flange bolt per MSI-0-000-PRO001, Torquing Guide. ________
+4. CHECK flange for leaks. ________
+Figure 45, Referencing Terminology Use
+2. The following are referencing terms:
+• Refer to
+• Per
+• See
+• Use
+• Repeat
+3. Repeat is a unique referencing term applied when a series of previously
+performed steps will be used for multiple evolutions. When using, provide a
+method to exit the evolution once the criteria is satisfied.

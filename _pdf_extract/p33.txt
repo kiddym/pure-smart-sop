@@ -1,0 +1,14 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 33 of 68
+d. Provide legends and labels so that the user can correctly interpret the
+representation.
+e. Maintain the aspect ratio for graphs that are scale-dependent.
+f. Consider that the size of a scale-dependent graph may be affected when
+displayed or printed.
+g. Graphs should be constructed with the following attributes (see Figure
+25):
+• Values can be read in the normal reading position
+• Interpolation is limited to half a division
+• Scientific notation is used only when necessary for user readability
+Figure 25, Sample Graph

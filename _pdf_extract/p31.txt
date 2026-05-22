@@ -1,0 +1,32 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 31 of 68
+4. The following are examples of material that may be included in an attachment:
+• Illustrations
+• Forms
+• Enclosures
+• Checklists
+• Tables
+• Data packages
+• Supplemental information
+4.14 Supplemental Information
+1. For human performance reasons, supplemental information such as illustrations,
+graphs, forms, tables, and flow charts should be placed within the procedure
+body.
+2. If supplemental information is less than a full page, then integrate it into the
+procedure immediately following the step or substep to which it applies.
+3. If supplemental information is too large or difficult to embed into the procedure,
+then include it as an appropriate supplement (e.g., attachment or appendix) to
+the procedure.
+4. Each supplement should be uniquely identified and consecutively numbered.
+5. If used in multiple procedures, then ensure the supplement is consistent among
+the procedures.
+6. Ensure the relationship between the parent step and the supplemental
+information is immediately apparent.
+7. If the supplemental information is a table, then (see Figure 24, Sample Table):
+a. Ensure the relationship of the entries is immediately apparent by choosing
+an appropriate title and column headings.
+b. Use table notes only as necessary to amplify cell information.
+c. Avoid including critical information or instructions in table notes.
+d. Use asterisks, letters, or other non-numerical system for designating table
+notes to avoid confusion with exponents.

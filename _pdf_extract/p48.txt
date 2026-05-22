@@ -1,0 +1,29 @@
+PROCEDURE WRITER'S MANUAL PPA AP-907-005
+Rev. 2
+Page 48 of 68
+4.24.2 Tables
+1. Use tables for the following:
+• Present a large amount of information in a small space
+• Support item to item comparisons
+• Display individual items and data values
+• Support data and information collection and analysis
+• Support decision making
+• Convey complex relationships
+2. Align table content consistently and in a manner which complements the text
+being presented.
+3. If action steps are combined into a table format, then structure the steps
+sequentially (left to right and top to bottom unless otherwise stated).
+4.24.3 Calculations
+1. Express calculations in the simplest form possible. See sample calculation in
+Figure 40, Sample Calculation.
+2. Ensure all math functions are clear to the user.
+3. Define terms used in the calculation in the same area as the calculation.
+4. Reference the step where the data is being obtained for use in the calculation.
+5. Allow adequate space for calculation data to be recorded and for the calculation
+itself.
+Reference Corrective Activity Background Adjusted Activity
+Source Count Rate Count Rate Count Rate
+Type CPM CPM CPM
+Co-60 (+) (=)
+Cs-137 (+) (=)
+Figure 40, Sample Calculation
