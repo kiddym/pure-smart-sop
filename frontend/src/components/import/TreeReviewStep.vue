@@ -4,6 +4,7 @@ import { ElMessageBox } from 'element-plus'
 import ImportTreeNode from './ImportTreeNode.vue'
 import {
   cloneTree,
+  computeChapterNumbers,
   countReview,
   deleteNode,
   findNode,
@@ -19,6 +20,7 @@ const emit = defineEmits<{ (e: 'update:modelValue', tree: WizardNode[]): void }>
 const selectedId = ref<string | null>(null)
 const selected = computed(() => (selectedId.value ? findNode(props.modelValue, selectedId.value) : null))
 const reviewCount = computed(() => countReview(props.modelValue))
+const numberMap = computed(() => computeChapterNumbers(props.modelValue))
 
 function commit(tree: WizardNode[]): void {
   emit('update:modelValue', tree)
@@ -89,6 +91,7 @@ function resetTree(): void {
           :node="node"
           :depth="0"
           :selected-id="selectedId"
+          :number-map="numberMap"
           @select="(id) => (selectedId = id)"
           @delete="onDelete"
           @move="onMove"
