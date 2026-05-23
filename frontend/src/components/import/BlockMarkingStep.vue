@@ -8,7 +8,7 @@ import {
   type MarkRole,
   type MarkedImportBlock,
 } from '@/utils/importBlocks'
-import type { WizardNode } from '@/utils/importTree'
+import { computeChapterNumbers, type WizardNode } from '@/utils/importTree'
 
 const props = defineProps<{ modelValue: MarkedImportBlock[] }>()
 const emit = defineEmits<{ (e: 'update:modelValue', blocks: MarkedImportBlock[]): void }>()
@@ -17,6 +17,7 @@ const selected = ref<string[]>([])
 
 const issues = computed(() => validateMarkedBlocks(props.modelValue))
 const preview = computed(() => rebuildTreeFromMarks(props.modelValue) as WizardNode[])
+const numberMap = computed(() => computeChapterNumbers(preview.value))
 const selectedCount = computed(() => selected.value.length)
 
 function checked(id: string): boolean {
@@ -96,6 +97,7 @@ function issueFor(id: string): string {
             :depth="0"
             :selected-id="null"
             :readonly="true"
+            :number-map="numberMap"
           />
         </template>
         <el-empty v-else description="暂无章节树" />
