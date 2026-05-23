@@ -13,6 +13,8 @@ interface Props {
   editable: boolean
   canMoveUp: boolean
   canMoveDown: boolean
+  canPromote: boolean
+  canDemote: boolean
   dropHint: '' | 'before' | 'after' | 'inside' | 'invalid'
 }
 const props = defineProps<Props>()
@@ -21,6 +23,8 @@ const emit = defineEmits<{
   (e: 'toggle'): void
   (e: 'add', kind: 'chapter' | 'content' | 'step'): void
   (e: 'move', dir: 'up' | 'down'): void
+  (e: 'promote'): void
+  (e: 'demote'): void
   (e: 'remove'): void
   (e: 'check', shift: boolean): void
   (e: 'dragstart', ev: DragEvent): void
@@ -113,6 +117,22 @@ const typeLabel = computed(() =>
       >
         +步
       </el-button>
+      <el-button
+        v-if="row.kind === 'chapter' || row.kind === 'content'"
+        size="small"
+        text
+        :disabled="!canPromote"
+        title="提升层级（Shift+Tab）"
+        @click="emit('promote')"
+      >⇤</el-button>
+      <el-button
+        v-if="row.kind === 'chapter' || row.kind === 'content'"
+        size="small"
+        text
+        :disabled="!canDemote"
+        title="降低层级（Tab）"
+        @click="emit('demote')"
+      >⇥</el-button>
       <el-button size="small" text :disabled="!canMoveUp" title="上移" @click="emit('move', 'up')">
         ↑
       </el-button>

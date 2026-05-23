@@ -18,6 +18,7 @@ import { useEditorPersistence } from '@/composables/useEditorPersistence'
 import { useEditorKeyboard } from '@/composables/useEditorKeyboard'
 import { copyProcedure, deleteProcedure, transitionProcedure, upgradeVersion } from '@/api/procedures'
 import { formatDateTime } from '@/utils/format'
+import AttachmentPanel from '@/components/editor/AttachmentPanel.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -182,6 +183,14 @@ useEditorKeyboard({
   onEsc: () => {
     if (store.markMode) store.toggleMarkMode()
   },
+  onPromote: () => {
+    const id = store.selectedId
+    if (id && store.editable) void store.promoteChapter(id)
+  },
+  onDemote: () => {
+    const id = store.selectedId
+    if (id && store.editable) void store.demoteChapter(id)
+  },
 })
 
 onMounted(async () => {
@@ -272,7 +281,11 @@ function goBack(): void {
               </div>
             </el-tab-pane>
             <el-tab-pane label="附件" name="attach">
-              <el-empty description="附件管理将在后续阶段提供" />
+              <AttachmentPanel
+                :procedure-id="store.procedure.id"
+                :editable="store.editable"
+                class="pane"
+              />
             </el-tab-pane>
             <el-tab-pane label="版本历史" name="history">
               <el-timeline v-if="store.procedure.version_change_log.length" class="pane">

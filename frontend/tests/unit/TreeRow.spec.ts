@@ -31,6 +31,8 @@ const baseProps = {
   editable: true,
   canMoveUp: false,
   canMoveDown: false,
+  canPromote: false,
+  canDemote: false,
   dropHint: '' as const,
 }
 
@@ -60,5 +62,50 @@ describe('TreeRow', () => {
   it('步骤行渲染类型色条', () => {
     const w = mountRow(row({ id: 's', kind: 'step', code: '1.1', form_type: 'NUMBER', fallback: '(空步骤)' }))
     expect(w.find('.tr-typebar').exists()).toBe(true)
+  })
+
+  describe('promote/demote buttons', () => {
+    function makeRow(kind: 'chapter' | 'content' | 'step'): FlatRow {
+      return {
+        id: 'r1', kind, depth: 1, parent_id: 'p1',
+        title: '测试', code: '1.0', skip_numbering: false,
+        mark_status: 'unmarked', form_type: null,
+        require_confirmation: false, has_children: false,
+        expanded: false, fallback: '',
+      }
+    }
+
+    it('shows promote/demote buttons for chapter', () => {
+      const w = mount(TreeRow, {
+        props: {
+          row: makeRow('chapter'), ...baseProps, canPromote: true, canDemote: true,
+        },
+        global: { plugins: [ElementPlus] },
+      })
+      expect(w.text()).toContain('⇤')
+      expect(w.text()).toContain('⇥')
+    })
+
+    it('shows promote/demote buttons for content', () => {
+      const w = mount(TreeRow, {
+        props: {
+          row: makeRow('content'), ...baseProps, canPromote: false, canDemote: false,
+        },
+        global: { plugins: [ElementPlus] },
+      })
+      expect(w.text()).toContain('⇤')
+      expect(w.text()).toContain('⇥')
+    })
+
+    it('does not show promote/demote for step', () => {
+      const w = mount(TreeRow, {
+        props: {
+          row: makeRow('step'), ...baseProps, canPromote: false, canDemote: false,
+        },
+        global: { plugins: [ElementPlus] },
+      })
+      expect(w.text()).not.toContain('⇤')
+      expect(w.text()).not.toContain('⇥')
+    })
   })
 })

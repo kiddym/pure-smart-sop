@@ -52,6 +52,18 @@ const children = computed<ChildRow[]>(() => {
 <template>
   <div v-if="chapter" class="chapter-detail">
     <el-form label-position="top">
+      <el-form-item label="节点类型">
+        <el-radio-group
+          :model-value="chapter.content_type"
+          :disabled="ro"
+          size="small"
+          @change="store.toggleContentType(chapter.id)"
+        >
+          <el-radio-button value="chapter">章节</el-radio-button>
+          <el-radio-button value="content">内容块</el-radio-button>
+        </el-radio-group>
+      </el-form-item>
+
       <el-form-item label="章节标题">
         <div class="title-row">
           <el-input

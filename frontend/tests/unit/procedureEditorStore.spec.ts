@@ -281,3 +281,79 @@ describe('validateForSave（评审 H2 / §8.2）', () => {
     expect(s.validateForSave()).toEqual([])
   })
 })
+
+describe('toggleContentType', () => {
+  it('switches chapter → content and marks dirty', () => {
+    const store = useProcedureEditorStore()
+    store.$patch({ procedure: meta(), chapters: [chap('c1', null, 0)], steps: [] })
+    expect(store.chapterMap.get('c1')!.content_type).toBe('chapter')
+
+    store.toggleContentType('c1')
+
+    expect(store.chapterMap.get('c1')!.content_type).toBe('content')
+    expect(store.dirtyChapters.has('c1')).toBe(true)
+  })
+
+  it('switches content → chapter', () => {
+    const store = useProcedureEditorStore()
+    const c: EditorChapter = { ...chap('c1', null, 0), content_type: 'content' }
+    store.$patch({ procedure: meta(), chapters: [c], steps: [] })
+
+    store.toggleContentType('c1')
+
+    expect(store.chapterMap.get('c1')!.content_type).toBe('chapter')
+  })
+
+  it('ignores unknown id', () => {
+    const store = useProcedureEditorStore()
+    store.$patch({ procedure: meta(), chapters: [], steps: [] })
+    expect(() => store.toggleContentType('nonexistent')).not.toThrow()
+  })
+})
+
+describe('canPromoteChapter', () => {
+  it('returns false for root chapter', () => {
+    const store = useProcedureEditorStore()
+    store.$patch({ procedure: meta(), chapters: [chap('c1', null, 0)], steps: [] })
+    expect(store.canPromoteChapter('c1')).toBe(false)
+  })
+
+  it('returns true for nested chapter', () => {
+    const store = useProcedureEditorStore()
+    store.$patch({
+      procedure: meta(),
+      chapters: [chap('c1', null, 0), chap('c2', 'c1', 0)],
+      steps: [],
+    })
+    expect(store.canPromoteChapter('c2')).toBe(true)
+  })
+})
+
+describe('canDemoteChapter', () => {
+  it('returns false when no previous sibling', () => {
+    const store = useProcedureEditorStore()
+    store.$patch({ procedure: meta(), chapters: [chap('c1', null, 0)], steps: [] })
+    expect(store.canDemoteChapter('c1')).toBe(false)
+  })
+
+  it('returns true when previous sibling is chapter', () => {
+    const store = useProcedureEditorStore()
+    store.$patch({
+      procedure: meta(),
+      chapters: [chap('c1', null, 0), chap('c2', null, 1)],
+      steps: [],
+    })
+    expect(store.canDemoteChapter('c2')).toBe(true)
+  })
+
+  it('returns false when previous sibling is content', () => {
+    const store = useProcedureEditorStore()
+    const contentNode: EditorChapter = { ...chap('c1', null, 0), content_type: 'content' }
+    store.$patch({
+      procedure: meta(),
+      chapters: [contentNode, chap('c2', null, 1)],
+      steps: [],
+    })
+    expect(store.canDemoteChapter('c2')).toBe(false)
+  })
+})
