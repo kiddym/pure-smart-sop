@@ -32,6 +32,7 @@ describe('BlockMarkingStep', () => {
       },
       global: {
         stubs: {
+          ImportTreeNode: { template: '<div class="stub-tree" />' },
           'el-button': { template: '<button @click="$emit(`click`)"><slot /></button>' },
           'el-checkbox': {
             props: ['modelValue'],
