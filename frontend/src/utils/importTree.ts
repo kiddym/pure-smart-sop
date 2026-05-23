@@ -97,3 +97,24 @@ export function toImportNodes(nodes: WizardNode[]): ImportNode[] {
     children: toImportNodes(n.children),
   }))
 }
+
+function _computeNumbers(nodes: WizardNode[], prefix: string): Record<string, string> {
+  const result: Record<string, string> = {}
+  let seq = 0
+  for (const node of nodes) {
+    if (node.content_type !== 'chapter') continue
+    if (node.skip_numbering) {
+      Object.assign(result, _computeNumbers(node.children, ''))
+      continue
+    }
+    seq++
+    const num = prefix ? `${prefix}.${seq}` : String(seq)
+    result[node.id] = num
+    Object.assign(result, _computeNumbers(node.children, num))
+  }
+  return result
+}
+
+export function computeChapterNumbers(nodes: WizardNode[]): Record<string, string> {
+  return _computeNumbers(nodes, '')
+}

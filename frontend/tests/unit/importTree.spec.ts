@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   buildWizardTree,
   clearReview,
+  computeChapterNumbers,
   countReview,
   deleteNode,
   findNode,
@@ -121,5 +122,76 @@ describe('importTree 纯函数', () => {
     // 无 id / confidence_tier 等向导内部字段
     expect('id' in out[0]).toBe(false)
     expect('confidence_tier' in out[0]).toBe(false)
+  })
+})
+
+describe('computeChapterNumbers', () => {
+  it('flat list: assigns sequential integers starting at 1', () => {
+    const tree = buildWizardTree([
+      pnode({ id: 'a', title: 'A' }),
+      pnode({ id: 'b', title: 'B' }),
+      pnode({ id: 'c', title: 'C' }),
+    ])
+    expect(computeChapterNumbers(tree)).toEqual({ a: '1', b: '2', c: '3' })
+  })
+
+  it('nested children get dotted prefix from parent', () => {
+    const tree = buildWizardTree([
+      pnode({
+        id: 'a',
+        title: 'A',
+        children: [
+          pnode({ id: 'a1', title: 'A1' }),
+          pnode({ id: 'a2', title: 'A2' }),
+        ],
+      }),
+      pnode({
+        id: 'b',
+        title: 'B',
+        children: [
+          pnode({
+            id: 'b1',
+            title: 'B1',
+            children: [pnode({ id: 'b1a', title: 'B1A' })],
+          }),
+        ],
+      }),
+    ])
+    const nums = computeChapterNumbers(tree)
+    expect(nums.a).toBe('1')
+    expect(nums.a1).toBe('1.1')
+    expect(nums.a2).toBe('1.2')
+    expect(nums.b).toBe('2')
+    expect(nums.b1).toBe('2.1')
+    expect(nums.b1a).toBe('2.1.1')
+  })
+
+  it('skip_numbering=true: excluded from map and does not consume sequence', () => {
+    const tree = buildWizardTree([
+      pnode({ id: 'a', title: 'A' }),
+      pnode({ id: 's', title: 'Skip', skip_numbering: true }),
+      pnode({ id: 'b', title: 'B' }),
+    ])
+    const nums = computeChapterNumbers(tree)
+    expect(nums.a).toBe('1')
+    expect('s' in nums).toBe(false)
+    expect(nums.b).toBe('2') // sequence is 2, not 3
+  })
+
+  it('content nodes are not numbered', () => {
+    const tree = buildWizardTree([
+      pnode({
+        id: 'a',
+        title: 'A',
+        children: [pnode({ id: 'c', title: 'Content', content_type: 'content' })],
+      }),
+    ])
+    const nums = computeChapterNumbers(tree)
+    expect(nums.a).toBe('1')
+    expect('c' in nums).toBe(false)
+  })
+
+  it('empty tree returns empty object', () => {
+    expect(computeChapterNumbers([])).toEqual({})
   })
 })
