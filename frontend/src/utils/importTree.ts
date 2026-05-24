@@ -295,3 +295,115 @@ export function restoreFromIgnored(
 ): WizardNode[] {
   return [...nodes, ...ignored]
 }
+
+// 从富文本提取纯文本标题（去标签 / 合并空白 / 截断）。用于「内容升级为章节」。
+export function titleFromHtml(html: string): string {
+  const text = html
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/\s+/g, ' ')
+    .trim()
+  return text.slice(0, 80)
+}
+
+export type LayerRole = 'chapter_1' | 'chapter_2' | 'chapter_3' | 'content'
+
+const clampLevel = (n: number): number => Math.min(3, Math.max(1, n))
+
+// 层级标定：把 ids 内的节点设为目标角色（章节 N 级 / 正文），按「重建」语义一次性产出新树。
+//
+// 取代旧的「逐节点相对升降级凑深度」(moveToDepth)，根治四类缺陷：
+//   - 顺序相关：先把整棵树按文档序拍平，结果与点选顺序无关。
+//   - 子树脱节：选中章节按 delta=目标层级-当前层级 平移，其后代同步平移，保持父子关系。
+//   - 静默错层：重建时夹紧到「最近可达父」下，绝不静默丢标记。
+//   - 非法树：章节只挂到章节父；前驱是正文 / 缺父时夹紧为更浅层级，绝不嵌进 content。
+// 内容↔章节互转保数据：content→章节用文本作标题、清空正文；章节→content 把标题文本回填正文。
+export function applyLayerRole(
+  nodes: WizardNode[],
+  ids: string[],
+  role: LayerRole,
+): WizardNode[] {
+  const idSet = new Set(ids)
+  if (idSet.size === 0) return nodes
+
+  const toContent = role === 'content'
+  const targetLevel = role === 'chapter_1' ? 1 : role === 'chapter_2' ? 2 : 3
+
+  // 拍平为文档序，并计算每个节点的「意向章节层级」。
+  // delta 由「最近的被选中祖先（含自身）」决定，使被选子树整体平移。
+  interface FlatItem {
+    node: WizardNode
+    intendedLevel: number
+    asChapter: boolean
+  }
+  const flat: FlatItem[] = []
+  const walk = (list: WizardNode[], depth: number, inheritedDelta: number): void => {
+    for (const n of list) {
+      let delta = inheritedDelta
+      let asChapter: boolean
+      if (idSet.has(n.id)) {
+        if (toContent) {
+          asChapter = false
+        } else {
+          asChapter = true
+          delta = targetLevel - depth // 自身及其后代整体平移
+        }
+      } else {
+        asChapter = n.content_type === 'chapter'
+      }
+      flat.push({ node: n, intendedLevel: clampLevel(depth + delta), asChapter })
+      walk(n.children, depth + 1, delta)
+    }
+  }
+  walk(nodes, 1, 0)
+
+  // 按意向层级重建：章节挂到最近可达的章节父，正文挂到当前打开的最深章节。
+  const roots: WizardNode[] = []
+  let l1: WizardNode | null = null
+  let l2: WizardNode | null = null
+  let l3: WizardNode | null = null
+
+  for (const { node, intendedLevel, asChapter } of flat) {
+    const fromContent = asChapter && node.content_type === 'content'
+    const toContentNode = !asChapter && node.content_type === 'chapter'
+    const fresh: WizardNode = {
+      ...node,
+      content_type: asChapter ? 'chapter' : 'content',
+      title: fromContent ? node.title.trim() || titleFromHtml(node.rich_content) : node.title,
+      // 章节正文恒空；章节→正文时把标题文本回填正文避免丢失。
+      rich_content: asChapter
+        ? ''
+        : toContentNode
+          ? node.rich_content || (node.title.trim() ? `<p>${node.title.trim()}</p>` : '')
+          : node.rich_content,
+      skip_numbering: asChapter ? (fromContent ? false : node.skip_numbering) : true,
+      children: [],
+    }
+
+    if (!asChapter) {
+      const parent = l3 ?? l2 ?? l1
+      if (parent) parent.children.push(fresh)
+      else roots.push(fresh)
+      continue
+    }
+
+    if (intendedLevel >= 3 && l2) {
+      l2.children.push(fresh)
+      l3 = fresh
+    } else if (intendedLevel >= 2 && l1) {
+      l1.children.push(fresh)
+      l2 = fresh
+      l3 = null
+    } else {
+      roots.push(fresh)
+      l1 = fresh
+      l2 = null
+      l3 = null
+    }
+  }
+
+  return roots
+}

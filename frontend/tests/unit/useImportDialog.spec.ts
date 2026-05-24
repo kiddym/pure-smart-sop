@@ -97,6 +97,32 @@ describe('useImportDialog 装载与编辑', () => {
     expect(d.mode.value).toBe('normal') // 应用后退出模式
   })
 
+  it('applyLayerMarking 多选标二级：与点选顺序无关，都挂到首章节下', () => {
+    const d = useImportDialog()
+    d.loadParseResult(mkParse([pnode({ id: 'A' }), pnode({ id: 'B' }), pnode({ id: 'C' })]))
+    d.toggleLayerMarking()
+    d.toggleMarkSelection('C') // 故意从下往上点
+    d.toggleMarkSelection('B')
+    d.applyLayerMarking('chapter_2')
+    expect(d.levelMap.value.get('B')).toBe(2)
+    expect(d.levelMap.value.get('C')).toBe(2)
+    expect(d.tree.value.find((n) => n.id === 'A')?.children.map((n) => n.id)).toEqual(['B', 'C'])
+  })
+
+  it('applyLayerMarking 前驱为正文时不把章节嵌进正文', () => {
+    const d = useImportDialog()
+    d.loadParseResult(mkParse([
+      pnode({ id: 'X', content_type: 'content', rich_content: '<p>正文</p>' }),
+      pnode({ id: 'B' }),
+    ]))
+    d.toggleLayerMarking()
+    d.toggleMarkSelection('B')
+    d.applyLayerMarking('chapter_2')
+    const x = d.tree.value.find((n) => n.id === 'X')
+    expect(x?.children.some((c) => c.id === 'B')).toBe(false)
+    expect(d.numberMap.value.B).toBeTruthy()
+  })
+
   it('applyLayerMarking →正文 把节点类型改 content', () => {
     const d = useImportDialog()
     d.loadParseResult(mkParse([pnode({ id: 'a' })]))

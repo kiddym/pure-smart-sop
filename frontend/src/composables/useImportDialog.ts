@@ -4,6 +4,7 @@ import type { ContentType, MarkStatus } from '@/types/node'
 import {
   addChildNode,
   addSiblingNode,
+  applyLayerRole,
   buildWizardTree,
   computeChapterNumbers,
   computeLevelMap,
@@ -131,32 +132,8 @@ export function useImportDialog() {
   }
 
   // ---- 层级标定动作 ---- //
-  function changeContentType(nodes: WizardNode[], ids: string[], type: ContentType): WizardNode[] {
-    const idSet = new Set(ids)
-    const walk = (list: WizardNode[]): WizardNode[] =>
-      list.map((n) => ({
-        ...n,
-        content_type: idSet.has(n.id) ? type : n.content_type,
-        skip_numbering: idSet.has(n.id) && type === 'content' ? true : n.skip_numbering,
-        children: walk(n.children),
-      }))
-    return walk(nodes)
-  }
-
-  function moveToDepth(nodes: WizardNode[], id: string, target: number): WizardNode[] {
-    let next = nodes
-    let safety = 10
-    while (safety-- > 0) {
-      const current = computeLevelMap(next).get(id) ?? 0
-      if (current === target) return next
-      if (current > target) next = promoteNode(next, id)
-      else next = demoteNode(next, id)
-      const after = computeLevelMap(next).get(id) ?? 0
-      if (after === current) return next // boundary: can't move further
-    }
-    return next
-  }
-
+  // 标定走「重建」语义（见 importTree.applyLayerRole）：顺序无关、子树整体平移、
+  // 不可达层级夹紧、绝不把章节嵌进正文、内容↔章节互转保数据。
   function applyLayerMarking(role: LayerRole): void {
     const ids = [...markSelection.value]
     if (ids.length === 0) return
@@ -169,16 +146,7 @@ export function useImportDialog() {
       return
     }
 
-    if (role === 'content') {
-      tree.value = changeContentType(tree.value, ids, 'content')
-      exitMode()
-      return
-    }
-
-    const target = role === 'chapter_1' ? 1 : role === 'chapter_2' ? 2 : 3
-    for (const id of ids) {
-      tree.value = moveToDepth(tree.value, id, target)
-    }
+    tree.value = applyLayerRole(tree.value, ids, role)
     exitMode()
   }
 
