@@ -17,9 +17,8 @@ import type { StepOut } from '@/types/node'
 function step(partial: Partial<StepOut>): StepOut {
   return {
     id: 's1', procedure_id: 'p', chapter_id: 'c1', title: '步骤', code: '1.1', content: '',
-    sort_order: 0, skip_numbering: false, input_schema: { type: 'COMMON' }, note: '', caution: '',
-    warning: '', note_schema: { type: 'COMMON' }, caution_schema: { type: 'COMMON' },
-    warning_schema: { type: 'COMMON' }, expected_output: '', require_confirmation: false, attachment_marks: [],
+    sort_order: 0, skip_numbering: false, input_schema: { type: 'COMMON' },
+    expected_output: '', require_confirmation: false, attachment_marks: [],
     ...partial,
   }
 }
@@ -112,6 +111,11 @@ describe('execText', () => {
     expect(execText(step({ input_schema: { type: 'NUMBER', unit: 'MPa', min: 0, max: 10 } }))).toContain('0~10')
     expect(execText(step({ input_schema: { type: 'NONE' } }))).toBe('')
     expect(execText(step({ input_schema: { type: 'RADIO', options: ['A', 'B'] } }))).toContain('○ A')
+  })
+  it('警示类型（NOTE/CAUTION/WARNING）返回空串', () => {
+    expect(execText(step({ input_schema: { type: 'WARNING' }, content: '<p>危险！</p>' }))).toBe('')
+    expect(execText(step({ input_schema: { type: 'NOTE' }, content: '<p>注意</p>' }))).toBe('')
+    expect(execText(step({ input_schema: { type: 'CAUTION' }, content: '<p>小心</p>' }))).toBe('')
   })
 })
 

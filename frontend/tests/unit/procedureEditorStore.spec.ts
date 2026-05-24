@@ -75,12 +75,6 @@ function stp(id: string, chapterId: string | null, sort: number): EditorStep {
     title: id,
     content: '',
     input_schema: { type: 'COMMON' },
-    note: '',
-    caution: '',
-    warning: '',
-    note_schema: { type: 'COMMON' },
-    caution_schema: { type: 'COMMON' },
-    warning_schema: { type: 'COMMON' },
     expected_output: '',
     require_confirmation: false,
     attachment_marks: [],
@@ -378,6 +372,17 @@ describe('canDemoteChapter', () => {
       state.steps = []
     })
     expect(store.canDemoteChapter('c2')).toBe(false)
+  })
+})
+
+describe('setStepFormType 非破坏性切换', () => {
+  it('切换类型保留 content，input_schema 只含 type', () => {
+    const s = seed()
+    const id = s.addStepNode('a')
+    s.updateStepFields(id, { content: '<p>说明</p>' })
+    s.setStepFormType(id, 'NUMBER')
+    expect(s.stepMap.get(id)!.content).toBe('<p>说明</p>')
+    expect(s.stepMap.get(id)!.input_schema).toEqual({ type: 'NUMBER' })
   })
 })
 
