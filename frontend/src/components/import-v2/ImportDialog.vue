@@ -10,6 +10,15 @@ import { fetchFolderTree } from '@/api/folders'
 import { toImportNodes } from '@/utils/importTree'
 import type { LeafFolderOption } from '@/utils/folders'
 import { collectLeafFolders } from '@/utils/folders'
+import { useStorage, useEventListener } from '@vueuse/core'
+import {
+  COL_DEFAULTS,
+  resizeLeftMid,
+  resizeMidRight,
+  rightOf,
+  sanitizeCols,
+  type ColWidths,
+} from '@/utils/importCols'
 
 const props = defineProps<{ modelValue: boolean }>()
 const emit = defineEmits<{
@@ -27,6 +36,53 @@ const visible = computed<boolean>({
   get: () => props.modelValue,
   set: (v) => emit('update:modelValue', v),
 })
+
+const colsRef = ref<HTMLDivElement | null>(null)
+const cols = useStorage<ColWidths>('smartsop.import.cols', { ...COL_DEFAULTS })
+// Guard against dirty/legacy persisted values on load.
+cols.value = sanitizeCols(cols.value)
+
+const rightPct = computed(() => rightOf(cols.value))
+
+type Handle = 'lm' | 'mr'
+const drag = ref<{ handle: Handle; startX: number; start: ColWidths; containerW: number } | null>(null)
+
+function onDragStart(e: PointerEvent, handle: Handle): void {
+  if (!colsRef.value) return
+  e.preventDefault()
+  // Capture the pointer so releasing outside the window still ends the drag cleanly.
+  const target = e.currentTarget as HTMLElement
+  target.setPointerCapture(e.pointerId)
+  drag.value = {
+    handle,
+    startX: e.clientX,
+    start: { ...cols.value },
+    containerW: colsRef.value.getBoundingClientRect().width,
+  }
+  document.body.style.userSelect = 'none'
+  document.body.style.cursor = 'col-resize'
+}
+
+function endDrag(): void {
+  if (!drag.value) return
+  drag.value = null
+  document.body.style.userSelect = ''
+  document.body.style.cursor = ''
+}
+
+function resetCols(): void {
+  cols.value = { ...COL_DEFAULTS }
+}
+
+useEventListener(window, 'pointermove', (e: PointerEvent) => {
+  const d = drag.value
+  if (!d || d.containerW === 0) return
+  const deltaPct = ((e.clientX - d.startX) / d.containerW) * 100
+  cols.value = d.handle === 'lm' ? resizeLeftMid(d.start, deltaPct) : resizeMidRight(d.start, deltaPct)
+})
+
+useEventListener(window, 'pointerup', endDrag)
+useEventListener(window, 'pointercancel', endDrag)
 
 onMounted(async () => {
   try {
@@ -169,10 +225,22 @@ watch(visible, (on) => {
           <div v-if="parsing" class="hint">解析中...</div>
         </div>
       </div>
-      <div v-else class="cols">
-        <div class="col left"><WordPreviewPanel :file="ctx.file.value" /></div>
-        <div class="col mid"><ImportTreePanel :ctx="ctx" /></div>
-        <div class="col right"><ImportDetailPanel :ctx="ctx" /></div>
+      <div v-else ref="colsRef" class="cols">
+        <div class="col" :style="{ width: cols.left + '%' }"><WordPreviewPanel :file="ctx.file.value" /></div>
+        <div
+          class="splitter"
+          title="拖拽调整列宽，双击重置"
+          @pointerdown="onDragStart($event, 'lm')"
+          @dblclick="resetCols"
+        />
+        <div class="col" :style="{ width: cols.mid + '%' }"><ImportTreePanel :ctx="ctx" /></div>
+        <div
+          class="splitter"
+          title="拖拽调整列宽，双击重置"
+          @pointerdown="onDragStart($event, 'mr')"
+          @dblclick="resetCols"
+        />
+        <div class="col" :style="{ width: rightPct + '%' }"><ImportDetailPanel :ctx="ctx" /></div>
       </div>
     </div>
   </el-dialog>
@@ -192,7 +260,20 @@ watch(visible, (on) => {
 .hint { margin-top: 8px; color: #606266; }
 .cols { flex: 1; display: flex; min-height: 0; }
 .col { display: flex; flex-direction: column; min-width: 0; }
-.col.left { width: 38%; }
-.col.mid { width: 28%; }
-.col.right { width: 34%; }
+.splitter {
+  flex: none;
+  width: 6px;
+  cursor: col-resize;
+  position: relative;
+  z-index: 1;
+  touch-action: none;
+}
+.splitter::after {
+  content: '';
+  position: absolute;
+  inset: 0 2px;
+  background: transparent;
+  transition: background 0.15s;
+}
+.splitter:hover::after { background: var(--el-color-primary, #d97757); }
 </style>
