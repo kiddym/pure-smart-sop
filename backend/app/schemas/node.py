@@ -84,12 +84,6 @@ class StepCreate(BaseModel):
     title: str = Field(default="", max_length=500)
     content: str = Field(default="")
     input_schema: dict[str, Any] = Field(default_factory=lambda: {"type": "COMMON"})
-    note: str = Field(default="")
-    caution: str = Field(default="")
-    warning: str = Field(default="")
-    note_schema: dict[str, Any] = Field(default_factory=lambda: {"type": "COMMON"})
-    caution_schema: dict[str, Any] = Field(default_factory=lambda: {"type": "COMMON"})
-    warning_schema: dict[str, Any] = Field(default_factory=lambda: {"type": "COMMON"})
     expected_output: str = Field(default="", max_length=10000)
     require_confirmation: bool = False
     attachment_marks: list[dict[str, Any]] = Field(default_factory=list)
@@ -103,12 +97,6 @@ class StepUpdate(BaseModel):
     title: str = Field(default="", max_length=500)
     content: str = Field(default="")
     input_schema: dict[str, Any] = Field(default_factory=lambda: {"type": "COMMON"})
-    note: str = Field(default="")
-    caution: str = Field(default="")
-    warning: str = Field(default="")
-    note_schema: dict[str, Any] = Field(default_factory=lambda: {"type": "COMMON"})
-    caution_schema: dict[str, Any] = Field(default_factory=lambda: {"type": "COMMON"})
-    warning_schema: dict[str, Any] = Field(default_factory=lambda: {"type": "COMMON"})
     expected_output: str = Field(default="", max_length=10000)
     require_confirmation: bool = False
     attachment_marks: list[dict[str, Any]] = Field(default_factory=list)
@@ -145,12 +133,6 @@ class StepUpsert(BaseModel):
     title: str = Field(default="", max_length=500)
     content: str = Field(default="")
     input_schema: dict[str, Any] = Field(default_factory=lambda: {"type": "COMMON"})
-    note: str = Field(default="")
-    caution: str = Field(default="")
-    warning: str = Field(default="")
-    note_schema: dict[str, Any] = Field(default_factory=lambda: {"type": "COMMON"})
-    caution_schema: dict[str, Any] = Field(default_factory=lambda: {"type": "COMMON"})
-    warning_schema: dict[str, Any] = Field(default_factory=lambda: {"type": "COMMON"})
     expected_output: str = Field(default="", max_length=10000)
     require_confirmation: bool = False
     attachment_marks: list[dict[str, Any]] = Field(default_factory=list)
@@ -175,12 +157,6 @@ class StepOut(BaseModel):
     sort_order: int
     skip_numbering: bool
     input_schema: dict[str, Any]
-    note: str
-    caution: str
-    warning: str
-    note_schema: dict[str, Any]
-    caution_schema: dict[str, Any]
-    warning_schema: dict[str, Any]
     expected_output: str
     require_confirmation: bool
     attachment_marks: list[dict[str, Any]]

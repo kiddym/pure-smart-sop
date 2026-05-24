@@ -30,16 +30,8 @@ class ProcedureStep(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
     content: Mapped[str] = mapped_column(LONGTEXT, default="", server_default="")
     sort_order: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     skip_numbering: Mapped[bool] = mapped_column(default=False, server_default="0")
-    # 执行表单 12 型（大写枚举，Q261/Q262）
+    # 执行表单 15 型（大写枚举，Q261/Q262；NOTE/CAUTION/WARNING 警示已并入 type）
     input_schema: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
-    # 三警示富文本（ANSI Z535 三色，Q263 方案 A）
-    note: Mapped[str] = mapped_column(LONGTEXT, default="", server_default="")
-    caution: Mapped[str] = mapped_column(LONGTEXT, default="", server_default="")
-    warning: Mapped[str] = mapped_column(LONGTEXT, default="", server_default="")
-    # 三警示执行表单类型（与 input_schema 同构，默认 COMMON 即富文本）
-    note_schema: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
-    caution_schema: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
-    warning_schema: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     expected_output: Mapped[str] = mapped_column(Text, default="", server_default="")
     # 步骤级附件标记（仅标记，不嵌文件，Q203）
     attachment_marks: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
