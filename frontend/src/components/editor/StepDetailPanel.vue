@@ -2,10 +2,13 @@
 import { computed, ref } from 'vue'
 import RichTextEditor from './RichTextEditor.vue'
 import StepFormFields from './StepFormFields.vue'
+import FormFieldPreview from './FormFieldPreview.vue'
 import { useProcedureEditorStore } from '@/store/procedureEditor'
 import { FORM_TYPE_META } from '@/utils/editor'
 import { FORM_TYPES } from '@/types/node'
 import type { AttachmentMark, FormType, InputSchema } from '@/types/node'
+
+type AlertField = 'note' | 'caution' | 'warning'
 
 // step 节点详情（§4.1，§40 重构）：基本信息 / 警示 / 正文 / 附件标记 / 执行记录 / 其他。
 const store = useProcedureEditorStore()
@@ -43,6 +46,12 @@ function removeMark(i: number): void {
 function onSchema(schema: InputSchema): void {
   upd({ input_schema: schema })
 }
+function onAlertSchema(field: AlertField, schema: InputSchema): void {
+  upd({ [`${field}_schema`]: schema })
+}
+function setAlertFormType(field: AlertField, type: FormType): void {
+  upd({ [`${field}_schema`]: { type } as InputSchema })
+}
 </script>
 
 <template>
@@ -78,16 +87,79 @@ function onSchema(schema: InputSchema): void {
 
       <el-collapse-item title="警示（注意 / 小心 / 警告）" name="alerts">
         <div class="alert-block alert-note">
-          <span class="alert-label">注意 Note</span>
-          <RichTextEditor :key="`note-${step.id}`" :model-value="step.note" variant="step" :readonly="ro" @update:model-value="(v) => upd({ note: v }, `note:${step!.id}`)" />
+          <div class="alert-header">
+            <span class="alert-label">注意 Note</span>
+            <el-select
+              :model-value="step.note_schema.type"
+              :disabled="ro"
+              size="small"
+              class="alert-type-select"
+              @change="(v: FormType) => setAlertFormType('note', v)"
+            >
+              <el-option v-for="t in FORM_TYPES" :key="t" :value="t" :label="FORM_TYPE_META[t].label" />
+            </el-select>
+          </div>
+          <RichTextEditor v-if="step.note_schema.type === 'COMMON'" :key="`note-${step.id}`" :model-value="step.note" variant="step" :readonly="ro" @update:model-value="(v) => upd({ note: v }, `note:${step!.id}`)" />
+          <el-form v-else label-position="top">
+            <div class="config-preview">
+              <div class="cp-config">
+                <StepFormFields :schema="step.note_schema" :readonly="ro" @update:schema="(s) => onAlertSchema('note', s)" />
+              </div>
+              <div class="cp-preview">
+                <FormFieldPreview :schema="step.note_schema" />
+              </div>
+            </div>
+          </el-form>
         </div>
         <div class="alert-block alert-caution">
-          <span class="alert-label">小心 Caution</span>
-          <RichTextEditor :key="`caution-${step.id}`" :model-value="step.caution" variant="step" :readonly="ro" @update:model-value="(v) => upd({ caution: v }, `caution:${step!.id}`)" />
+          <div class="alert-header">
+            <span class="alert-label">小心 Caution</span>
+            <el-select
+              :model-value="step.caution_schema.type"
+              :disabled="ro"
+              size="small"
+              class="alert-type-select"
+              @change="(v: FormType) => setAlertFormType('caution', v)"
+            >
+              <el-option v-for="t in FORM_TYPES" :key="t" :value="t" :label="FORM_TYPE_META[t].label" />
+            </el-select>
+          </div>
+          <RichTextEditor v-if="step.caution_schema.type === 'COMMON'" :key="`caution-${step.id}`" :model-value="step.caution" variant="step" :readonly="ro" @update:model-value="(v) => upd({ caution: v }, `caution:${step!.id}`)" />
+          <el-form v-else label-position="top">
+            <div class="config-preview">
+              <div class="cp-config">
+                <StepFormFields :schema="step.caution_schema" :readonly="ro" @update:schema="(s) => onAlertSchema('caution', s)" />
+              </div>
+              <div class="cp-preview">
+                <FormFieldPreview :schema="step.caution_schema" />
+              </div>
+            </div>
+          </el-form>
         </div>
         <div class="alert-block alert-warning">
-          <span class="alert-label">警告 Warning</span>
-          <RichTextEditor :key="`warning-${step.id}`" :model-value="step.warning" variant="step" :readonly="ro" @update:model-value="(v) => upd({ warning: v }, `warning:${step!.id}`)" />
+          <div class="alert-header">
+            <span class="alert-label">警告 Warning</span>
+            <el-select
+              :model-value="step.warning_schema.type"
+              :disabled="ro"
+              size="small"
+              class="alert-type-select"
+              @change="(v: FormType) => setAlertFormType('warning', v)"
+            >
+              <el-option v-for="t in FORM_TYPES" :key="t" :value="t" :label="FORM_TYPE_META[t].label" />
+            </el-select>
+          </div>
+          <RichTextEditor v-if="step.warning_schema.type === 'COMMON'" :key="`warning-${step.id}`" :model-value="step.warning" variant="step" :readonly="ro" @update:model-value="(v) => upd({ warning: v }, `warning:${step!.id}`)" />
+          <el-form v-else label-position="top">
+            <div class="config-preview">
+              <div class="cp-config">
+                <StepFormFields :schema="step.warning_schema" :readonly="ro" @update:schema="(s) => onAlertSchema('warning', s)" />
+              </div>
+              <div class="cp-preview">
+                <FormFieldPreview :schema="step.warning_schema" />
+              </div>
+            </div>
+          </el-form>
         </div>
       </el-collapse-item>
 
@@ -109,7 +181,14 @@ function onSchema(schema: InputSchema): void {
 
       <el-collapse-item title="执行记录" name="exec">
         <el-form label-position="top">
-          <StepFormFields :schema="step.input_schema" :readonly="ro" @update:schema="onSchema" />
+          <div class="config-preview">
+            <div class="cp-config">
+              <StepFormFields :schema="step.input_schema" :readonly="ro" @update:schema="onSchema" />
+            </div>
+            <div class="cp-preview">
+              <FormFieldPreview :schema="step.input_schema" />
+            </div>
+          </div>
           <el-checkbox :model-value="step.require_confirmation" :disabled="ro" @change="(v: string | number | boolean) => upd({ require_confirmation: !!v })">
             需要操作员确认
           </el-checkbox>
@@ -132,6 +211,17 @@ function onSchema(schema: InputSchema): void {
   display: flex;
   gap: 16px;
 }
+.config-preview {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.cp-config,
+.cp-preview {
+  flex: 1 1 280px;
+  min-width: 0;
+}
 .alert-block {
   margin-bottom: 12px;
   padding-left: 8px;
@@ -146,11 +236,19 @@ function onSchema(schema: InputSchema): void {
 .alert-warning {
   border-left-color: #f56c6c;
 }
+.alert-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
 .alert-label {
-  display: block;
   font-size: 12px;
   color: #909399;
-  margin-bottom: 4px;
+  flex: none;
+}
+.alert-type-select {
+  width: 160px;
 }
 .mark-row {
   display: flex;
