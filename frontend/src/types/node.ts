@@ -82,12 +82,6 @@ export interface StepOut {
   sort_order: number
   skip_numbering: boolean
   input_schema: InputSchema
-  note: string
-  caution: string
-  warning: string
-  note_schema: InputSchema
-  caution_schema: InputSchema
-  warning_schema: InputSchema
   expected_output: string
   require_confirmation: boolean
   attachment_marks: AttachmentMark[]
@@ -126,12 +120,6 @@ export interface StepUpsert {
   title: string
   content: string
   input_schema: InputSchema
-  note: string
-  caution: string
-  warning: string
-  note_schema: InputSchema
-  caution_schema: InputSchema
-  warning_schema: InputSchema
   expected_output: string
   require_confirmation: boolean
   attachment_marks: AttachmentMark[]
@@ -193,12 +181,6 @@ export interface EditorStep {
   title: string
   content: string
   input_schema: InputSchema
-  note: string
-  caution: string
-  warning: string
-  note_schema: InputSchema
-  caution_schema: InputSchema
-  warning_schema: InputSchema
   expected_output: string
   require_confirmation: boolean
   attachment_marks: AttachmentMark[]
