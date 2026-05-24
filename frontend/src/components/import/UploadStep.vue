@@ -82,14 +82,14 @@ function handleClear(): void {
   padding: 24px 0;
 }
 .ico {
-  color: var(--el-color-primary, #409eff);
+  color: var(--el-color-primary, #d97757);
   margin-bottom: 8px;
 }
 .hint {
   color: #606266;
 }
 .hint em {
-  color: var(--el-color-primary, #409eff);
+  color: var(--el-color-primary, #d97757);
   font-style: normal;
 }
 .sub {

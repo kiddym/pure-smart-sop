@@ -67,7 +67,7 @@ const list = computed(() => (methods.value.length ? methods.value : FALLBACK))
   cursor: pointer;
 }
 .card.active {
-  border-color: var(--el-color-primary, #409eff);
+  border-color: var(--el-color-primary, #d97757);
 }
 .radio {
   height: auto;

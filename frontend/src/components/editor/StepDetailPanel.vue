@@ -188,7 +188,7 @@ async function onTypeChange(next: FormType): Promise<void> {
   border-left: 3px solid transparent;
 }
 .alert-note {
-  border-left-color: #409eff;
+  border-left-color: var(--el-color-primary, #d97757);
 }
 .alert-caution {
   border-left-color: #e6a23c;

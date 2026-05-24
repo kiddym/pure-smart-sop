@@ -166,16 +166,16 @@ const typeLabel = computed(() =>
   background: var(--el-fill-color-light, #f5f7fa);
 }
 .tr--selected {
-  background: var(--el-color-primary-light-9, #ecf5ff);
+  background: var(--el-color-primary-light-9, #fbf1ee);
 }
 .tr--drop-before {
-  box-shadow: inset 0 2px 0 var(--el-color-primary, #409eff);
+  box-shadow: inset 0 2px 0 var(--el-color-primary, #d97757);
 }
 .tr--drop-after {
-  box-shadow: inset 0 -2px 0 var(--el-color-primary, #409eff);
+  box-shadow: inset 0 -2px 0 var(--el-color-primary, #d97757);
 }
 .tr--drop-inside {
-  background: var(--el-color-primary-light-8, #d9ecff);
+  background: var(--el-color-primary-light-8, #f7e4dd);
 }
 .tr--drop-invalid {
   box-shadow: inset 0 0 0 1px var(--el-color-danger, #f56c6c);
@@ -197,7 +197,7 @@ const typeLabel = computed(() =>
   flex: none;
 }
 .c-chapter {
-  color: #409eff;
+  color: var(--el-color-primary, #d97757);
 }
 .c-step {
   color: #67c23a;
@@ -233,7 +233,7 @@ const typeLabel = computed(() =>
   color: #909399;
 }
 .bar-blue {
-  color: #409eff;
+  color: var(--el-color-primary, #d97757);
 }
 .bar-purple {
   color: #8e44ad;

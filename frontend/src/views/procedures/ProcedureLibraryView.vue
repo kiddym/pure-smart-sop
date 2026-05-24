@@ -125,4 +125,24 @@ function onCreated(proc: ProcedureMeta): void {
   margin-top: 16px;
   justify-content: flex-end;
 }
+.library > * {
+  animation: u-fade-in 0.28s ease both;
+}
+.library > *:nth-child(1) {
+  animation-delay: 0.02s;
+}
+.library > *:nth-child(2) {
+  animation-delay: 0.06s;
+}
+.library > *:nth-child(3) {
+  animation-delay: 0.1s;
+}
+.library > *:nth-child(4) {
+  animation-delay: 0.14s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .library > * {
+    animation: none;
+  }
+}
 </style>

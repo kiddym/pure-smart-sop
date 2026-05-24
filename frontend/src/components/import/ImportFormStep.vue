@@ -63,7 +63,7 @@ onMounted(async () => {
   width: 100%;
 }
 .code {
-  color: var(--accent, #409eff);
+  color: var(--accent, #d97757);
   font-family: monospace;
 }
 </style>

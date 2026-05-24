@@ -54,7 +54,11 @@ const activeMenu = computed(() => {
       </el-menu>
     </el-aside>
     <el-main class="app-main">
-      <RouterView />
+      <RouterView v-slot="{ Component }">
+        <Transition name="fade" mode="out-in">
+          <component :is="Component" />
+        </Transition>
+      </RouterView>
     </el-main>
   </el-container>
 </template>

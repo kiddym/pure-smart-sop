@@ -302,9 +302,9 @@ function issueFor(id: string): string {
   color: #303133;
 }
 .ctrl-btn.active {
-  background: #ecf5ff;
-  border-color: #409eff;
-  color: #409eff;
+  background: var(--el-color-primary-light-9, #fbf1ee);
+  border-color: var(--el-color-primary, #d97757);
+  color: var(--el-color-primary, #d97757);
 }
 .zoom-label {
   font-size: 11px;
@@ -316,7 +316,7 @@ function issueFor(id: string): string {
   padding: 0 2px;
 }
 .zoom-label:hover {
-  color: #409eff;
+  color: var(--el-color-primary, #d97757);
 }
 .docx-scroll-area {
   flex: 1;
@@ -389,7 +389,7 @@ function issueFor(id: string): string {
   background: #f5f7fa;
 }
 .block-row.selected {
-  background: #ecf5ff;
+  background: var(--el-color-primary-light-9, #fbf1ee);
 }
 .block-row.ignored {
   color: #909399;
@@ -400,7 +400,7 @@ function issueFor(id: string): string {
 }
 .chapter-number {
   font-size: 12px;
-  color: #409eff;
+  color: var(--el-color-primary, #d97757);
   font-weight: 600;
   flex-shrink: 0;
   min-width: 28px;

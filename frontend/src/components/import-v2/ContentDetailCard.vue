@@ -33,7 +33,7 @@ const emit = defineEmits<{
 <style scoped>
 .card { padding: 16px; }
 .badge { display: inline-block; padding: 2px 8px; background: #f4f4f5; color: #909399; border-radius: 4px; font-size: 12px; }
-.ref { margin-top: 6px; font-size: 13px; color: #409eff; cursor: pointer; }
+.ref { margin-top: 6px; font-size: 13px; color: var(--el-color-primary, #d97757); cursor: pointer; }
 .ref:hover { text-decoration: underline; }
 .preview { border: 1px dashed #dcdfe6; border-radius: 4px; padding: 12px; max-height: 380px; overflow: auto; font-size: 13px; }
 .preview :deep(img) { max-width: 100%; }

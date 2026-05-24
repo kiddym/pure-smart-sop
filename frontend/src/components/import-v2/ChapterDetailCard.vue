@@ -65,9 +65,9 @@ const skipModel = computed<boolean>({
 <style scoped>
 .card { padding: 16px; }
 .head { margin-bottom: 12px; }
-.badge { display: inline-block; padding: 2px 8px; background: #ecf5ff; color: #409eff; border-radius: 4px; font-size: 12px; }
+.badge { display: inline-block; padding: 2px 8px; background: var(--el-color-primary-light-9, #fbf1ee); color: var(--el-color-primary, #d97757); border-radius: 4px; font-size: 12px; }
 .title-line { margin-top: 6px; display: flex; align-items: baseline; gap: 8px; }
-.num { color: #409eff; font-weight: 600; }
+.num { color: var(--el-color-primary, #d97757); font-weight: 600; }
 .title { font-size: 15px; font-weight: 600; }
 .form { margin-top: 8px; }
 .children { display: flex; flex-direction: column; gap: 4px; }

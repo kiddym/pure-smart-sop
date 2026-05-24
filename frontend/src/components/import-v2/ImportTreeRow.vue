@@ -91,10 +91,10 @@ function snippetOf(html: string): string {
   font-size: 13px;
 }
 .tr:hover { background: #f5f7fa; }
-.tr--selected { background: #ecf5ff; }
+.tr--selected { background: var(--el-color-primary-light-9, #fbf1ee); }
 .tr-check { flex: none; }
 .tr-tag { flex: none; }
-.tr-num { color: #409eff; font-weight: 600; font-variant-numeric: tabular-nums; flex: none; }
+.tr-num { color: var(--el-color-primary, #d97757); font-weight: 600; font-variant-numeric: tabular-nums; flex: none; }
 .tr-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #303133; }
 .tr-title--empty { color: #c0c4cc; font-style: italic; }
 .tr-spacer { flex: 1; }

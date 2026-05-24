@@ -8,6 +8,49 @@ body,
   height: 100%;
   margin: 0;
   font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
-  color: #303133;
-  background: #f5f7fa;
+  color: var(--text-primary);
+  background: var(--bg-surface);
+}
+
+/* 标题/品牌使用显示字（西文有性格，中文回退系统字） */
+h1,
+h2,
+h3,
+.app-brand {
+  font-family: var(--font-display);
+}
+
+/* ---- 动效（克制，可访问） ---- */
+/* 路由切换淡入淡出，配合 <Transition name="fade"> */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.16s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 一次性入场（用于首屏 stagger） */
+@keyframes u-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.u-fade-in {
+  animation: u-fade-in 0.28s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-enter-active,
+  .fade-leave-active,
+  .u-fade-in {
+    transition: none !important;
+    animation: none !important;
+  }
 }

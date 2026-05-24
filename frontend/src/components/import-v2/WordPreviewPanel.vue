@@ -85,7 +85,7 @@ watchEffect(async () => {
 }
 .controls { display: flex; align-items: center; gap: 2px; }
 .zoom { font-size: 12px; color: #606266; min-width: 36px; text-align: center; cursor: pointer; }
-.zoom:hover { color: #409eff; }
+.zoom:hover { color: var(--el-color-primary, #d97757); }
 .empty { flex: 1; display: flex; align-items: center; justify-content: center; }
 .scroll { flex: 1; overflow: auto; padding: 0 8px 8px; }
 .scroll.pan-mode { cursor: grab; }

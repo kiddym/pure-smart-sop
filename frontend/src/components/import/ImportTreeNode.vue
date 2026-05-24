@@ -83,7 +83,7 @@ function snippetOf(html: string): string {
   background: #f5f7fa;
 }
 .row.selected {
-  background: #ecf5ff;
+  background: var(--el-color-primary-light-9, #fbf1ee);
 }
 .row.review {
   background: #fdf6ec;
@@ -94,7 +94,7 @@ function snippetOf(html: string): string {
 .chapter-num {
   font-size: 13px;
   font-weight: 600;
-  color: #409eff;
+  color: var(--el-color-primary, #d97757);
   flex-shrink: 0;
 }
 .title {

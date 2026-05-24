@@ -100,7 +100,7 @@ function toggleNotes(id: string): void {
   border-bottom: 1px solid var(--el-border-color-lighter, #f0f0f0);
 }
 .vrow.viewing {
-  background: #ecf5ff;
+  background: var(--el-color-primary-light-9, #fbf1ee);
   border-radius: 4px;
 }
 .line {

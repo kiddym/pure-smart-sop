@@ -8,8 +8,8 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#409eff',
-          dark: '#337ecc',
+          DEFAULT: '#d97757',
+          dark: '#ae5f46',
         },
       },
       fontFamily: {
@@ -20,6 +20,7 @@ export default {
           'Arial',
           'sans-serif',
         ],
+        display: ['Fraunces', 'Georgia', 'Times New Roman', 'serif'],
       },
     },
   },

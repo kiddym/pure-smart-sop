@@ -1,4 +1,4 @@
-/* 设计令牌单一来源（节选，权威见 docs/design-system.md §2.1 / Q317）。
+/* 设计令牌单一来源（权威见 docs/design-system.md）。
    新增配色请先回填 design-system.md，禁止散落 hex。 */
 :root {
   /* 状态色（暖盘） */
@@ -12,4 +12,18 @@
   --bg-surface: #f5f3ef;
   --bg-elevated: #eceae5;
   --text-primary: #1a1714;
+
+  /* 字体 */
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+
+  /* Element Plus 主题色覆盖（赤陶梯度，单一来源）
+     tokens.css 在 element-plus/dist/index.css 之后加载，故此覆盖生效，
+     并级联到所有引用 var(--el-color-primary*) 的组件。 */
+  --el-color-primary: #d97757;
+  --el-color-primary-light-3: #e4a089;
+  --el-color-primary-light-5: #ecbbab;
+  --el-color-primary-light-7: #f4d6cd;
+  --el-color-primary-light-8: #f7e4dd;
+  --el-color-primary-light-9: #fbf1ee;
+  --el-color-primary-dark-2: #ae5f46;
 }
