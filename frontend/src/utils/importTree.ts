@@ -407,3 +407,36 @@ export function applyLayerRole(
 
   return roots
 }
+
+// ---- 平铺逐段层级标定（import-v2 标定模式用） ---- //
+
+export interface MarkRow {
+  id: string
+  label: string // 章节用 title；正文用去标签摘要
+  defaultRole: LayerRole
+}
+
+// 节点 + 深度 → 解析器当前级别：content→content；章节按深度→chapter_1/2/3。
+// depth 为 1-based 树深度（≥1）；超出 1..3 的值会被夹紧。
+export function defaultRoleOf(node: WizardNode, depth: number): LayerRole {
+  if (node.content_type === 'content') return 'content'
+  const lv = Math.min(3, Math.max(1, depth))
+  return `chapter_${lv}` as LayerRole
+}
+
+// 按文档前序遍历拍平为平铺标定行（顺序 = Word 原文顺序）。
+export function flattenForMarking(nodes: WizardNode[]): MarkRow[] {
+  const rows: MarkRow[] = []
+  const walk = (list: WizardNode[], depth: number): void => {
+    for (const n of list) {
+      rows.push({
+        id: n.id,
+        label: n.content_type === 'content' ? titleFromHtml(n.rich_content) : n.title || '（无标题）',
+        defaultRole: defaultRoleOf(n, depth),
+      })
+      walk(n.children, depth + 1)
+    }
+  }
+  walk(nodes, 1)
+  return rows
+}

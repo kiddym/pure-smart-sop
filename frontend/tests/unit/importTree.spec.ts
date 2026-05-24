@@ -4,8 +4,10 @@ import {
   clearReview,
   computeChapterNumbers,
   countReview,
+  defaultRoleOf,
   deleteNode,
   findNode,
+  flattenForMarking,
   moveNode,
   toImportNodes,
   updateNode,
@@ -193,5 +195,53 @@ describe('computeChapterNumbers', () => {
 
   it('empty tree returns empty object', () => {
     expect(computeChapterNumbers([])).toEqual({})
+  })
+})
+
+describe('defaultRoleOf', () => {
+  it('content→content；章节按深度（>3 夹紧 3）', () => {
+    const c = buildWizardTree([pnode({ id: 'c', content_type: 'content' })])[0]
+    const h = buildWizardTree([pnode({ id: 'h' })])[0]
+    expect(defaultRoleOf(c, 1)).toBe('content')
+    expect(defaultRoleOf(h, 1)).toBe('chapter_1')
+    expect(defaultRoleOf(h, 2)).toBe('chapter_2')
+    expect(defaultRoleOf(h, 3)).toBe('chapter_3')
+    expect(defaultRoleOf(h, 5)).toBe('chapter_3')
+  })
+})
+
+describe('flattenForMarking', () => {
+  it('按文档前序拍平 + 默认级别映射 + 正文摘要', () => {
+    const tree = buildWizardTree([
+      pnode({ id: 'a', title: '目的', children: [
+        pnode({ id: 'a1', title: '范围' }),
+        pnode({ id: 'a2', content_type: 'content', rich_content: '<p>正文内容</p>' }),
+      ] }),
+      pnode({ id: 'b', title: '职责' }),
+    ])
+    const rows = flattenForMarking(tree)
+    expect(rows.map((r) => r.id)).toEqual(['a', 'a1', 'a2', 'b'])
+    expect(rows.map((r) => r.defaultRole)).toEqual(['chapter_1', 'chapter_2', 'content', 'chapter_1'])
+    expect(rows[2].label).toBe('正文内容')
+    expect(rows[0].label).toBe('目的')
+  })
+
+  it('深度>3 的章节默认夹紧为 chapter_3', () => {
+    const tree = buildWizardTree([
+      pnode({ id: 'a', children: [pnode({ id: 'b', children: [
+        pnode({ id: 'c', children: [pnode({ id: 'd' })] }),
+      ] })] }),
+    ])
+    expect(flattenForMarking(tree).find((r) => r.id === 'd')?.defaultRole).toBe('chapter_3')
+  })
+
+  it('空标题章节 label 回落（无标题）', () => {
+    const tree = buildWizardTree([pnode({ id: 'a', title: '' })])
+    expect(flattenForMarking(tree)[0].label).toBe('（无标题）')
+  })
+
+  it('空正文节点 label 为空字符串（仅章节才回落"无标题"）', () => {
+    const tree = buildWizardTree([pnode({ id: 'x', content_type: 'content', rich_content: '' })])
+    expect(flattenForMarking(tree)[0].label).toBe('')
   })
 })
