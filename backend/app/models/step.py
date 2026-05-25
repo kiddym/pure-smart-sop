@@ -34,8 +34,6 @@ class ProcedureStep(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
     input_schema: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     # 步骤级附件标记（仅标记，不嵌文件，Q203）
     attachment_marks: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
-    require_confirmation: Mapped[bool] = mapped_column(default=False, server_default="0")
-
     procedure: Mapped[Procedure] = relationship(back_populates="steps")
     chapter: Mapped[ProcedureChapter | None] = relationship(back_populates="steps")
 

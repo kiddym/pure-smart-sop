@@ -46,7 +46,6 @@ _STEP_COPY = (
     "caution",
     "warning",
     "attachment_marks",
-    "require_confirmation",
 )
 
 

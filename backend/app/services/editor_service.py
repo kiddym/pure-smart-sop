@@ -246,7 +246,6 @@ def save_procedure(
         st_node.title = su.title
         st_node.content = su.content
         st_node.input_schema = su.input_schema
-        st_node.require_confirmation = su.require_confirmation
         st_node.attachment_marks = su.attachment_marks
         st_node.skip_numbering = su.skip_numbering
         st_node.sort_order = su.sort_order

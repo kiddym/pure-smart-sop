@@ -84,7 +84,6 @@ class StepCreate(BaseModel):
     title: str = Field(default="", max_length=500)
     content: str = Field(default="")
     input_schema: dict[str, Any] = Field(default_factory=lambda: {"type": "COMMON"})
-    require_confirmation: bool = False
     attachment_marks: list[dict[str, Any]] = Field(default_factory=list)
     skip_numbering: bool = False
     sort_order: int | None = None
@@ -96,7 +95,6 @@ class StepUpdate(BaseModel):
     title: str = Field(default="", max_length=500)
     content: str = Field(default="")
     input_schema: dict[str, Any] = Field(default_factory=lambda: {"type": "COMMON"})
-    require_confirmation: bool = False
     attachment_marks: list[dict[str, Any]] = Field(default_factory=list)
     skip_numbering: bool = False
 
@@ -131,7 +129,6 @@ class StepUpsert(BaseModel):
     title: str = Field(default="", max_length=500)
     content: str = Field(default="")
     input_schema: dict[str, Any] = Field(default_factory=lambda: {"type": "COMMON"})
-    require_confirmation: bool = False
     attachment_marks: list[dict[str, Any]] = Field(default_factory=list)
     skip_numbering: bool = False
     sort_order: int = 0
@@ -154,7 +151,6 @@ class StepOut(BaseModel):
     sort_order: int
     skip_numbering: bool
     input_schema: dict[str, Any]
-    require_confirmation: bool
     attachment_marks: list[dict[str, Any]]
 
 

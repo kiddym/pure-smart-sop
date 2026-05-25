@@ -63,7 +63,6 @@ def _step(**kw: object) -> StepData:
         skip_numbering=False,
         input_schema={"type": "COMMON"},
         attachment_marks=[],
-        require_confirmation=False,
     )
     base.update(kw)
     return StepData(**base)  # type: ignore[arg-type]
@@ -137,7 +136,6 @@ def test_step_renders_content_marks_confirmation() -> None:
         content="<p>正文</p>",
         # 编辑器真实字段形态：filename + kind=video
         attachment_marks=[{"filename": "demo.mp4", "kind": "video", "note": ""}],
-        require_confirmation=True,
         input_schema={"type": "CHECK"},
     )
     out: list = []

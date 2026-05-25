@@ -33,7 +33,6 @@ class StepData:
     skip_numbering: bool
     input_schema: dict[str, Any]
     attachment_marks: list[dict[str, Any]]
-    require_confirmation: bool
 
 
 @dataclass
@@ -110,7 +109,6 @@ def _to_step(s: ProcedureStep) -> StepData:
         skip_numbering=s.skip_numbering,
         input_schema=dict(s.input_schema or {}),
         attachment_marks=list(s.attachment_marks or []),
-        require_confirmation=s.require_confirmation,
     )
 
 
