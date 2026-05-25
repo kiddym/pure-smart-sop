@@ -34,10 +34,13 @@ class ProcedureStep(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
     input_schema: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     # 步骤级附件标记（仅标记，不嵌文件，Q203）
     attachment_marks: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
+    # step / content（内容块=只有富文本的步骤）
+    kind: Mapped[str] = mapped_column(String(20), default="step", server_default="step")
     procedure: Mapped[Procedure] = relationship(back_populates="steps")
     chapter: Mapped[ProcedureChapter | None] = relationship(back_populates="steps")
 
     __table_args__ = (
         Index("ix_tb_procedure_step_procedure_id_sort_order", "procedure_id", "sort_order"),
         Index("ix_tb_procedure_step_chapter_id", "chapter_id"),
+        Index("ix_tb_procedure_step_kind", "kind"),
     )

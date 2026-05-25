@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy import ForeignKey, Index, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import LONGTEXT, Base, SoftDeleteMixin, TimestampMixin, UUIDMixin
+from app.models.base import Base, SoftDeleteMixin, TimestampMixin, UUIDMixin
 
 if TYPE_CHECKING:
     from app.models.procedure import Procedure
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 class ProcedureChapter(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
-    """章节节点。content_type=chapter（标题容器）或 content（叶子正文）。"""
+    """章节节点（纯标题/分组容器）。"""
 
     __tablename__ = "tb_procedure_chapter"
 
@@ -27,12 +27,6 @@ class ProcedureChapter(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
     )
     title: Mapped[str] = mapped_column(String(500))
     code: Mapped[str] = mapped_column(String(50), default="", server_default="")
-    # chapter / content（§3.4.1）
-    content_type: Mapped[str] = mapped_column(
-        String(20), default="chapter", server_default="chapter"
-    )
-    # 仅 content 节点使用；chapter 节点恒为空字符串（应用层校验）
-    rich_content: Mapped[str] = mapped_column(LONGTEXT, default="", server_default="")
     sort_order: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     # 1-3（Q190 二次修订回 3）
     level: Mapped[int] = mapped_column(Integer, default=1, server_default="1")
@@ -57,5 +51,4 @@ class ProcedureChapter(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         Index("ix_tb_procedure_chapter_procedure_id_sort_order", "procedure_id", "sort_order"),
         Index("ix_tb_procedure_chapter_parent_id", "parent_id"),
         Index("ix_tb_procedure_chapter_mark_status", "mark_status"),
-        Index("ix_tb_procedure_chapter_content_type", "content_type"),
     )
