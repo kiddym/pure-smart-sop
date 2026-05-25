@@ -881,7 +881,7 @@ modal：
 
 按钮显示条件：任意 `is_current=true` 的程序均可预览。
 
-> **预览不再调后端 base64 PDF**（Q234，旧 `POST /pdf-preview` 已删除）。预览是**前端可交互渲染层**：正文数据复用 `GET /procedures/{id}`，分页骨架取 `GET /procedures/{id}/pdf-layout`，前端**一次性完整复刻**本规范全版式（封面/TOC/修订/正文/警示/签名/水印），signoff 可勾选，打印走 `window.print()`。详见 [feature-clarifications.md §34](feature-clarifications.md) 与 [pdf-rendering.md §6.7](pdf-rendering.md)。
+> **预览不再调后端 base64 PDF**（Q234，旧 `POST /pdf-preview` 已删除）。预览是**前端可交互渲染层**：正文数据复用 `GET /procedures/{id}`，分页骨架取 `GET /procedures/{id}/pdf-layout`，前端**一次性完整复刻**本规范全版式（封面/TOC/修订/正文/警示/签名/水印），hold-point / 封面 / signature-bar 签名区可勾选（程序级签字栏为静态行，见 §10.2），打印走 `window.print()`。详见 [feature-clarifications.md §34](feature-clarifications.md) 与 [pdf-rendering.md §6.7](pdf-rendering.md)。
 
 ### 10.1 预览流程
 

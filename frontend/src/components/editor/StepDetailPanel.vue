@@ -133,7 +133,6 @@ async function onTypeChange(next: FormType): Promise<void> {
             </div>
             <div v-if="hasHiddenBody" class="hidden-body-hint">已隐藏正文（切回「通用 / 注意 / 小心 / 警告」可恢复）</div>
           </template>
-
         </el-form>
       </el-collapse-item>
 
