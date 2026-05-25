@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import ImportMarkingRow from '@/components/import-v2/ImportMarkingRow.vue'
+import ImportMarkingRow from '@/components/shared/ImportMarkingRow.vue'
 import { useProcedureEditorStore } from '@/store/procedureEditor'
 import { computeLayerIndents, defaultLayerRole, type LayerRole } from '@/utils/layerMark'
 import { computeFallback } from '@/utils/editor'

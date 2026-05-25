@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LayerRole } from '@/utils/importTree'
+import type { LayerRole } from '@/utils/layerMark'
 
 defineProps<{
   label: string

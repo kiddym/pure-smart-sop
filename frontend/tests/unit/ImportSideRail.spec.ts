@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
-import ImportSideRail from '@/components/import-v2/ImportSideRail.vue'
+import ImportSideRail from '@/components/shared/ImportSideRail.vue'
 
 describe('ImportSideRail', () => {
   it('渲染传入的 label', () => {

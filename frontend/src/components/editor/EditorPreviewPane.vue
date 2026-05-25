@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import { useStorage, useEventListener } from '@vueuse/core'
-import WordPreviewPanel from '@/components/import-v2/WordPreviewPanel.vue'
-import ImportSideRail from '@/components/import-v2/ImportSideRail.vue'
+import WordPreviewPanel from '@/components/shared/WordPreviewPanel.vue'
+import ImportSideRail from '@/components/shared/ImportSideRail.vue'
 import { fetchSourceDocx } from '@/api/procedures'
 import {
   PREVIEW_DEFAULTS,

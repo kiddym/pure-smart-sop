@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import ElementPlus from 'element-plus'
-import ImportMarkingRow from '@/components/import-v2/ImportMarkingRow.vue'
+import ImportMarkingRow from '@/components/shared/ImportMarkingRow.vue'
 
 const base = { label: '目的', role: 'chapter_1' as const, indent: 0 }
 

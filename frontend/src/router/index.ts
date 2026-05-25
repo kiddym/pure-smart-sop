@@ -15,18 +15,6 @@ const routes: RouteRecordRaw[] = [
     meta: { title: '草稿箱' },
   },
   {
-    path: '/procedures/import',
-    name: 'procedure-import',
-    component: () => import('@/views/procedures/ImportWizardView.vue'),
-    meta: { title: '导入程序' },
-  },
-  {
-    path: '/procedures/import-v2',
-    name: 'procedure-import-v2',
-    component: () => import('@/views/procedures/ImportDialogView.vue'),
-    meta: { title: '导入程序 (v2)' },
-  },
-  {
     path: '/procedures/:id/edit',
     name: 'procedure-edit',
     component: () => import('@/views/procedures/ProcedureEditorView.vue'),
