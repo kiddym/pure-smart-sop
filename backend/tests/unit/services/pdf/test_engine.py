@@ -34,14 +34,12 @@ def _rich_proc(db: Session, factory: Factory):
     ]
     proc.version_update_notes = "本次新增启动前检查"
     purpose = factory.chapter(proc.id, title="目的", level=1, sort_order=0)
-    factory.chapter(
+    factory.step(
         proc.id,
-        title="",
-        parent_id=purpose.id,
-        content_type="content",
-        level=2,
+        chapter_id=purpose.id,
+        kind="content",
+        content="<p>本程序用于规范启动流程。</p>",
         sort_order=0,
-        rich_content="<p>本程序用于规范启动流程。</p>",
     )
     ops = factory.chapter(proc.id, title="操作", level=1, sort_order=1)
     factory.step(

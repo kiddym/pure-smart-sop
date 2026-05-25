@@ -60,6 +60,7 @@ def _step(**kw: object) -> StepData:
         code="1.1",
         title="步骤",
         content="",
+        kind="step",
         skip_numbering=False,
         input_schema={"type": "COMMON"},
         attachment_marks=[],
@@ -255,12 +256,10 @@ def _attach() -> AttachmentData:
 def test_virtual_attachment_chapter_when_no_user_chapter() -> None:
     ch = ChapterData(
         id="c1",
-        content_type="chapter",
         title="操作",
         code="1",
         level=1,
         skip_numbering=False,
-        rich_content="",
     )
     out, has_attach = sections.build_content(_data(_proc(), chapters=[ch], attachments=[_attach()]))
     assert has_attach
@@ -270,12 +269,10 @@ def test_virtual_attachment_chapter_when_no_user_chapter() -> None:
 def test_user_attachment_chapter_holds_table() -> None:
     ch = ChapterData(
         id="c1",
-        content_type="chapter",
         title="附件",
         code="1",
         level=1,
         skip_numbering=False,
-        rich_content="",
     )
     out, has_attach = sections.build_content(_data(_proc(), chapters=[ch], attachments=[_attach()]))
     assert has_attach

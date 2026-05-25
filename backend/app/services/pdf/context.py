@@ -30,6 +30,7 @@ class StepData:
     code: str
     title: str
     content: str
+    kind: str
     skip_numbering: bool
     input_schema: dict[str, Any]
     attachment_marks: list[dict[str, Any]]
@@ -38,14 +39,12 @@ class StepData:
 @dataclass
 class ChapterData:
     id: str
-    content_type: str  # chapter / content
     title: str
     code: str
     level: int
     skip_numbering: bool
-    rich_content: str
-    children: list[ChapterData] = field(default_factory=list)  # 子 chapter/content（混排）
-    steps: list[StepData] = field(default_factory=list)  # 步骤（与 children 互斥，Q25）
+    children: list[ChapterData] = field(default_factory=list)  # 子章节
+    steps: list[StepData] = field(default_factory=list)  # 步骤 + 内容块步骤（按 sort_order 混排）
 
 
 @dataclass
@@ -106,6 +105,7 @@ def _to_step(s: ProcedureStep) -> StepData:
         code=s.code,
         title=s.title,
         content=s.content,
+        kind=s.kind,
         skip_numbering=s.skip_numbering,
         input_schema=dict(s.input_schema or {}),
         attachment_marks=list(s.attachment_marks or []),
@@ -172,12 +172,10 @@ def load_render_data(db: Session, proc_id: str) -> RenderData:
     def build_chapter(ch: ProcedureChapter) -> ChapterData:
         node = ChapterData(
             id=ch.id,
-            content_type=ch.content_type,
             title=ch.title,
             code=ch.code,
             level=ch.level,
             skip_numbering=ch.skip_numbering,
-            rich_content=ch.rich_content,
             children=[build_chapter(c) for c in children_by_parent.get(ch.id, [])],
             steps=[_to_step(s) for s in steps_by_chapter.get(ch.id, [])],
         )
@@ -224,10 +222,8 @@ def load_render_data(db: Session, proc_id: str) -> RenderData:
                 )
             )
 
-    # 预取所有富文本里引用的 asset 字节（content 节点 + step 富文本字段）
-    htmls: list[str] = [c.rich_content for c in chapters]
-    for s in steps:
-        htmls += [s.content]
+    # 预取所有富文本里引用的 asset 字节（步骤 content 字段，含内容块步骤）
+    htmls: list[str] = [s.content for s in steps]
     assets: dict[str, tuple[bytes, str]] = {}
     for aid in _collect_asset_ids(*htmls):
         try:

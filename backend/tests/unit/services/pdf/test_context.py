@@ -26,20 +26,18 @@ def test_not_found_raises_procedure_not_found(db: Session, factory: Factory) -> 
     assert exc.value.detail["code"] == "PROCEDURE_NOT_FOUND"
 
 
-def test_chapter_tree_with_content_and_steps(db: Session, factory: Factory) -> None:
+def test_chapter_tree_with_content_step_and_steps(db: Session, factory: Factory) -> None:
     proc = _proc(factory)
-    # L1 章节「目的」含一个 content 子节点
+    # L1 章节「目的」含一个内容块步骤（kind='content'）
     purpose = factory.chapter(proc.id, title="目的", level=1, sort_order=0)
-    factory.chapter(
+    factory.step(
         proc.id,
-        title="",
-        parent_id=purpose.id,
-        content_type="content",
-        level=2,
+        chapter_id=purpose.id,
+        kind="content",
+        content="<p>本程序用于…</p>",
         sort_order=0,
-        rich_content="<p>本程序用于…</p>",
     )
-    # L1 章节「操作」含两个 step（与 content 互斥）
+    # L1 章节「操作」含两个普通 step
     ops = factory.chapter(proc.id, title="操作", level=1, sort_order=1)
     factory.step(proc.id, chapter_id=ops.id, title="启动电源", sort_order=0)
     factory.step(proc.id, chapter_id=ops.id, title="检查阀门", sort_order=1)
@@ -53,9 +51,10 @@ def test_chapter_tree_with_content_and_steps(db: Session, factory: Factory) -> N
     purpose_node, ops_node = data.root_chapters
     assert purpose_node.title == "目的"
     assert purpose_node.code == "1"  # 内部 code 递归（render-only .0 在 sections 层）
-    assert len(purpose_node.children) == 1
-    assert purpose_node.children[0].content_type == "content"
-    assert purpose_node.steps == []
+    assert len(purpose_node.children) == 0
+    # 内容块步骤在 steps 里，kind='content'
+    assert len(purpose_node.steps) == 1
+    assert purpose_node.steps[0].kind == "content"
     assert ops_node.children == []
     assert [s.title for s in ops_node.steps] == ["启动电源", "检查阀门"]
     assert ops_node.steps[0].code == "2.1"

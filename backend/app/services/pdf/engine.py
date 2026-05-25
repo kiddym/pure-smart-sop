@@ -131,7 +131,7 @@ def _extract_layout(data: RenderData, doc: ProcedureDocTemplate) -> LayoutInfo:
     for ch in sections.toc_chapters(data):
         phys = ep.get(("chapter", ch.id))
         disp = str(phys - cover - front) if phys else ""
-        code = sections.display_code(ch.code, ch.level, ch.content_type, ch.skip_numbering)
+        code = sections.display_code(ch.code, ch.level, ch.skip_numbering)
         toc_entries.append(
             TocEntryInfo(
                 chapter_id=ch.id,

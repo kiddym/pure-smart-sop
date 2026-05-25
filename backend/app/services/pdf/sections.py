@@ -51,9 +51,9 @@ def _keyed(para: Paragraph, key: tuple[str, str]) -> Paragraph:
     return para
 
 
-def display_code(code: str, level: int, content_type: str, skip: bool) -> str:
-    """渲染编号：skip / content / 空 code → ''；L1 chapter 追加 .0（§47/Q305）。"""
-    if skip or content_type == "content" or not code:
+def display_code(code: str, level: int, skip: bool) -> str:
+    """渲染编号：skip / 空 code → ''；L1 chapter 追加 .0（§47/Q305）。"""
+    if skip or not code:
         return ""
     return f"{code}.0" if level == 1 else code
 
@@ -129,7 +129,7 @@ def toc_chapters(data: RenderData) -> list[ChapterData]:
 
     def walk(nodes: list[ChapterData]) -> None:
         for n in nodes:
-            if n.content_type == "chapter" and not n.skip_numbering:
+            if not n.skip_numbering:
                 result.append(n)
             walk(n.children)
 
@@ -147,7 +147,7 @@ def build_toc(data: RenderData, toc_pages: dict[str, str]) -> list[Flowable]:
         out.append(Paragraph("（无章节）", s("placeholder_muted")))
         return out
     for ch in chapters:
-        code = display_code(ch.code, ch.level, ch.content_type, ch.skip_numbering)
+        code = display_code(ch.code, ch.level, ch.skip_numbering)
         page = toc_pages.get(ch.id, "")
         dots = " " + "." * 3 + " "
         text = f"{_esc(code)} {_esc(ch.title)}{dots}{page}"
@@ -252,7 +252,7 @@ def build_content(data: RenderData) -> tuple[list[Flowable], bool]:
 
 def _find_attachment_chapter(data: RenderData) -> ChapterData | None:
     for ch in data.root_chapters:
-        if ch.content_type == "chapter" and ch.title.strip() in ATTACHMENT_CHAPTER_NAMES:
+        if ch.title.strip() in ATTACHMENT_CHAPTER_NAMES:
             return ch
     return None
 
@@ -260,10 +260,7 @@ def _find_attachment_chapter(data: RenderData) -> ChapterData | None:
 def _render_chapter(
     ch: ChapterData, data: RenderData, out: list[Flowable], *, attach_into: ChapterData | None
 ) -> None:
-    if ch.content_type == "content":
-        out.extend(render_html(ch.rich_content, data.assets, base_style="content"))
-        return
-    code = display_code(ch.code, ch.level, ch.content_type, ch.skip_numbering)
+    code = display_code(ch.code, ch.level, ch.skip_numbering)
     style = {1: "h1", 2: "h2", 3: "h3"}.get(ch.level, "h3")
     title = f"{_esc(code)}{FULL_SPACE}{_esc(ch.title)}" if code else _esc(ch.title)
     out.append(_keyed(Paragraph(title, s(style)), ("chapter", ch.id)))
@@ -278,6 +275,9 @@ def _render_chapter(
 
 
 def _render_step(st: StepData, data: RenderData, out: list[Flowable]) -> None:
+    if st.kind == "content":
+        out.extend(render_html(st.content, data.assets, base_style="content"))
+        return
     code = "" if st.skip_numbering or not st.code else st.code
     title = f"{_esc(code)}{FULL_SPACE}{_esc(st.title)}" if code else _esc(st.title)
     out.append(_keyed(Paragraph(title or "（步骤）", s("step_title")), ("step", st.id)))
@@ -409,7 +409,7 @@ def _virtual_attachment_chapter(data: RenderData) -> list[Flowable]:
 def _next_attachment_number(data: RenderData) -> int:
     max_seq = 0
     for ch in data.root_chapters:
-        if ch.content_type == "chapter" and not ch.skip_numbering and ch.code.isdigit():
+        if not ch.skip_numbering and ch.code.isdigit():
             max_seq = max(max_seq, int(ch.code))
     return max_seq + 1
 
