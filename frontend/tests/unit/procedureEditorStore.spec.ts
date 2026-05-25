@@ -557,3 +557,31 @@ describe('层级标定 (P2c)', () => {
     expect(markSpy).toHaveBeenCalledWith('a', 'unmarked')
   })
 })
+
+describe('缺标题 + 展开祖先', () => {
+  it('missingTitleCount 只统计标题为空的「章节」（不含内容块/步骤）', () => {
+    setActivePinia(createPinia())
+    const s = useProcedureEditorStore()
+    s.procedure = meta()
+    const empty = chap('e', null, 0)
+    empty.title = '   ' // 纯空白
+    const content = chap('ct', null, 1)
+    content.content_type = 'content'
+    content.title = '' // 内容块空标题不计入
+    s.chapters = [chap('a', null, 2), empty, content]
+    s.steps = [stp('s', 'a', 0)] // s 的 title 由 stp() 设为 's'
+    expect(s.missingTitleCount).toBe(1)
+  })
+
+  it('expandAncestors 展开目标的全部祖先', () => {
+    setActivePinia(createPinia())
+    const s = useProcedureEditorStore()
+    s.procedure = meta()
+    s.chapters = [chap('g', null, 0), chap('p', 'g', 0), chap('c', 'p', 0)]
+    s.expanded = {}
+    s.expandAncestors('c')
+    expect(s.expanded.p).toBe(true)
+    expect(s.expanded.g).toBe(true)
+    expect(s.expanded.c ?? false).toBe(false) // 只展开祖先，不含自身
+  })
+})

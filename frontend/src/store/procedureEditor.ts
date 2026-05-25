@@ -258,6 +258,9 @@ export const useProcedureEditorStore = defineStore('procedureEditor', {
     addButtonStateFor(): (parentId: string | null) => AddButtonState {
       return (parentId: string | null): AddButtonState => getAddButtonState(this.childKindsOf(parentId))
     },
+    missingTitleCount(state): number {
+      return state.chapters.filter((c) => c.content_type === 'chapter' && !c.title.trim()).length
+    },
     selectedChapter(state): EditorChapter | null {
       return state.selectedId ? (this.chapterMap.get(state.selectedId) ?? null) : null
     },
@@ -386,6 +389,15 @@ export const useProcedureEditorStore = defineStore('procedureEditor', {
 
     toggleExpanded(id: string): void {
       this.setExpanded(id, !(this.expanded[id] ?? false))
+    },
+
+    // 展开 id 的全部祖先（不含自身），用于把目标滚入可见。
+    expandAncestors(id: string): void {
+      let pid = this.chapterMap.get(id)?.parent_id ?? this.stepMap.get(id)?.chapter_id ?? null
+      while (pid) {
+        this.setExpanded(pid, true)
+        pid = this.chapterMap.get(pid)?.parent_id ?? null
+      }
     },
 
     // ---- undo 快照 ---- //
