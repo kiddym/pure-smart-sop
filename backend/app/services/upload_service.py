@@ -73,6 +73,16 @@ def upload_filename(token: str) -> str:
     return str(meta.get("filename", "")) if meta else ""
 
 
+def try_read_source(token: str) -> tuple[bytes, str] | None:
+    """读取临时 docx + 原始文件名；不存在/过期/非法 token → None（不抛，供导入降级）。"""
+    if not _is_safe_token(token):
+        return None
+    src = storage.token_dir(token) / _SOURCE
+    if not src.exists() or _is_expired(token, utcnow()):
+        return None
+    return src.read_bytes(), upload_filename(token) or _SOURCE
+
+
 # --------------------------------------------------------------------------- #
 # 临时图：写盘 + 服务
 # --------------------------------------------------------------------------- #
