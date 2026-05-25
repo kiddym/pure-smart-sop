@@ -10,8 +10,9 @@ from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 
 from app.deps import RequestMeta, get_db, get_request_meta
+from pydantic import BaseModel, Field
+
 from app.schemas.node import (
-    BatchContentToStepsIn,
     ChapterCreate,
     ChapterMoveIn,
     ChapterOut,
@@ -19,6 +20,12 @@ from app.schemas.node import (
     ConversionResult,
     MarkStatusIn,
 )
+
+
+class BatchContentToStepsIn(BaseModel):
+    """批量 content-to-steps（原子，body: chapter_ids）。TODO A8: 端点将移除。"""
+
+    chapter_ids: list[str] = Field(min_length=1, max_length=100)
 from app.services import chapter_service, conversion_service, mark_service
 
 router = APIRouter(prefix="/api/v1/chapters", tags=["chapters"])

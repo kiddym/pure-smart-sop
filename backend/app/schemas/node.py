@@ -1,7 +1,8 @@
 """章节 / 步骤（节点）schema（api-specification §5.4 / data-model §3.4-3.5 / §19 / §40）。
 
-章节树由 tb_procedure_chapter 自引用（content_type='chapter' 容器 / 'content' 叶子正文）+
-tb_procedure_step（步骤，挂 chapter 下或根级）构成。编号 code 全自动（§47），不接受手填。
+章节树由 tb_procedure_chapter 自引用（纯标题/分组容器）+
+tb_procedure_step（步骤，kind=step 普通步骤 / kind=content 内容块）构成。
+编号 code 全自动（§47），不接受手填。
 """
 
 from __future__ import annotations
@@ -10,7 +11,6 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-ContentType = Literal["chapter", "content"]
 MarkStatus = Literal["unmarked", "step", "content"]
 
 # 执行表单 15 型（大写枚举，Q261/§40.1）
@@ -39,24 +39,19 @@ FORM_TYPES: frozenset[str] = frozenset(
 # 章节 CRUD
 # --------------------------------------------------------------------------- #
 class ChapterCreate(BaseModel):
-    """新增章节 / 内容节点（受 Q25 互斥 + 3 级嵌套校验）。code 由后端整树重算。"""
+    """新增章节（分组容器）。code 由后端整树重算。"""
 
     procedure_id: str
     parent_id: str | None = None
-    content_type: ContentType = "chapter"
     title: str = Field(default="", max_length=500)
-    rich_content: str = Field(
-        default=""
-    )  # 仅 content 节点可非空（CHAPTER_RICH_CONTENT_NOT_ALLOWED）
     skip_numbering: bool = False
     sort_order: int | None = None  # None = 追加到同级末尾
 
 
 class ChapterUpdate(BaseModel):
-    """更新章节 / 内容节点（content_type 不可改，改类型走 convert-*）。"""
+    """更新章节（content_type 不可改，改类型走 convert-*）。"""
 
     title: str = Field(default="", max_length=500)
-    rich_content: str = Field(default="")
     skip_numbering: bool = False
 
 
@@ -81,6 +76,7 @@ class StepCreate(BaseModel):
 
     procedure_id: str
     chapter_id: str | None = None
+    kind: Literal["step", "content"] = "step"
     title: str = Field(default="", max_length=500)
     content: str = Field(default="")
     input_schema: dict[str, Any] = Field(default_factory=lambda: {"type": "COMMON"})
@@ -92,6 +88,7 @@ class StepCreate(BaseModel):
 class StepUpdate(BaseModel):
     """更新步骤。"""
 
+    kind: Literal["step", "content"] = "step"
     title: str = Field(default="", max_length=500)
     content: str = Field(default="")
     input_schema: dict[str, Any] = Field(default_factory=lambda: {"type": "COMMON"})
@@ -110,13 +107,11 @@ class StepMoveIn(BaseModel):
 # 批量保存（编辑器 PUT /procedures/{id} 的脏节点 upsert，§17.2 / Q154-Q155）
 # --------------------------------------------------------------------------- #
 class ChapterUpsert(BaseModel):
-    """脏章节 / 内容节点。id 为新建临时 id 或既有真实 id；parent_id 同理（后端 id 映射）。"""
+    """脏章节。id 为新建临时 id 或既有真实 id；parent_id 同理（后端 id 映射）。"""
 
     id: str
     parent_id: str | None = None
-    content_type: ContentType = "chapter"
     title: str = Field(default="", max_length=500)
-    rich_content: str = Field(default="")
     skip_numbering: bool = False
     sort_order: int = 0
 
@@ -126,6 +121,7 @@ class StepUpsert(BaseModel):
 
     id: str
     chapter_id: str | None = None
+    kind: Literal["step", "content"] = "step"
     title: str = Field(default="", max_length=500)
     content: str = Field(default="")
     input_schema: dict[str, Any] = Field(default_factory=lambda: {"type": "COMMON"})
@@ -145,6 +141,7 @@ class StepOut(BaseModel):
     id: str
     procedure_id: str
     chapter_id: str | None
+    kind: Literal["step", "content"] = "step"
     title: str
     code: str
     content: str
@@ -162,28 +159,24 @@ class ChapterOut(BaseModel):
     id: str
     procedure_id: str
     parent_id: str | None
-    content_type: str
     title: str
     code: str
     level: int
     sort_order: int
     skip_numbering: bool
     mark_status: str
-    rich_content: str
 
 
 class ChapterTreeNode(BaseModel):
     """嵌套章节树节点（GET /procedures/{id}.chapters）。"""
 
     id: str
-    content_type: str
     title: str
     code: str
     level: int
     sort_order: int
     skip_numbering: bool
     mark_status: str
-    rich_content: str
     children: list[ChapterTreeNode] = Field(default_factory=list)
 
 
@@ -193,12 +186,6 @@ ChapterTreeNode.model_rebuild()
 # --------------------------------------------------------------------------- #
 # 转换 / 标记结果（Phase 5）
 # --------------------------------------------------------------------------- #
-class BatchContentToStepsIn(BaseModel):
-    """批量 content-to-steps（原子，body: chapter_ids）。"""
-
-    chapter_ids: list[str] = Field(min_length=1, max_length=100)
-
-
 class ConversionResult(BaseModel):
     """转换结果：新建 / 删除节点 ID。"""
 
