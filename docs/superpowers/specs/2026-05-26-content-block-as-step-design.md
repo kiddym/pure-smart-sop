@@ -74,7 +74,14 @@
 **导入 `import_service`**
 
 - 解析器（`structurer` / `result.py`）中间结果**不动**：标题块仍 `content_type='chapter'`，正文块仍 `content_type='content'`（每块独立，§19）。
-- 落库时改映射：`content_type='content'` 的解析节点 → 新建 `ProcedureStep(kind='content', content=block.html, chapter_id=<最近的标题章节>, sort_order=<位序>)`；标题块仍建章节行。
+- 落库时改映射：`content_type='content'` 的解析节点 → 新建 `ProcedureStep(kind='content', content=block.html, chapter_id=<所属叶子标题>, sort_order=<位序>)`；标题块仍建章节行。
+- **导入归一化（严格互斥不变式保障）**：解析器会产出「一个标题下既有正文块、又有子标题」的结构（§19），这在新模型里违反 Q25（章节同时含子章节与内容块）。落库前对 `ImportNodeIn` 树做一遍归一化，把这类正文块**下沉进相邻子标题**：
+  - 位于第一个子标题之前的正文 → 该子标题的**前置**内容块；
+  - 位于某子标题之后的正文 → 追加为该（前一个）子标题的**后置**内容块；
+  - 递归处理（接收方自身若仍是分组标题，继续下沉，章节深度 ≤3）。
+  - 触发归一化时补一条 `ParseWarning`（沿用首标题前正文丢弃的提示范式）。
+
+  归一化后，每个标题节点要么纯分组（只有子标题）、要么纯叶子（只有内容块/步骤），落库满足 Q25，无需跨表归并排序。
 - `schemas/parse.py` 的 `ImportNodeIn` 保留 `content_type`（解析侧分类），仅落库语义改变。
 
 **标记 / apply-marks `mark_service` + `conversion_service` + `chapters.py`**
@@ -161,7 +168,8 @@
 
 - `numbering_service`：内容块步骤不编号、不占位；步骤序号在内容块穿插时连续。
 - `editor_service` 保存校验：新 Q25（步骤+内容块共存、与子章节互斥）；旧 content 校验已删；5MB 校验落在 step.content。
-- `import_service`：非标题块 → `kind='content'` 步骤，挂最近标题章节下，位序正确。
+- `import_service`：非标题块 → `kind='content'` 步骤，挂所属叶子标题下，位序正确。
+- 导入归一化：标题下「正文 + 子标题」混合 → 正文下沉为相邻子标题的前置/后置内容块（递归直至每个标题纯分组或纯叶子）；触发时产出 warning。
 - `mark_service`：章节标 step/content → 对应 kind 步骤；确认旧拆分分支移除；`'review'` 不被 apply-marks 触碰。
 - `pdf`：内容块与步骤按 sort_order 交替渲染，内容块无编号无标题。
 - 迁移：跑 upgrade 后章节表无非标题行、内容块数据落步骤表；downgrade 可逆。
@@ -181,3 +189,4 @@
 - **`recomputeCodes` 与后端编号必须保持等价**：单测锁定；内容块跳过逻辑两端对齐。
 - **移除「提升为章节」入口**：见 §6。用户已确认接受。
 - **解析侧仍用 `content_type` 分类**：仅落库语义改变，避免改动解析器本体，降低风险。
+- **导入归一化会微调层级**：「标题下夹在子标题间的正文」会下沉为相邻子标题的内容块（位置随之变化，但内容不丢，且带 warning）。这是严格互斥（选项3）换取「模型完全对称、无跨表归并、互转永远合法」的代价，用户已确认接受。
