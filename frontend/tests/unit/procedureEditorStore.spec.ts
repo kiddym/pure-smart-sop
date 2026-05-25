@@ -366,61 +366,6 @@ describe('toggleContentType', () => {
   })
 })
 
-describe('canPromoteChapter', () => {
-  it('returns false for root chapter', () => {
-    const store = useProcedureEditorStore()
-    store.$patch((state) => {
-      state.procedure = meta()
-      state.chapters = [chap('c1', null, 0)]
-      state.steps = []
-    })
-    expect(store.canPromoteChapter('c1')).toBe(false)
-  })
-
-  it('returns true for nested chapter', () => {
-    const store = useProcedureEditorStore()
-    store.$patch((state) => {
-      state.procedure = meta()
-      state.chapters = [chap('c1', null, 0), chap('c2', 'c1', 0)]
-      state.steps = []
-    })
-    expect(store.canPromoteChapter('c2')).toBe(true)
-  })
-})
-
-describe('canDemoteChapter', () => {
-  it('returns false when no previous sibling', () => {
-    const store = useProcedureEditorStore()
-    store.$patch((state) => {
-      state.procedure = meta()
-      state.chapters = [chap('c1', null, 0)]
-      state.steps = []
-    })
-    expect(store.canDemoteChapter('c1')).toBe(false)
-  })
-
-  it('returns true when previous sibling is chapter', () => {
-    const store = useProcedureEditorStore()
-    store.$patch((state) => {
-      state.procedure = meta()
-      state.chapters = [chap('c1', null, 0), chap('c2', null, 1)]
-      state.steps = []
-    })
-    expect(store.canDemoteChapter('c2')).toBe(true)
-  })
-
-  it('returns false when previous sibling is content', () => {
-    const store = useProcedureEditorStore()
-    const contentNode: EditorChapter = { ...chap('c1', null, 0), content_type: 'content' }
-    store.$patch((state) => {
-      state.procedure = meta()
-      state.chapters = [contentNode, chap('c2', null, 1)]
-      state.steps = []
-    })
-    expect(store.canDemoteChapter('c2')).toBe(false)
-  })
-})
-
 describe('setStepFormType 非破坏性切换', () => {
   it('切换类型保留 content，input_schema 只含 type', () => {
     const s = seed()
@@ -583,5 +528,21 @@ describe('缺标题 + 展开祖先', () => {
     expect(s.expanded.p).toBe(true)
     expect(s.expanded.g).toBe(true)
     expect(s.expanded.c ?? false).toBe(false) // 只展开祖先，不含自身
+  })
+})
+
+describe('移除树层级 promote/demote（保留 promoteContentToChapter）', () => {
+  it('promoteChapter/demoteChapter/canPromoteChapter/canDemoteChapter 不再存在', () => {
+    setActivePinia(createPinia())
+    const s = useProcedureEditorStore() as unknown as Record<string, unknown>
+    expect(s.promoteChapter).toBeUndefined()
+    expect(s.demoteChapter).toBeUndefined()
+    expect(s.canPromoteChapter).toBeUndefined()
+    expect(s.canDemoteChapter).toBeUndefined()
+  })
+  it('promoteContentToChapter 仍保留', () => {
+    setActivePinia(createPinia())
+    const s = useProcedureEditorStore()
+    expect(typeof s.promoteContentToChapter).toBe('function')
   })
 })

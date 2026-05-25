@@ -734,22 +734,6 @@ export const useProcedureEditorStore = defineStore('procedureEditor', {
       await this.reload()
     },
 
-    canPromoteChapter(id: string): boolean {
-      const ch = this.chapterMap.get(id)
-      return !!(ch && ch.parent_id)
-    },
-
-    canDemoteChapter(id: string): boolean {
-      const ch = this.chapterMap.get(id)
-      if (!ch) return false
-      const siblings = this.chapters
-        .filter((c) => c.parent_id === ch.parent_id)
-        .sort((a, b) => (a.sort_order !== b.sort_order ? a.sort_order - b.sort_order : a.id < b.id ? -1 : 1))
-      const myIdx = siblings.findIndex((c) => c.id === id)
-      if (myIdx <= 0) return false
-      return siblings[myIdx - 1].content_type === 'chapter'
-    },
-
     async moveCrossParent(id: string, targetParentId: string | null, targetIndex: number): Promise<void> {
       const map = await this.ensureSaved()
       const realId = map[id] ?? id
@@ -760,35 +744,6 @@ export const useProcedureEditorStore = defineStore('procedureEditor', {
         await moveStepApi(realId, { target_chapter_id: realParent, target_index: targetIndex })
       }
       await this.reload()
-    },
-
-    async promoteChapter(id: string): Promise<void> {
-      if (!this.canPromoteChapter(id)) return
-      const wasReview = this.chapterMap.get(id)?.mark_status === 'review'
-      const ch = this.chapterMap.get(id)!
-      const parent = this.chapterMap.get(ch.parent_id!)!
-      const grandParentId = parent.parent_id
-      // 找到 parent 在其兄弟中的排序位置，把当前节点插到 parent 之后
-      const parentSiblings = this.chapters
-        .filter((c) => c.parent_id === grandParentId)
-        .sort((a, b) => (a.sort_order !== b.sort_order ? a.sort_order - b.sort_order : a.id < b.id ? -1 : 1))
-      const parentIdx = parentSiblings.findIndex((c) => c.id === parent.id)
-      await this.moveCrossParent(id, grandParentId, parentIdx + 1)
-      if (wasReview) await this.setMark(id, 'unmarked')
-    },
-
-    async demoteChapter(id: string): Promise<void> {
-      if (!this.canDemoteChapter(id)) return
-      const wasReview = this.chapterMap.get(id)?.mark_status === 'review'
-      const ch = this.chapterMap.get(id)!
-      const siblings = this.chapters
-        .filter((c) => c.parent_id === ch.parent_id)
-        .sort((a, b) => (a.sort_order !== b.sort_order ? a.sort_order - b.sort_order : a.id < b.id ? -1 : 1))
-      const myIdx = siblings.findIndex((c) => c.id === id)
-      const prevSibling = siblings[myIdx - 1]
-      const prevChildren = this.chapters.filter((c) => c.parent_id === prevSibling.id)
-      await this.moveCrossParent(id, prevSibling.id, prevChildren.length)
-      if (wasReview) await this.setMark(id, 'unmarked')
     },
 
     // ---- 标记模式 / 层级标定模式（互斥） ---- //
