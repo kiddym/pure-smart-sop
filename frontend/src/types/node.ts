@@ -82,7 +82,6 @@ export interface StepOut {
   sort_order: number
   skip_numbering: boolean
   input_schema: InputSchema
-  expected_output: string
   require_confirmation: boolean
   attachment_marks: AttachmentMark[]
 }
@@ -120,7 +119,6 @@ export interface StepUpsert {
   title: string
   content: string
   input_schema: InputSchema
-  expected_output: string
   require_confirmation: boolean
   attachment_marks: AttachmentMark[]
   skip_numbering: boolean
@@ -181,7 +179,6 @@ export interface EditorStep {
   title: string
   content: string
   input_schema: InputSchema
-  expected_output: string
   require_confirmation: boolean
   attachment_marks: AttachmentMark[]
   skip_numbering: boolean

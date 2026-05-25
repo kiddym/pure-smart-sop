@@ -156,7 +156,6 @@ def create_step(db: Session, data: StepCreate, meta: RequestMeta) -> ProcedureSt
         title=data.title,
         content=data.content,
         input_schema=data.input_schema,
-        expected_output=data.expected_output,
         require_confirmation=data.require_confirmation,
         attachment_marks=data.attachment_marks,
         skip_numbering=data.skip_numbering,
@@ -193,7 +192,6 @@ def update_step(db: Session, step_id: str, data: StepUpdate, meta: RequestMeta) 
     st.title = data.title
     st.content = data.content
     st.input_schema = data.input_schema
-    st.expected_output = data.expected_output
     st.require_confirmation = data.require_confirmation
     st.attachment_marks = data.attachment_marks
     st.skip_numbering = data.skip_numbering

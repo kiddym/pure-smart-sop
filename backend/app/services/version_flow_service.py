@@ -45,7 +45,6 @@ _STEP_COPY = (
     "note",
     "caution",
     "warning",
-    "expected_output",
     "attachment_marks",
     "require_confirmation",
 )

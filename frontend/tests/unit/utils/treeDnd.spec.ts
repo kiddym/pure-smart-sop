@@ -32,7 +32,6 @@ const st = (id: string, chapterId: string | null, sort = 0): EditorStep => ({
   title: id,
   content: '',
   input_schema: { type: 'NONE' },
-  expected_output: '',
   require_confirmation: false,
   attachment_marks: [],
   skip_numbering: false,

@@ -230,7 +230,7 @@
 | `note` | LONGTEXT | NOT NULL DEFAULT '' | **警示·提示（蓝）富文本**（Q263 方案 A）；亦承载普通备注（原 `notes` 归入此字段）|
 | `caution` | LONGTEXT | NOT NULL DEFAULT '' | **警示·小心（黄）富文本**（Q263）|
 | `warning` | LONGTEXT | NOT NULL DEFAULT '' | **警示·警告（红）富文本**（Q263）|
-| `expected_output` | TEXT | NOT NULL DEFAULT '' | 预期输出（复刻 DPMS，保留）|
+| ~~`expected_output`~~ | — | **已移除**：复刻 DPMS 的预留字段，从未被渲染（PDF）/校验/执行消费，确认无用后删除 |
 | `attachment_marks` | JSON | NOT NULL DEFAULT '[]' | **步骤级附件标记**（Q203）：数组，每项 `{name, kind, note}`，仅标记不嵌入文件，见下方 |
 | `require_confirmation` | BOOLEAN | NOT NULL DEFAULT FALSE | |
 | `is_active`、时间戳 | | | |

@@ -61,7 +61,6 @@ def _step(**kw: object) -> StepData:
         content="",
         skip_numbering=False,
         input_schema={"type": "COMMON"},
-        expected_output="",
         attachment_marks=[],
         require_confirmation=False,
     )

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from sqlalchemy import JSON, ForeignKey, Index, Integer, String, Text
+from sqlalchemy import JSON, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import LONGTEXT, Base, SoftDeleteMixin, TimestampMixin, UUIDMixin
@@ -32,7 +32,6 @@ class ProcedureStep(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
     skip_numbering: Mapped[bool] = mapped_column(default=False, server_default="0")
     # 执行表单 15 型（大写枚举，Q261/Q262；NOTE/CAUTION/WARNING 警示已并入 type）
     input_schema: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
-    expected_output: Mapped[str] = mapped_column(Text, default="", server_default="")
     # 步骤级附件标记（仅标记，不嵌文件，Q203）
     attachment_marks: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
     require_confirmation: Mapped[bool] = mapped_column(default=False, server_default="0")

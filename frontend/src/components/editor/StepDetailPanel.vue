@@ -9,11 +9,11 @@ import { FORM_TYPE_META, isAlertType, isRichTextType } from '@/utils/editor'
 import { FORM_TYPES } from '@/types/node'
 import type { AttachmentMark, FormType, InputSchema } from '@/types/node'
 
-// step 节点详情（§4.1，§40 重构）：基本信息 / 内容 / 附件标记 / 其他。
+// step 节点详情（§4.1，§40 重构）：基本信息 / 内容 / 附件标记。
 const store = useProcedureEditorStore()
 const step = computed(() => store.selectedStep)
 const ro = computed(() => !store.editable)
-const active = ref(['basic', 'content', 'attach', 'other'])
+const active = ref(['basic', 'content', 'attach'])
 
 const ATTACH_KINDS = [
   { value: 'video', label: '视频' },
@@ -154,14 +154,6 @@ async function onTypeChange(next: FormType): Promise<void> {
           <el-button v-if="!ro" size="small" text @click="removeMark(i)">✕</el-button>
         </div>
         <el-button v-if="!ro" size="small" @click="addMark">+ 附件标记</el-button>
-      </el-collapse-item>
-
-      <el-collapse-item title="其他" name="other">
-        <el-form label-position="top">
-          <el-form-item label="预期输出">
-            <el-input :model-value="step.expected_output" type="textarea" :rows="2" maxlength="10000" :disabled="ro" @input="(v: string) => upd({ expected_output: v }, `exp:${step!.id}`)" />
-          </el-form-item>
-        </el-form>
       </el-collapse-item>
     </el-collapse>
   </div>

@@ -76,7 +76,6 @@ function stp(id: string, chapterId: string | null, sort: number): EditorStep {
     title: id,
     content: '',
     input_schema: { type: 'COMMON' },
-    expected_output: '',
     require_confirmation: false,
     attachment_marks: [],
     skip_numbering: false,
