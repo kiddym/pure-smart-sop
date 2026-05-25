@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { Document, EditPen, Folder, Setting } from '@element-plus/icons-vue'
+import { Document, EditPen, Folder, Setting, Fold, Expand } from '@element-plus/icons-vue'
+import { useSidebar } from '@/composables/useSidebar'
 
 const route = useRoute()
+const { collapsed, toggle } = useSidebar()
+
 // 顶层菜单高亮：详情页 /procedures/:id 归到「程序库」
 const activeMenu = computed(() => {
   if (route.path.startsWith('/settings/fields')) return '/settings/fields'
@@ -17,10 +20,22 @@ const activeMenu = computed(() => {
 
 <template>
   <el-container class="app-layout">
-    <el-aside width="220px" class="app-aside">
-      <div class="app-brand">Smart SOP</div>
+    <el-aside :width="collapsed ? '64px' : '220px'" class="app-aside">
+      <div class="app-brand" :class="{ collapsed }">
+        <span v-if="!collapsed" class="brand-text">Smart SOP</span>
+        <span v-else class="brand-mark">S</span>
+        <button
+          class="brand-toggle"
+          :title="collapsed ? '展开侧边栏' : '折叠侧边栏'"
+          @click="toggle"
+        >
+          <el-icon><Expand v-if="collapsed" /><Fold v-else /></el-icon>
+        </button>
+      </div>
       <el-menu
         :default-active="activeMenu"
+        :collapse="collapsed"
+        :collapse-transition="false"
         router
         class="app-menu"
         text-color="#3a3530"
@@ -73,14 +88,43 @@ const activeMenu = computed(() => {
   flex-direction: column;
   border-right: 1px solid #e0dbd3;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
+  transition: width 0.2s ease;
 }
 .app-brand {
   color: var(--text-primary);
   font-size: 18px;
   font-weight: 700;
-  padding: 18px 20px;
+  padding: 14px 20px;
   letter-spacing: 0.5px;
   border-bottom: 1px solid #e0dbd3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  box-sizing: border-box;
+}
+.app-brand.collapsed {
+  padding: 14px 0;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
+}
+.brand-mark {
+  font-size: 18px;
+}
+.brand-toggle {
+  border: none;
+  background: transparent;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+}
+.brand-toggle:hover {
+  color: #d97757;
+  background: rgba(0, 0, 0, 0.04);
 }
 .app-menu {
   border-right: none;
