@@ -70,6 +70,7 @@ export interface ProcedureDetail {
   steps: StepOut[]
   attachments: unknown[]
   fields: ProcedureFieldView[]
+  has_source_docx: boolean
 }
 
 // 编辑器整批保存入参（PUT /procedures/{id}，§17.2）：元字段 + 脏节点 upsert + 显式删除。

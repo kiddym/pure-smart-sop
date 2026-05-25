@@ -242,3 +242,4 @@ class ProcedureDetail(BaseModel):
     steps: list[StepOut] = Field(default_factory=list)
     attachments: list[AttachmentOut] = Field(default_factory=list)
     fields: list[FieldOut] = Field(default_factory=list)
+    has_source_docx: bool = False  # 该 group 是否有原始 Word 源文件（前端据此决定是否拉预览）

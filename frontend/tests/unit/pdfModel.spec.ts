@@ -50,6 +50,7 @@ function detail(): ProcedureDetail {
     steps: [step({ id: 's1', chapter_id: 'c2', code: '2.1', title: '启动电源', sort_order: 0 })],
     attachments: [],
     fields: [],
+    has_source_docx: false,
   }
 }
 

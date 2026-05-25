@@ -132,8 +132,14 @@ function ingestStep(s: StepOut): EditorStep {
   }
 }
 
+// patch 是否真的改动了目标的任一字段（含数组/对象，按值比较），用于跳过空操作。
+function patchChangesAnything(target: Record<string, unknown>, patch: Record<string, unknown>): boolean {
+  return Object.keys(patch).some((k) => JSON.stringify(target[k]) !== JSON.stringify(patch[k]))
+}
+
 interface State {
   procedure: ProcedureMeta | null
+  hasSourceDocx: boolean
   fields: ProcedureFieldView[]
   chapters: EditorChapter[]
   steps: EditorStep[]
@@ -156,6 +162,7 @@ interface State {
 export const useProcedureEditorStore = defineStore('procedureEditor', {
   state: (): State => ({
     procedure: null,
+    hasSourceDocx: false,
     fields: [],
     chapters: [],
     steps: [],
@@ -342,6 +349,7 @@ export const useProcedureEditorStore = defineStore('procedureEditor', {
       try {
         const detail = await fetchProcedureDetail(id)
         this.procedure = detail.procedure
+        this.hasSourceDocx = detail.has_source_docx
         this.fields = detail.fields
         this.chapters = ingestChapters(detail.chapters)
         this.steps = detail.steps.map(ingestStep)
@@ -441,6 +449,7 @@ export const useProcedureEditorStore = defineStore('procedureEditor', {
     updateChapterFields(id: string, patch: Partial<EditorChapter>, undoTag?: string): void {
       const ch = this.chapterMap.get(id)
       if (!ch) return
+      if (!patchChangesAnything(ch as unknown as Record<string, unknown>, patch)) return // 空操作不置脏、不入撤销栈
       this.pushUndo(undoTag)
       Object.assign(ch, patch)
       this.dirtyChapters.add(id)
@@ -449,6 +458,7 @@ export const useProcedureEditorStore = defineStore('procedureEditor', {
     updateStepFields(id: string, patch: Partial<EditorStep>, undoTag?: string): void {
       const st = this.stepMap.get(id)
       if (!st) return
+      if (!patchChangesAnything(st as unknown as Record<string, unknown>, patch)) return // 空操作（如编辑器回发等值内容）不置脏、不入撤销栈
       this.pushUndo(undoTag)
       Object.assign(st, patch)
       this.dirtySteps.add(id)

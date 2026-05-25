@@ -8,6 +8,7 @@ import {
   exportFolderAuditLogs,
   exportProcedureAuditLogs,
 } from '@/api/auditLogs'
+import { formatDateTimeSeconds } from '@/utils/format'
 
 // ── Tabs ────────────────────────────────────────────────────────────────────
 const activeTab = ref<'folders' | 'procedures'>('folders')
@@ -143,9 +144,9 @@ function openDetail(row: AuditLogItem | ProcedureAuditLogItem) {
 }
 
 // ── Utilities ────────────────────────────────────────────────────────────────
+// 时间统一走 utils/format（裸 UTC → 本地，带秒），与全站一致、不再偏 8 小时。
 function formatDateTime(s: string): string {
-  if (!s) return '-'
-  return s.replace('T', ' ').substring(0, 19)
+  return formatDateTimeSeconds(s)
 }
 
 function prettyJson(val: Record<string, unknown>): string {

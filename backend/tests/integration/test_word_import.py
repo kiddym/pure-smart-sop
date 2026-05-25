@@ -203,6 +203,9 @@ def test_import_stores_and_serves_source_docx(client: TestClient, storage_tmp: P
     assert imported.status_code == 201, imported.text
     pid = imported.json()["id"]
 
+    # 详情携带 has_source_docx=True，前端据此才拉预览（避免无源时的无谓 404）。
+    assert client.get(f"/api/v1/procedures/{pid}").json()["has_source_docx"] is True
+
     served = client.get(f"/api/v1/procedures/{pid}/source-docx")
     assert served.status_code == 200
     assert served.headers["content-type"] == DOCX_MIME
@@ -222,6 +225,7 @@ def test_import_without_token_has_no_source_docx(client: TestClient, storage_tmp
         IMPORT, json={"name": "无源文件", "folder_id": leaf, "chapters": body["chapters"]}
     )
     pid = imported.json()["id"]
+    assert client.get(f"/api/v1/procedures/{pid}").json()["has_source_docx"] is False
     assert client.get(f"/api/v1/procedures/{pid}/source-docx").status_code == 404
 
 

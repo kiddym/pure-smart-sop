@@ -16,14 +16,14 @@ const submitting = ref(false)
 interface FormState {
   id: string
   name: string
-  parent_id: string | null
+  parent_id: string // '' = 根目录（el-option 不接受 null，提交时归一为 null）
   prefix: string
   sequence_digits: number
 }
 const form = reactive<FormState>({
   id: '',
   name: '',
-  parent_id: null,
+  parent_id: '',
   prefix: '',
   sequence_digits: 5,
 })
@@ -42,7 +42,7 @@ function openCreate(): void {
   Object.assign(form, {
     id: '',
     name: '',
-    parent_id: selected.value?.id ?? null,
+    parent_id: selected.value?.id ?? '',
     prefix: '',
     sequence_digits: 5,
   })
@@ -59,7 +59,7 @@ function openEdit(): void {
   Object.assign(form, {
     id: selected.value.id,
     name: selected.value.name,
-    parent_id: selected.value.parent_id,
+    parent_id: selected.value.parent_id ?? '',
     prefix: selected.value.prefix,
     sequence_digits: 5,
   })
@@ -76,7 +76,7 @@ async function submit(): Promise<void> {
     if (dialogMode.value === 'create') {
       await createFolder({
         name: form.name,
-        parent_id: form.parent_id,
+        parent_id: form.parent_id || null,
         prefix: form.prefix || '',
         sequence_digits: form.sequence_digits,
       })
@@ -84,7 +84,7 @@ async function submit(): Promise<void> {
     } else {
       await updateFolder(form.id, {
         name: form.name,
-        parent_id: form.parent_id,
+        parent_id: form.parent_id || null,
         prefix: form.prefix || '',
         sequence_digits: form.sequence_digits,
       })
@@ -140,7 +140,7 @@ async function remove(): Promise<void> {
         </el-form-item>
         <el-form-item label="父文件夹">
           <el-select v-model="form.parent_id" clearable placeholder="根目录" class="full">
-            <el-option label="（根目录）" :value="null" />
+            <el-option label="（根目录）" value="" />
             <el-option
               v-for="opt in store.options"
               :key="opt.id"

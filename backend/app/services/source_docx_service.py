@@ -84,6 +84,23 @@ def get_for_procedure(db: Session, procedure_id: str) -> tuple[Path, str, str]:
     return path, _DOCX_MIME, row.filename
 
 
+def exists_for_procedure(db: Session, procedure_id: str) -> bool:
+    """该程序所属 group 是否存有原始 Word 源文件（供前端决定是否拉取预览，避免无谓 404）。"""
+    proc = db.execute(
+        select(Procedure).where(Procedure.id == procedure_id, Procedure.is_active.is_(True))
+    ).scalar_one_or_none()
+    if proc is None:
+        return False
+    return (
+        db.execute(
+            select(ProcedureSourceDocx.id).where(
+                ProcedureSourceDocx.procedure_group_id == proc.procedure_group_id
+            )
+        ).first()
+        is not None
+    )
+
+
 def delete_for_group(db: Session, procedure_group_id: str) -> None:
     """删除某 group 的源 docx（行 + 落盘文件）。无则静默。"""
     row = db.execute(

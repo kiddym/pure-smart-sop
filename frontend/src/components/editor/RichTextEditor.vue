@@ -89,8 +89,11 @@ function insertSpecial(html: string): void {
   editor.dangerouslyInsertHtml(html)
 }
 
-function onChange(value: string): void {
-  emit('update:modelValue', value)
+// wangEditor 空内容会规范化为 <p><br></p>（DOM 里表现为 U+FEFF BOM）。新建步骤挂载时它会
+// 迟发一次 onChange，使「空」被写成非空 HTML，刚保存后又被置脏（逼出二次保存）。空内容统一
+// 回发 ''，与存储侧的空串对齐，杜绝幽灵脏。
+function onChange(editor: IDomEditor): void {
+  emit('update:modelValue', editor.isEmpty() ? '' : editor.getHtml())
 }
 
 onBeforeUnmount(() => {
@@ -124,7 +127,7 @@ onBeforeUnmount(() => {
       :default-config="editorConfig"
       :mode="mode"
       @on-created="handleCreated"
-      @on-change="(e: IDomEditor) => onChange(e.getHtml())"
+      @on-change="onChange"
     />
   </div>
 </template>

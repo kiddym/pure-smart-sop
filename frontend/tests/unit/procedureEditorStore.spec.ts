@@ -134,6 +134,22 @@ describe('编辑与脏追踪', () => {
     expect(s.chapterMap.get('a')?.skip_numbering).toBe(true)
     expect(s.dirtyChapters.has('a')).toBe(true)
   })
+
+  it('updateStepFields 等值空操作不置脏、不入撤销栈（杜绝富文本幽灵脏）', () => {
+    const s = seed()
+    s.steps = [stp('s1', 'a', 0)] // content 初始为 ''
+    const undoBefore = s.undoStack.length
+    s.updateStepFields('s1', { content: '' }, 'content:s1') // 编辑器挂载回发等值空内容
+    expect(s.dirtySteps.has('s1')).toBe(false)
+    expect(s.undoStack.length).toBe(undoBefore)
+  })
+
+  it('updateChapterFields 等值空操作不置脏', () => {
+    const s = seed()
+    const title = s.chapterMap.get('a')!.title
+    s.updateChapterFields('a', { title })
+    expect(s.dirtyChapters.has('a')).toBe(false)
+  })
 })
 
 describe('上下移 reorder', () => {

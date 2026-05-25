@@ -267,7 +267,7 @@ function goBack(): void {
       />
 
       <div class="body">
-        <EditorPreviewPane :procedure-id="store.procedure.id" />
+        <EditorPreviewPane v-if="store.hasSourceDocx" :procedure-id="store.procedure.id" />
         <div class="left">
           <ChapterTreePanel ref="treeRef" />
         </div>

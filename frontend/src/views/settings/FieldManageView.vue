@@ -12,6 +12,7 @@ import {
   reorderFields,
 } from '@/api/fields'
 import type { FieldDetailOut, FieldCreate, FieldUpdate, FieldType, FieldOption } from '@/types/field'
+import { formatDate } from '@/utils/format'
 
 const FIELD_TYPE_LABELS: Record<string, string> = {
   text: '文本',
@@ -307,7 +308,7 @@ async function moveField(index: number, direction: 'up' | 'down') {
       </el-table-column>
       <el-table-column label="创建时间" width="120" align="center">
         <template #default="{ row }">
-          {{ row.created_at ? new Date(row.created_at).toLocaleDateString('zh-CN') : '-' }}
+          {{ formatDate(row.created_at) }}
         </template>
       </el-table-column>
       <el-table-column label="封面显示" width="100" align="center">

@@ -645,6 +645,8 @@ def get_detail(db: Session, proc_id: str) -> ProcedureDetail:
             .order_by(ProcedureField.sort_order)
         ).scalars()
     )
+    from app.services import source_docx_service  # 局部导入避免循环
+
     return ProcedureDetail(
         procedure=_meta_model(db, proc),
         chapters=_build_chapter_tree(db, proc_id),
@@ -653,4 +655,5 @@ def get_detail(db: Session, proc_id: str) -> ProcedureDetail:
             AttachmentOut.model_validate(a) for a in attachment_service.rows_for(db, proc_id)
         ],
         fields=[FieldOut.model_validate(f) for f in fields],
+        has_source_docx=source_docx_service.exists_for_procedure(db, proc_id),
     )
