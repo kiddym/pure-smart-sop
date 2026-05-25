@@ -87,3 +87,6 @@ backend-init-log.txt
 backend-pip-freeze.txt
 frontend-npm-install.txt
 frontend-package-list.json
+
+# brainstorming visual companion mockups
+.superpowers/
