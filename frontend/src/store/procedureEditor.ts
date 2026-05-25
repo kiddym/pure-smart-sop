@@ -445,8 +445,10 @@ export const useProcedureEditorStore = defineStore('procedureEditor', {
     toggleContentType(id: string): void {
       const ch = this.chapterMap.get(id)
       if (!ch) return
+      const wasReview = ch.mark_status === 'review'
       const next: ContentType = ch.content_type === 'chapter' ? 'content' : 'chapter'
       this.updateChapterFields(id, { content_type: next }, `content_type:${id}`)
+      if (wasReview) void this.setMark(id, 'unmarked')
     },
 
     promoteContentToChapter(id: string): void {
@@ -692,6 +694,7 @@ export const useProcedureEditorStore = defineStore('procedureEditor', {
 
     async promoteChapter(id: string): Promise<void> {
       if (!this.canPromoteChapter(id)) return
+      const wasReview = this.chapterMap.get(id)?.mark_status === 'review'
       const ch = this.chapterMap.get(id)!
       const parent = this.chapterMap.get(ch.parent_id!)!
       const grandParentId = parent.parent_id
@@ -701,10 +704,12 @@ export const useProcedureEditorStore = defineStore('procedureEditor', {
         .sort((a, b) => (a.sort_order !== b.sort_order ? a.sort_order - b.sort_order : a.id < b.id ? -1 : 1))
       const parentIdx = parentSiblings.findIndex((c) => c.id === parent.id)
       await this.moveCrossParent(id, grandParentId, parentIdx + 1)
+      if (wasReview) await this.setMark(id, 'unmarked')
     },
 
     async demoteChapter(id: string): Promise<void> {
       if (!this.canDemoteChapter(id)) return
+      const wasReview = this.chapterMap.get(id)?.mark_status === 'review'
       const ch = this.chapterMap.get(id)!
       const siblings = this.chapters
         .filter((c) => c.parent_id === ch.parent_id)
@@ -713,6 +718,7 @@ export const useProcedureEditorStore = defineStore('procedureEditor', {
       const prevSibling = siblings[myIdx - 1]
       const prevChildren = this.chapters.filter((c) => c.parent_id === prevSibling.id)
       await this.moveCrossParent(id, prevSibling.id, prevChildren.length)
+      if (wasReview) await this.setMark(id, 'unmarked')
     },
 
     // ---- 标记模式 ---- //
@@ -733,6 +739,18 @@ export const useProcedureEditorStore = defineStore('procedureEditor', {
       } catch {
         ch.mark_status = prev
       }
+    },
+
+    // 接受单个待确认：清 review（保留解析判定的类型/结构）。
+    async acceptReview(id: string): Promise<void> {
+      await this.setMark(id, 'unmarked')
+    },
+
+    // 接受全部待确认。
+    async acceptAllReviews(): Promise<void> {
+      await this.ensureSaved()
+      const ids = this.chapters.filter((c) => c.mark_status === 'review').map((c) => c.id)
+      for (const id of ids) await this.setMark(id, 'unmarked')
     },
 
     async cycleMark(id: string): Promise<void> {

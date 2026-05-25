@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { flushPromises } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 
 // 隔离 axios / element-plus 副作用：store 经 api 层间接依赖 http。
@@ -436,5 +437,37 @@ describe('内容提升为章节', () => {
     s.promoteContentToChapter('c1')
 
     expect(s.chapterMap.get('c1')?.content_type).toBe('content')
+  })
+})
+
+describe('待确认 triage (P2b)', () => {
+  it('acceptReview 清 review 并持久化', async () => {
+    const s = seed()
+    s.chapters = [{ ...chap('a', null, 0), mark_status: 'review' }]
+    await s.acceptReview('a')
+    expect(s.chapterMap.get('a')?.mark_status).toBe('unmarked')
+    expect(markSpy).toHaveBeenCalledWith('a', 'unmarked')
+  })
+
+  it('acceptAllReviews 清全部 review', async () => {
+    const s = seed()
+    s.chapters = [
+      { ...chap('a', null, 0), mark_status: 'review' },
+      { ...chap('b', null, 1), mark_status: 'review' },
+      { ...chap('c', null, 2), mark_status: 'unmarked' },
+    ]
+    await s.acceptAllReviews()
+    expect(s.chapters.every((c) => c.mark_status === 'unmarked')).toBe(true)
+    expect(markSpy).toHaveBeenCalledTimes(2)
+  })
+
+  it('toggleContentType 在 review 节点上自动清 review', async () => {
+    const s = seed()
+    s.chapters = [{ ...chap('a', null, 0), mark_status: 'review' }]
+    s.toggleContentType('a')
+    await flushPromises()
+    expect(s.chapterMap.get('a')?.content_type).toBe('content')
+    expect(s.chapterMap.get('a')?.mark_status).toBe('unmarked')
+    expect(markSpy).toHaveBeenCalledWith('a', 'unmarked')
   })
 })
