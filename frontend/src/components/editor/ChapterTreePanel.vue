@@ -341,33 +341,14 @@ async function applyBatch(status: 'step' | 'content'): Promise<void> {
   ElMessage.success(`已标记 ${ids.length} 项${inplace ? `（${inplace} 项就地转换）` : ''}`)
   markSel.value = new Set()
 }
+// 「清除标记」：janitor 用途。
+// 新模型下章节在此 UI 永远不会被打上 step/content 标，但旧数据迁移、直接调 API、
+// 或将来 Word 解析策略调整时仍可能产生遗留的 chapter mark_status。本函数清空它们，
+// 同时清空 markSel 让用户回到干净状态。
 async function clearMarks(): Promise<void> {
   await store.ensureSaved()
   for (const n of store.markedNodes) await store.setMark(n.id, 'unmarked')
   markSel.value = new Set()
-}
-async function applyMarks(): Promise<void> {
-  const marked = store.markedNodes
-  if (marked.length === 0) {
-    ElMessage.warning('没有需要应用的标记')
-    return
-  }
-  const chToStep = marked.filter((m) => m.mark_status === 'step').length
-  try {
-    await ElMessageBox.confirm(
-      `将转换 ${chToStep} 个章节为步骤。该操作原子执行且不可撤销，是否继续？`,
-      '应用标记',
-      { type: 'warning' },
-    )
-  } catch {
-    return
-  }
-  try {
-    await store.applyAllMarks()
-    ElMessage.success('已应用标记')
-  } catch {
-    /* 拦截器已提示 */
-  }
 }
 
 const searchRef = ref<{ focus: () => void } | null>(null)
@@ -435,7 +416,6 @@ defineExpose({ focusSearch })
           标记为内容
         </el-button>
         <el-button size="small" @click="clearMarks">清除标记</el-button>
-        <el-button size="small" type="primary" @click="applyMarks">应用标记</el-button>
       </div>
     </div>
 

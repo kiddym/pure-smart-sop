@@ -426,4 +426,18 @@ describe('ChapterTreePanel · 标记模式级联', () => {
 
     expect(store.selectedId).toBe('s1') // 未被切换到 c1
   })
+
+  it('mark-bar 不渲染「应用标记」/「应用章节标记」按钮（新模型下章节不可被标记）', () => {
+    setActivePinia(createPinia())
+    const store = useProcedureEditorStore()
+    store.procedure = meta()
+    store.chapters = [chapter('c1', '章一', null, 0)]
+    store.markMode = true
+
+    const w = mount(ChapterTreePanel, { global: { plugins: [ElementPlus] }, attachTo: document.body })
+    const labels = w.find('.mark-bar').findAll('button').map((b) => b.text())
+    expect(labels).not.toContain('应用标记')
+    expect(labels).not.toContain('应用章节标记')
+    expect(labels).toEqual(expect.arrayContaining(['标记为步骤', '标记为内容', '清除标记']))
+  })
 })
