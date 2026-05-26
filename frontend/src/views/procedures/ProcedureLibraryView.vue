@@ -1,20 +1,32 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import FolderTreePane from '@/components/library/FolderTreePane.vue'
 import ProcedureTable from '@/components/ProcedureTable.vue'
 import CreateProcedureDialog from '@/components/CreateProcedureDialog.vue'
 import CreateFromWordDialog from '@/components/CreateFromWordDialog.vue'
 import { useProcedureStore } from '@/store/procedures'
 import type { ProcedureMeta, ProcedureStatus } from '@/types/procedure'
+import type { FolderTreeNode } from '@/types/folder'
 
 const router = useRouter()
 const store = useProcedureStore()
 const createVisible = ref(false)
 const wordVisible = ref(false)
 
-const query = reactive<{ search: string; status: string; page: number }>({
+const selectedFolder = ref<FolderTreeNode | null>(null)
+
+interface LibraryQuery {
+  search: string
+  status: ProcedureStatus
+  folder_id: string | undefined
+  page: number
+}
+
+const query = reactive<LibraryQuery>({
   search: '',
-  status: '',
+  status: 'PUBLISHED' as ProcedureStatus,
+  folder_id: undefined,
   page: 1,
 })
 
@@ -23,11 +35,20 @@ async function load(): Promise<void> {
     page: query.page,
     page_size: store.pageSize,
     search: query.search || undefined,
-    status: (query.status as ProcedureStatus) || undefined,
+    status: query.status,
+    folder_id: query.folder_id,
   })
 }
 
 onMounted(load)
+
+function onSelectFolder(node: FolderTreeNode | null): void {
+  selectedFolder.value = node
+  query.folder_id = node?.id
+  query.status = (node?.system ? 'ARCHIVED' : 'PUBLISHED') as ProcedureStatus
+  query.page = 1
+  void load()
+}
 
 function onSearch(): void {
   query.page = 1
@@ -54,61 +75,72 @@ function onImported(id: string): void {
 
 <template>
   <div class="library">
-    <div class="toolbar">
-      <h2 class="title">程序库</h2>
-      <div class="toolbar-actions">
-        <el-dropdown trigger="click" @command="(c: string) => (c === 'word' ? (wordVisible = true) : (createVisible = true))">
-          <el-button type="primary">新建</el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item command="blank">空白程序</el-dropdown-item>
-              <el-dropdown-item command="word">从 Word 导入</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
+    <FolderTreePane @select="onSelectFolder" />
+
+    <div class="list-pane">
+      <div class="toolbar">
+        <h2 class="title">{{ selectedFolder?.name ?? '全库' }}</h2>
+        <div class="toolbar-actions">
+          <el-dropdown
+            v-if="!selectedFolder?.system"
+            data-test="create-btn"
+            trigger="click"
+            @command="(c: string) => (c === 'word' ? (wordVisible = true) : (createVisible = true))"
+          >
+            <el-button type="primary">新建</el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="blank">空白程序</el-dropdown-item>
+                <el-dropdown-item command="word">从 Word 导入</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
       </div>
-    </div>
 
-    <div class="filters">
-      <el-input
-        v-model="query.search"
-        placeholder="搜索编码 / 名称 / 描述"
-        clearable
-        class="search"
-        @keyup.enter="onSearch"
-        @clear="onSearch"
+      <div class="filters">
+        <el-input
+          v-model="query.search"
+          placeholder="搜索编码 / 名称 / 描述（跨全库）"
+          clearable
+          class="search"
+          @keyup.enter="onSearch"
+          @clear="onSearch"
+        />
+        <el-button @click="onSearch">查询</el-button>
+      </div>
+
+      <ProcedureTable :rows="store.rows" :loading="store.loading" @open="open" />
+
+      <el-pagination
+        class="pager"
+        layout="total, prev, pager, next"
+        :total="store.total"
+        :current-page="store.page"
+        :page-size="store.pageSize"
+        @current-change="onPage"
       />
-      <el-select
-        v-model="query.status"
-        placeholder="全部状态"
-        clearable
-        class="status"
-        @change="onSearch"
-      >
-        <el-option label="草稿" value="DRAFT" />
-        <el-option label="已发布" value="PUBLISHED" />
-        <el-option label="已归档" value="ARCHIVED" />
-      </el-select>
-      <el-button @click="onSearch">查询</el-button>
+
+      <CreateProcedureDialog v-model="createVisible" @created="onCreated" />
+      <CreateFromWordDialog v-model="wordVisible" @imported="onImported" />
     </div>
-
-    <ProcedureTable :rows="store.rows" :loading="store.loading" @open="open" />
-
-    <el-pagination
-      class="pager"
-      layout="total, prev, pager, next"
-      :total="store.total"
-      :current-page="store.page"
-      :page-size="store.pageSize"
-      @current-change="onPage"
-    />
-
-    <CreateProcedureDialog v-model="createVisible" @created="onCreated" />
-    <CreateFromWordDialog v-model="wordVisible" @imported="onImported" />
   </div>
 </template>
 
 <style scoped>
+.library {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+}
+.list-pane {
+  flex: 1;
+  overflow: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
 .toolbar {
   display: flex;
   align-items: center;
@@ -119,43 +151,17 @@ function onImported(id: string): void {
   margin: 0;
   font-size: 18px;
 }
-.toolbar-actions {
-  display: flex;
-  gap: 8px;
-}
 .filters {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   margin-bottom: 16px;
 }
 .search {
-  width: 320px;
-}
-.status {
-  width: 160px;
+  flex: 1;
+  max-width: 400px;
 }
 .pager {
   margin-top: 16px;
   justify-content: flex-end;
-}
-.library > * {
-  animation: u-fade-in 0.28s ease both;
-}
-.library > *:nth-child(1) {
-  animation-delay: 0.02s;
-}
-.library > *:nth-child(2) {
-  animation-delay: 0.06s;
-}
-.library > *:nth-child(3) {
-  animation-delay: 0.1s;
-}
-.library > *:nth-child(4) {
-  animation-delay: 0.14s;
-}
-@media (prefers-reduced-motion: reduce) {
-  .library > * {
-    animation: none;
-  }
 }
 </style>
