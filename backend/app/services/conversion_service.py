@@ -309,6 +309,11 @@ def convert_to_chapter(db: Session, step_id: str, meta: RequestMeta) -> Conversi
     st = _get_step(db, step_id)
     proc = _get_proc_editable(db, st.procedure_id)
 
+    # 内容块（kind='content'）语义上是"无标题正文"，没有 heading 可作为章节标题；
+    # UI 上也不暴露此入口（content 与 step 之间的切换走 setStepKind）。直接拒绝。
+    if st.kind != "step":
+        raise bad_request("CONTENT_BLOCK_NOT_CONVERTIBLE", "内容块不能转换为章节")
+
     # 父级（原 step.chapter）移除该 step 后若仍有其他 step → 互斥冲突（Q29）
     if _other_step_count(db, proc.id, st.chapter_id, st.id) > 0:
         raise bad_request("SIBLING_TYPE_CONFLICT", "同级仍有步骤，转换会违反互斥规则")

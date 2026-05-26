@@ -139,6 +139,18 @@ def test_convert_step_to_chapter_sibling_conflict(db: Session, factory: Factory)
     assert exc.value.detail["code"] == "SIBLING_TYPE_CONFLICT"
 
 
+def test_convert_content_step_to_chapter_rejected(db: Session, factory: Factory) -> None:
+    """content 块语义上是"无标题正文"，不应能被提升为章节（无 heading）。"""
+    proc = _proc(factory)
+    parent = factory.chapter(proc.id, title="父")
+    content_step = factory.step(
+        proc.id, chapter_id=parent.id, kind="content", title="", content="<p>说明</p>"
+    )
+    with pytest.raises(HTTPException) as exc:
+        conversion_service.convert_to_chapter(db, content_step.id, META)
+    assert exc.value.detail["code"] == "CONTENT_BLOCK_NOT_CONVERTIBLE"
+
+
 def test_convert_step_to_chapter_depth_exceeded(db: Session, factory: Factory) -> None:
     proc = _proc(factory)
     l1 = factory.chapter(proc.id, title="1", level=1)
