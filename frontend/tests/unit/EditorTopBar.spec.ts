@@ -41,3 +41,14 @@ describe('EditorTopBar · PDF 预览按钮', () => {
     expect(w.emitted('preview-pdf')).toBeTruthy()
   })
 })
+
+describe('EditorTopBar · 标记模式按钮已移除', () => {
+  beforeEach(() => setActivePinia(createPinia()))
+
+  it('顶栏不再渲染「标记模式」按钮', () => {
+    seedEditable()
+    const w = mount(EditorTopBar, { global: { plugins: [ElementPlus] } })
+    const btn = w.findAll('button').find((b) => b.text().includes('标记模式'))
+    expect(btn).toBeFalsy()
+  })
+})
