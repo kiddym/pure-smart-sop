@@ -10,11 +10,10 @@ import { fetchProcedureDetail, saveProcedure, applyMarks } from '@/api/procedure
 import {
   convertChapterToStep,
   convertRootToStep,
-  deleteChapter as deleteChapterApi,
   moveChapter as moveChapterApi,
   setChapterMarkStatus,
 } from '@/api/chapters'
-import { convertStepToChapter, deleteStep as deleteStepApi, moveStep as moveStepApi } from '@/api/steps'
+import { convertStepToChapter, moveStep as moveStepApi } from '@/api/steps'
 import {
   computeFallback,
   formatCode,
@@ -684,18 +683,25 @@ export const useProcedureEditorStore = defineStore('procedureEditor', {
       return ids
     },
 
-    // 删除节点：临时节点纯本地（可撤销）；已存节点先存待存改动再调 DELETE，然后整树同步。
-    async deleteNode(id: string): Promise<void> {
-      if (isTempId(id)) {
-        this.pushUndo()
-        this.removeNodeLocal(id)
-        return
+    // 删除节点：纯本地，已存节点的真实 id（含子树中的已存后代 / 已存步骤）记入待删除集合，
+    // 由下次 save 经 buildPayload 一并提交。可撤销。
+    deleteNode(id: string): void {
+      this.pushUndo()
+      const ch = this.chapterMap.get(id)
+      if (ch) {
+        const subtreeChapterIds = this.collectSubtree(id)
+        for (const cid of subtreeChapterIds) {
+          if (!isTempId(cid)) this.deletedChapterIds.add(cid)
+        }
+        for (const st of this.steps) {
+          if (st.chapter_id && subtreeChapterIds.has(st.chapter_id) && !isTempId(st.id)) {
+            this.deletedStepIds.add(st.id)
+          }
+        }
+      } else if (this.stepMap.has(id)) {
+        if (!isTempId(id)) this.deletedStepIds.add(id)
       }
-      const map = await this.ensureSaved()
-      const real = map[id] ?? id
-      if (this.chapterMap.has(real)) await deleteChapterApi(real)
-      else await deleteStepApi(real)
-      await this.reload()
+      this.removeNodeLocal(id)
     },
 
     // ---- 立即后端转换 / 移动 / 标记（不可撤销，先存待存改动） ---- //

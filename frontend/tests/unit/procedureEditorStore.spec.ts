@@ -5,16 +5,21 @@ import { createPinia, setActivePinia } from 'pinia'
 // 隔离 axios / element-plus 副作用：store 经 api 层间接依赖 http。
 vi.mock('@/api/http', () => ({ http: { get: vi.fn(), post: vi.fn(), put: vi.fn(), delete: vi.fn() } }))
 
-const { markSpy, saveSpy } = vi.hoisted(() => ({ markSpy: vi.fn(), saveSpy: vi.fn() }))
+const { markSpy, saveSpy, deleteChapterSpy, deleteStepSpy } = vi.hoisted(() => ({
+  markSpy: vi.fn(),
+  saveSpy: vi.fn(),
+  deleteChapterSpy: vi.fn(),
+  deleteStepSpy: vi.fn(),
+}))
 vi.mock('@/api/chapters', () => ({
   setChapterMarkStatus: markSpy,
   createChapter: vi.fn(),
-  deleteChapter: vi.fn(),
+  deleteChapter: deleteChapterSpy,
   moveChapter: vi.fn(),
   convertChapterToStep: vi.fn(),
   convertRootToStep: vi.fn(),
 }))
-vi.mock('@/api/steps', () => ({ deleteStep: vi.fn(), moveStep: vi.fn(), convertStepToChapter: vi.fn() }))
+vi.mock('@/api/steps', () => ({ deleteStep: deleteStepSpy, moveStep: vi.fn(), convertStepToChapter: vi.fn() }))
 vi.mock('@/api/procedures', () => ({
   fetchProcedureDetail: vi.fn(),
   saveProcedure: saveSpy,
@@ -108,6 +113,8 @@ beforeEach(() => {
   setActivePinia(createPinia())
   markSpy.mockReset().mockResolvedValue({})
   saveSpy.mockReset()
+  deleteChapterSpy.mockReset().mockResolvedValue({})
+  deleteStepSpy.mockReset().mockResolvedValue({})
 })
 
 describe('新增节点', () => {
@@ -635,5 +642,60 @@ describe('exportDraft / importDraft 含删除集合', () => {
     // importDraft 历来清 undo 栈：保持原有契约
     expect(s2.undoStack).toEqual([])
     expect(s2.redoStack).toEqual([])
+  })
+})
+
+describe('deleteNode 本地化（Tier 1）', () => {
+  it('删除已存章节：记录 id 到 deletedChapterIds，不发请求', async () => {
+    const s = seed()
+    await s.deleteNode('a')
+    expect([...s.deletedChapterIds]).toEqual(['a'])
+    expect(deleteChapterSpy).not.toHaveBeenCalled()
+    expect(s.chapterMap.has('a')).toBe(false)
+  })
+
+  it('删除已存章节可撤销：undo 还原章节和删除集合', async () => {
+    const s = seed()
+    await s.deleteNode('a')
+    s.undo()
+    expect(s.chapterMap.has('a')).toBe(true)
+    expect(s.deletedChapterIds.size).toBe(0)
+  })
+
+  it('删除临时章节：不进入 deletedChapterIds（后端无此节点）', async () => {
+    const s = seed()
+    const tmp = s.addChapterNode('a')
+    await s.deleteNode(tmp)
+    expect(s.deletedChapterIds.size).toBe(0)
+    expect(s.chapterMap.has(tmp)).toBe(false)
+    expect(deleteChapterSpy).not.toHaveBeenCalled()
+  })
+
+  it('删除子树：所有已存后代章节 + 已存子步骤都进入对应删除集合，临时子节点忽略', async () => {
+    const s = seed()
+    // 已存父 a；已存子 a1；a1 下临时孙；a 下已存步骤 stepX；a1 下已存步骤 stepT_real；a1 下临时步骤
+    s.chapters = [chap('a', null, 0), chap('a1', 'a', 0)]
+    const tmpGrandchild = s.addChapterNode('a1')   // 临时
+    s.steps = [stp('stepX', 'a', 0), stp('stepT_real', 'a1', 0)]
+    const tmpStep = s.addStepNode('a1')             // 临时
+    await s.deleteNode('a')
+    expect([...s.deletedChapterIds].sort()).toEqual(['a', 'a1'])
+    expect([...s.deletedStepIds].sort()).toEqual(['stepT_real', 'stepX'])
+    // 临时节点不进入删除集合
+    expect(s.deletedChapterIds.has(tmpGrandchild)).toBe(false)
+    expect(s.deletedStepIds.has(tmpStep)).toBe(false)
+    // 本地完全移除
+    expect(s.chapterMap.has('a')).toBe(false)
+    expect(s.chapterMap.has('a1')).toBe(false)
+    expect(s.stepMap.has('stepX')).toBe(false)
+  })
+
+  it('删除已存步骤：记录 id 到 deletedStepIds，不发请求', async () => {
+    const s = seed()
+    s.steps = [stp('s1', 'a', 0)]
+    await s.deleteNode('s1')
+    expect([...s.deletedStepIds]).toEqual(['s1'])
+    expect(deleteStepSpy).not.toHaveBeenCalled()
+    expect(s.stepMap.has('s1')).toBe(false)
   })
 })
