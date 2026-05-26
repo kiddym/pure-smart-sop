@@ -376,4 +376,32 @@ describe('ChapterTreePanel · 标记模式级联', () => {
 
     expect(setStepKindSpy).not.toHaveBeenCalled()
   })
+
+  it('章节 + shift → 走 range 而非级联（不选第二个章节的后代）', async () => {
+    setActivePinia(createPinia())
+    const store = useProcedureEditorStore()
+    store.procedure = meta()
+    store.chapters = [chapter('c1', '章一', null, 0), chapter('c2', '章二', null, 1)]
+    store.steps = [
+      { id: 's2a', chapter_id: 'c2', kind: 'step', title: 'a', content: '', input_schema: { type: 'COMMON' }, attachment_marks: [], skip_numbering: false, sort_order: 0 },
+    ]
+    store.expanded = { c1: true, c2: true }
+    store.markMode = true
+
+    const w = mount(ChapterTreePanel, { global: { plugins: [ElementPlus] }, attachTo: document.body })
+    const rows = w.findAllComponents({ name: 'TreeRow' })
+
+    // 单击 c1 建立锚点（非 shift → 级联，但 c1 没有后代，所以只选自身）
+    rows.find((r) => r.props('row').id === 'c1')!.vm.$emit('check', false)
+    await w.vm.$nextTick()
+
+    // shift 点 c2 → 走 buildSelection 的 range 路径（同父 null），不级联到 c2 的后代 s2a
+    rows.find((r) => r.props('row').id === 'c2')!.vm.$emit('check', true)
+    await w.vm.$nextTick()
+
+    expect(rows.find((r) => r.props('row').id === 'c1')!.props('selectedForMark')).toBe(true)
+    expect(rows.find((r) => r.props('row').id === 'c2')!.props('selectedForMark')).toBe(true)
+    // 关键断言：c2 的 step 后代不在选择中（否则就是 cascade 行为了）
+    expect(rows.find((r) => r.props('row').id === 's2a')!.props('selectedForMark')).toBe(false)
+  })
 })

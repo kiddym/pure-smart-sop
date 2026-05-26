@@ -223,7 +223,7 @@ const lastChecked = ref<string | null>(null)
 
 // ---- 标记模式：后代映射（DFS 全子树，忽略折叠/过滤） ---- //
 // 每个 chapter id → 其全部后代 id（含 chapter / content / step）。
-// rebuild 触发：chapters / steps 形状变。
+// rebuild 触发：chapters / steps 任意属性变（结构 + 非结构，Pinia 响应式追踪）。
 const descendantsByChapter = computed<Map<string, string[]>>(() => {
   const childChapters = new Map<string | null, string[]>()
   for (const c of store.chapters) {

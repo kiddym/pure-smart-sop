@@ -1,5 +1,5 @@
 // 标记模式批量选择的纯逻辑（从 ChapterTreePanel 抽出，便于单测）。
-// 步骤不参与标记；shift 区间仅选与锚点同父的章节/正文，跨父忽略；单次最多 100 项。
+// shift 区间选与锚点同父的章节/正文/步骤，跨父忽略；单次最多 100 项。
 import type { FlatRow } from '@/types/node'
 
 export const MAX_BATCH_MARK = 100
