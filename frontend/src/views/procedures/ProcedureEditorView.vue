@@ -64,9 +64,9 @@ const DETAIL_CFG: PanelConfig = { defaultWidth: 360, min: 300, max: 700 }
 const kind = computed<'chapter' | 'content' | 'step' | null>(() => {
   const sid = store.selectedId
   if (!sid) return null
-  const c = store.chapterMap.get(sid)
-  if (c) return c.content_type === 'content' ? 'content' : 'chapter'
-  return store.stepMap.has(sid) ? 'step' : null
+  if (store.chapterMap.has(sid)) return 'chapter'
+  const s = store.stepMap.get(sid)
+  return s ? (s.kind === 'content' ? 'content' : 'step') : null
 })
 
 function errCode(e: unknown): string | undefined {
