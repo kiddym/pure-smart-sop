@@ -420,3 +420,70 @@ def convert_to_content(db: Session, chapter_id: str, meta: RequestMeta) -> Conve
     return ConversionResult(created=[step.id], deleted=[ch.id])
 
 
+# --------------------------------------------------------------------------- #
+# 拆 heading + content（C）
+# --------------------------------------------------------------------------- #
+def split_title_content(
+    db: Session, chapter_id: str, cursor_offset: int, meta: RequestMeta
+) -> ConversionResult:
+    """在 chapter.title 的 cursor_offset 位置拆为标题 + 内容。
+
+    title 截短到 [:cursor]，[cursor:] 部分作为新 content step 插入 chapter 下首位
+    （现有 step 全部 sort_order +1 让出 0 位）。
+
+    校验：
+    - 0 < cursor_offset < len(title)（INVALID_CURSOR）
+    - title[cursor:] strip 非空（EMPTY_CONTENT）
+    """
+    ch = _get_chapter(db, chapter_id)
+    proc = _get_proc_editable(db, ch.procedure_id)
+
+    title = ch.title or ""
+    if cursor_offset <= 0 or cursor_offset >= len(title):
+        raise bad_request("INVALID_CURSOR", "拆分点必须严格在标题中间")
+    new_content_text = title[cursor_offset:]
+    if not new_content_text.strip():
+        raise bad_request("EMPTY_CONTENT", "拆出的内容为空")
+
+    new_title = title[:cursor_offset]
+
+    # 已有 step children 全部 sort_order +1（让出 0 位）
+    existing_steps = (
+        db.execute(
+            select(ProcedureStep).where(
+                ProcedureStep.chapter_id == ch.id, ProcedureStep.is_active.is_(True)
+            )
+        )
+        .scalars()
+        .all()
+    )
+    for s in existing_steps:
+        s.sort_order += 1
+
+    ch.title = new_title
+    new_step = ProcedureStep(
+        procedure_id=proc.id,
+        chapter_id=ch.id,
+        kind="content",
+        title="",
+        content=new_content_text,
+        input_schema={},
+        sort_order=0,
+    )
+    db.add(new_step)
+    db.flush()
+    numbering_service.recompute(db, proc.id)
+    optimistic_lock.bump(proc)
+    db.flush()
+    _audit(
+        db,
+        proc,
+        target_id=new_step.id,
+        action="split-title-content",
+        meta=meta,
+        old_value={"chapter_id": ch.id, "original_title": title, "cursor": cursor_offset},
+        new_value={"new_title": new_title, "new_content": new_content_text},
+    )
+    return ConversionResult(created=[new_step.id], deleted=[])
+
+
