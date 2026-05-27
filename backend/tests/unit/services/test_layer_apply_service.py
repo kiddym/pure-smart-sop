@@ -265,50 +265,42 @@ def test_to_content_empty_title_produces_empty_body(db: Session, factory: Factor
     assert children[0].content == ""  # 不是 "<p></p>"
 
 
-def test_router_smoke(engine) -> None:
-    """通过 FastAPI TestClient 端到端跑一次 happy path,验证 If-Match + JSON body。"""
-    from contextlib import contextmanager
-    from unittest.mock import patch
+def test_router_smoke(engine, factory: Factory) -> None:
+    """通过 FastAPI TestClient 端到端跑一次 happy path,验证 If-Match + JSON body + 路由路径。
 
+    注:不使用 conftest 的 `client` fixture,因为 `with TestClient(app)` 会触发 lifespan,
+    后者直接调 `SessionLocal()` 连真实 DB(本地无 MySQL → MySQL 连接拒绝)。
+    我们绕过 lifespan,直接覆盖 `get_db` dep。
+    """
     from fastapi.testclient import TestClient
     from sqlalchemy.orm import Session as _Session
 
-    from app.db import get_db
+    from app.deps import get_db
     from app.main import app
 
-    def _override() -> Generator[_Session, None, None]:
-        with _Session(engine, expire_on_commit=False) as s:
-            yield s
+    leaf = factory.folder(name="叶子-router", prefix="QC", full_path="叶子-router")
+    factory.sequence(leaf.id)
+    proc = factory.procedure(leaf.id, code="QC-router")
+    ch = factory.chapter(proc.id, title="A", level=1)
+    s = factory.step(proc.id, chapter_id=ch.id, kind="content", title="X", sort_order=0)
+    initial_revision = proc.revision
 
-    @contextmanager
-    def _fake_session_local():
-        with _Session(engine, expire_on_commit=False) as s:
-            yield s
+    def _override():
+        with _Session(engine, expire_on_commit=False) as session:
+            yield session
 
     app.dependency_overrides[get_db] = _override
     try:
-        with _Session(engine, expire_on_commit=False) as setup_db:
-            fac = Factory(setup_db)
-            leaf = fac.folder(name="叶子-router", prefix="QC", full_path="叶子-router")
-            fac.sequence(leaf.id)
-            proc = fac.procedure(leaf.id, code="QC-router")
-            ch = fac.chapter(proc.id, title="A", level=1)
-            s = fac.step(proc.id, chapter_id=ch.id, kind="content", title="X", sort_order=0)
-            initial_revision = proc.revision
-            step_id = s.id
-            proc_id = proc.id
-            setup_db.commit()
-
-        with patch("app.main.SessionLocal", _fake_session_local):
-            with TestClient(app) as tc:
-                resp = tc.post(
-                    f"/api/v1/procedures/{proc_id}/apply-layer-roles",
-                    json={"roles": {step_id: "chapter_2"}},
-                    headers={"If-Match": str(initial_revision)},
-                )
-        assert resp.status_code == 200, resp.text
-        body = resp.json()
-        assert step_id in body["chapter_map"]
-        assert body["revision"] > initial_revision
+        tc = TestClient(app)  # no `with` — skip lifespan
+        resp = tc.post(
+            f"/api/v1/procedures/{proc.id}/apply-layer-roles",
+            json={"roles": {s.id: "chapter_2"}},
+            headers={"If-Match": str(initial_revision)},
+        )
     finally:
-        app.dependency_overrides.clear()
+        app.dependency_overrides.pop(get_db, None)
+
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert s.id in body["chapter_map"]
+    assert body["revision"] > initial_revision
