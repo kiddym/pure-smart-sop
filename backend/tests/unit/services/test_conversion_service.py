@@ -160,3 +160,83 @@ def test_convert_step_to_chapter_depth_exceeded(db: Session, factory: Factory) -
     with pytest.raises(HTTPException) as exc:
         conversion_service.convert_to_chapter(db, step.id, META)
     assert exc.value.detail["code"] == "CHAPTER_DEPTH_EXCEEDED"
+
+
+# --------------------------------------------------------------------------- #
+# chapter → content（融合式标题降级）
+# --------------------------------------------------------------------------- #
+def test_convert_to_content_happy(db: Session, factory: Factory) -> None:
+    """无 children 的唯一 chapter → 转换成 content step；chapter 软删；title 搬运到 step.content。"""
+    proc = _proc(factory)
+    ch = factory.chapter(proc.id, title="3.1质量部是记录的归口管理部门，负责...")
+
+    result = conversion_service.convert_to_content(db, ch.id, META)
+    db.commit()
+
+    db.refresh(ch)
+    assert ch.is_active is False
+    assert result.deleted == [ch.id]
+    assert len(result.created) == 1
+    new_step = step_service.get_step(db, result.created[0])
+    assert new_step.kind == "content"
+    assert new_step.title == ""
+    assert new_step.content == "3.1质量部是记录的归口管理部门，负责..."
+    assert new_step.chapter_id == ch.parent_id  # None for root
+
+
+def test_convert_to_content_has_child_chapter(db: Session, factory: Factory) -> None:
+    """有子 chapter → CHAPTER_HAS_CHILDREN。"""
+    proc = _proc(factory)
+    parent = factory.chapter(proc.id, title="父章节")
+    factory.chapter(proc.id, parent_id=parent.id, title="子章节")
+
+    with pytest.raises(HTTPException) as exc:
+        conversion_service.convert_to_content(db, parent.id, META)
+    assert exc.value.detail["code"] == "CHAPTER_HAS_CHILDREN"
+
+
+def test_convert_to_content_has_child_step(db: Session, factory: Factory) -> None:
+    """有子 step → CHAPTER_HAS_CHILDREN。"""
+    proc = _proc(factory)
+    ch = factory.chapter(proc.id, title="章节")
+    factory.step(proc.id, chapter_id=ch.id, kind="step", title="子步骤")
+
+    with pytest.raises(HTTPException) as exc:
+        conversion_service.convert_to_content(db, ch.id, META)
+    assert exc.value.detail["code"] == "CHAPTER_HAS_CHILDREN"
+
+
+def test_convert_to_content_sibling_chapter_conflict(db: Session, factory: Factory) -> None:
+    """同级仍有 chapter → SIBLING_TYPE_CONFLICT（Q25 互斥）。"""
+    proc = _proc(factory)
+    ch1 = factory.chapter(proc.id, title="章节A")
+    factory.chapter(proc.id, title="章节B")  # 同级 sibling
+
+    with pytest.raises(HTTPException) as exc:
+        conversion_service.convert_to_content(db, ch1.id, META)
+    assert exc.value.detail["code"] == "SIBLING_TYPE_CONFLICT"
+
+
+def test_convert_to_content_readonly_procedure(db: Session, factory: Factory) -> None:
+    """非 DRAFT 程序 → PROCEDURE_READONLY。"""
+    proc = _proc(factory)
+    proc.status = "RELEASED"
+    db.flush()
+    ch = factory.chapter(proc.id, title="章节")
+
+    with pytest.raises(HTTPException) as exc:
+        conversion_service.convert_to_content(db, ch.id, META)
+    assert exc.value.detail["code"] == "PROCEDURE_READONLY"
+
+
+def test_convert_to_content_bumps_revision(db: Session, factory: Factory) -> None:
+    """转换后 procedure revision bump + numbering recompute。"""
+    proc = _proc(factory)
+    ch = factory.chapter(proc.id, title="章节")
+    initial_revision = proc.revision
+
+    conversion_service.convert_to_content(db, ch.id, META)
+    db.commit()
+    db.refresh(proc)
+
+    assert proc.revision > initial_revision

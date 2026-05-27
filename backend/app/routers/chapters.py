@@ -146,3 +146,12 @@ def convert_root_to_step(
     return result
 
 
+@router.post("/{chapter_id}/convert-to-content", response_model=ConversionResult)
+def convert_to_content(
+    chapter_id: str, db: Session = Depends(get_db), meta: RequestMeta = Depends(get_request_meta)
+) -> ConversionResult:
+    result = conversion_service.convert_to_content(db, chapter_id, meta)
+    db.commit()
+    return result
+
+
