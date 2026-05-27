@@ -102,6 +102,7 @@ def load_gt_style(docx_path: Path) -> GroundTruth:
         styles_index = _load_styles_index(zf)
         chapters: list[GtChapter] = []
         body_parts: list[str] = []
+        first_chapter_seen = False  # body_text 只收 first chapter 之后的（对齐 parser body_start）
 
         for idx, p, text in _iter_body_paragraphs(zf):
             sid = _pstyle_id(p)
@@ -109,6 +110,7 @@ def load_gt_style(docx_path: Path) -> GroundTruth:
                 sid, styles_index, synonyms=syn, style_overrides={}
             )
             if level is not None and text:
+                first_chapter_seen = True
                 chapters.append(
                     GtChapter(
                         title=normalize_title(text),
@@ -116,7 +118,7 @@ def load_gt_style(docx_path: Path) -> GroundTruth:
                         source_idx=idx,
                     )
                 )
-            elif text:
+            elif text and first_chapter_seen:
                 body_parts.append(text)
 
     if not chapters:
@@ -155,13 +157,14 @@ def load_gt_manual(docx_path: Path) -> GroundTruth:
         )
         for i, c in enumerate(data["chapters"])
     )
-    # body_text 用 lxml 拼，但去掉与 chapter title 同行的段
+    # body_text 用 lxml 拼，但去掉与 chapter title 同行的段；同时只收 first chapter 之后的（对齐 parser body_start）
     with zipfile.ZipFile(docx_path) as zf:
         title_idxs = {c.source_idx for c in chapters}
+        first_chapter_idx = min(title_idxs) if title_idxs else 0
         parts = [
             text
             for idx, _p, text in _iter_body_paragraphs(zf)
-            if text and idx not in title_idxs
+            if text and idx not in title_idxs and idx >= first_chapter_idx
         ]
     return GroundTruth(
         docx_path=docx_path,
@@ -187,6 +190,7 @@ def extract_qms_gt(docx_path: Path, *, require_bold_for_l1: bool = True) -> Grou
     """
     chapters: list[GtChapter] = []
     body_parts: list[str] = []
+    first_chapter_seen = False  # 对齐 parser body_start
     with zipfile.ZipFile(docx_path) as zf:
         for idx, p, text in _iter_body_paragraphs(zf):
             if not text:
@@ -201,6 +205,7 @@ def extract_qms_gt(docx_path: Path, *, require_bold_for_l1: bool = True) -> Grou
                 if bold >= 0.5:
                     level = 1
             if level is not None:
+                first_chapter_seen = True
                 chapters.append(
                     GtChapter(
                         title=normalize_title(text),
@@ -208,7 +213,7 @@ def extract_qms_gt(docx_path: Path, *, require_bold_for_l1: bool = True) -> Grou
                         source_idx=idx,
                     )
                 )
-            else:
+            elif first_chapter_seen:
                 body_parts.append(text)
     expected_empty = len(chapters) == 0 and _DIRECTORY_HINT in docx_path.name
     return GroundTruth(
