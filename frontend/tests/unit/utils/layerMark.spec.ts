@@ -4,7 +4,6 @@ import {
   computeLayerUpdates,
   defaultLayerRole,
   validateLayerQ25,
-  type LayerConflict,
   type LayerRole,
   type LayerRow,
 } from '@/utils/layerMark'
