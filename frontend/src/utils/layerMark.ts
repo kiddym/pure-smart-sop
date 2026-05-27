@@ -116,6 +116,44 @@ export function computeLayerUpdates(
   return out
 }
 
+export interface LayerConflict {
+  parent_id: string | null
+  chapterChildren: string[]
+  leafChildren: string[]
+}
+
+/** Dry-run §Q25 同级互斥校验：按 updates 推出每行的 target kind，按 parent_id 分组，flag 混合组。 */
+export function validateLayerQ25(
+  rows: LayerRow[],
+  updates: Map<string, LayerUpdate>,
+): LayerConflict[] {
+  // target kind: chapter | leaf
+  const targetKind = new Map<string, 'chapter' | 'leaf'>()
+  for (const row of rows) {
+    const u = updates.get(row.id)
+    if (!u) continue
+    if (u.kind === 'reorder' || u.kind === 'to-chapter') targetKind.set(row.id, 'chapter')
+    else targetKind.set(row.id, 'leaf') // to-content / leaf-reparent
+  }
+  // 按 parent_id 分组
+  const groups = new Map<string | null, { chapters: string[]; leaves: string[] }>()
+  for (const [id, u] of updates) {
+    const k = targetKind.get(id)
+    if (!k) continue
+    const g = groups.get(u.parent_id) ?? { chapters: [], leaves: [] }
+    if (k === 'chapter') g.chapters.push(id)
+    else g.leaves.push(id)
+    groups.set(u.parent_id, g)
+  }
+  const conflicts: LayerConflict[] = []
+  for (const [parent_id, g] of groups) {
+    if (g.chapters.length > 0 && g.leaves.length > 0) {
+      conflicts.push({ parent_id, chapterChildren: g.chapters, leafChildren: g.leaves })
+    }
+  }
+  return conflicts
+}
+
 /** 「所见即所选」缩进：章节按其落定 level；叶子 keep 缩在当前 heading 下；叶子提升为章节按新 level。 */
 export function computeLayerIndents(
   rows: LayerRow[],

@@ -3,6 +3,8 @@ import {
   computeLayerIndents,
   computeLayerUpdates,
   defaultLayerRole,
+  validateLayerQ25,
+  type LayerConflict,
   type LayerRole,
   type LayerRow,
 } from '@/utils/layerMark'
@@ -123,5 +125,35 @@ describe('computeLayerIndents with leaves', () => {
     expect(m.get('s1')).toBe(1) // 挂在 L1 下
     expect(m.get('c1')).toBe(1) // 自己被提升为 L2 → indent=1
     expect(m.get('s2')).toBe(2) // 挂在新 L2 下
+  })
+})
+
+describe('validateLayerQ25', () => {
+  it('提升中间叶子导致父级 chapter/leaf 混合 → 冲突', () => {
+    const rows: LayerRow[] = [
+      { id: 'A', kind: 'chapter', level: 1, hasLeafChildren: true },
+      { id: 's1', kind: 'step', level: 0, hasLeafChildren: false },
+      { id: 'c1', kind: 'content', level: 0, hasLeafChildren: false },
+      { id: 's2', kind: 'step', level: 0, hasLeafChildren: false },
+    ]
+    const updates = computeLayerUpdates(rows, new Map([
+      ['A', 'chapter_1'],
+      ['c1', 'chapter_2'],
+    ]))
+    const conflicts = validateLayerQ25(rows, updates)
+    expect(conflicts).toHaveLength(1)
+    expect(conflicts[0].parent_id).toBe('A')
+    expect(conflicts[0].chapterChildren).toEqual(['c1'])
+    expect(conflicts[0].leafChildren).toEqual(['s1'])
+  })
+
+  it('全 leaf 兄弟（无章节兄弟）无冲突', () => {
+    const rows: LayerRow[] = [
+      { id: 'A', kind: 'chapter', level: 1, hasLeafChildren: true },
+      { id: 's1', kind: 'step', level: 0, hasLeafChildren: false },
+      { id: 's2', kind: 'step', level: 0, hasLeafChildren: false },
+    ]
+    const updates = computeLayerUpdates(rows, new Map([['A', 'chapter_1']]))
+    expect(validateLayerQ25(rows, updates)).toEqual([])
   })
 })
