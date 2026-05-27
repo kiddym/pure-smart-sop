@@ -9,7 +9,7 @@ const roleMap = ref<Map<string, LayerRole>>(new Map())
 
 function seed(): void {
   const m = new Map<string, LayerRole>()
-  for (const r of store.layerRows) m.set(r.id, defaultLayerRole(r.level))
+  for (const r of store.layerRows) m.set(r.id, defaultLayerRole(r))
   roleMap.value = m
 }
 watch(() => store.layerMode, (on) => { if (on) seed() }, { immediate: true })
@@ -23,7 +23,7 @@ const rows = computed<RenderRow[]>(() =>
     return {
       id: r.id,
       label: ch?.title.trim() || '（无标题）',
-      role: roleMap.value.get(r.id) ?? defaultLayerRole(r.level),
+      role: roleMap.value.get(r.id) ?? defaultLayerRole(r),
       indent: indents.value.get(r.id) ?? 0,
       disableContent: r.hasLeafChildren,
     }

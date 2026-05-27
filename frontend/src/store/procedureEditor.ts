@@ -245,6 +245,7 @@ export const useProcedureEditorStore = defineStore('procedureEditor', {
         for (const c of [...(byParent.get(parent) ?? [])].sort(cmp)) {
           rows.push({
             id: c.id,
+            kind: 'chapter',
             level: levels.get(c.id) ?? 1,
             hasLeafChildren: hasStep.has(c.id),
           })
