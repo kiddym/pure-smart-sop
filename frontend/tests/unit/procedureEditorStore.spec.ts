@@ -453,11 +453,27 @@ describe('层级标定 (P2c)', () => {
     s.chapters = [chap('a', null, 0), chap('b', 'a', 0)]
     s.steps = [stp('s1', 'a', 0)]
     const rows = s.layerRows
-    expect(rows.map((r) => r.id)).toEqual(['a', 'b'])
+    // 新行为：章节 a、子章节 b、再是 a 下的叶子 s1（子章节先于叶子）
+    expect(rows.map((r) => r.id)).toEqual(['a', 'b', 's1'])
     expect(rows.find((r) => r.id === 'a')?.hasLeafChildren).toBe(true)
     expect(rows.find((r) => r.id === 'b')?.hasLeafChildren).toBe(false)
     // 章节行无 content_type 字段。
     expect(rows[0]).not.toHaveProperty('content_type')
+  })
+
+  it('layerRows (overlay)：输出 chapter + step + content 按文档序', () => {
+    const s = seed()
+    s.chapters = [
+      chap('A', null, 0),
+      chap('B', 'A', 0),
+    ]
+    s.steps = [
+      { id: 's1', chapter_id: 'B', kind: 'step', title: 's1', content: '', input_schema: { type: 'COMMON' }, attachment_marks: [], skip_numbering: false, sort_order: 0 },
+      { id: 'c1', chapter_id: 'B', kind: 'content', title: '', content: '<p>x</p>', input_schema: { type: 'COMMON' }, attachment_marks: [], skip_numbering: false, sort_order: 1 },
+    ]
+    expect(s.layerRows.map((r) => r.id)).toEqual(['A', 'B', 's1', 'c1'])
+    expect(s.layerRows.map((r) => r.kind)).toEqual(['chapter', 'chapter', 'step', 'content'])
+    expect(s.layerRows[1].hasLeafChildren).toBe(true)
   })
 
   it('applyLayerRoles 把 b 提为一级章节并置脏、退出模式', () => {

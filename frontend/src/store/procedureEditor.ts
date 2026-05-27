@@ -228,21 +228,27 @@ export const useProcedureEditorStore = defineStore('procedureEditor', {
       walk(null, 1)
       return levels
     },
-    // 文档序章节/正文行（层级标定面板数据源）。
+    // 文档序章节/正文行（层级标定面板数据源）。含章节与叶子（step/content）。
     layerRows(): LayerRow[] {
       const levels = this.levelMap
       const hasStep = new Set(this.steps.map((s) => s.chapter_id))
-      const byParent = new Map<string | null, EditorChapter[]>()
+      const chByParent = new Map<string | null, EditorChapter[]>()
       for (const c of this.chapters) {
-        const g = byParent.get(c.parent_id) ?? []
+        const g = chByParent.get(c.parent_id) ?? []
         g.push(c)
-        byParent.set(c.parent_id, g)
+        chByParent.set(c.parent_id, g)
       }
-      const cmp = (a: EditorChapter, b: EditorChapter): number =>
+      const stByChapter = new Map<string | null, EditorStep[]>()
+      for (const s of this.steps) {
+        const g = stByChapter.get(s.chapter_id) ?? []
+        g.push(s)
+        stByChapter.set(s.chapter_id, g)
+      }
+      const cmp = (a: { sort_order: number; id: string }, b: { sort_order: number; id: string }): number =>
         a.sort_order !== b.sort_order ? a.sort_order - b.sort_order : a.id < b.id ? -1 : 1
       const rows: LayerRow[] = []
       const walk = (parent: string | null): void => {
-        for (const c of [...(byParent.get(parent) ?? [])].sort(cmp)) {
+        for (const c of [...(chByParent.get(parent) ?? [])].sort(cmp)) {
           rows.push({
             id: c.id,
             kind: 'chapter',
@@ -250,6 +256,14 @@ export const useProcedureEditorStore = defineStore('procedureEditor', {
             hasLeafChildren: hasStep.has(c.id),
           })
           walk(c.id)
+        }
+        for (const s of [...(stByChapter.get(parent) ?? [])].sort(cmp)) {
+          rows.push({
+            id: s.id,
+            kind: s.kind === 'content' ? 'content' : 'step',
+            level: 0,
+            hasLeafChildren: false,
+          })
         }
       }
       walk(null)
@@ -277,11 +291,9 @@ export const useProcedureEditorStore = defineStore('procedureEditor', {
     // 全部「章节/内容」按文档序（与折叠无关，含 title），供缺标题定位/导航——
     // 不能用 flatRows，它会剔除折叠分支里的节点（漏掉藏在折叠章节里的缺标题章节）。
     chapterDocRows(): { id: string; kind: 'chapter' | 'content'; title: string }[] {
-      return this.layerRows.map((r) => ({
-        id: r.id,
-        kind: 'chapter' as const,
-        title: this.chapterMap.get(r.id)?.title ?? '',
-      }))
+      return this.layerRows
+        .filter((r) => r.kind === 'chapter')
+        .map((r) => ({ id: r.id, kind: 'chapter' as const, title: this.chapterMap.get(r.id)?.title ?? '' }))
     },
     selectedChapter(state): EditorChapter | null {
       return state.selectedId ? (this.chapterMap.get(state.selectedId) ?? null) : null
