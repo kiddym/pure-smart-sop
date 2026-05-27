@@ -32,7 +32,7 @@ vi.mock('@/api/procedures', () => ({
 
 import { useProcedureEditorStore } from '@/store/procedureEditor'
 import { nextRowId } from '@/utils/reviewNav'
-import type { EditorChapter, EditorStep } from '@/types/node'
+import type { ChapterTreeNode, EditorChapter, EditorStep, StepOut } from '@/types/node'
 import type { ProcedureMeta } from '@/types/procedure'
 import { convertChapterToContent as convertChapterToContentApi, splitChapterTitleContent as splitChapterTitleContentApi } from '@/api/chapters'
 import { fetchProcedureDetail } from '@/api/procedures'
@@ -207,7 +207,7 @@ describe('setStepKind', () => {
         content: '<p>正文</p>',
         kind: 'step',
         input_schema: { type: 'COMMON' },
-        attachment_marks: [{ token: 't', filename: 'a.pdf', note: '' }],
+        attachment_marks: [{ kind: 't', filename: 'a.pdf', note: '' }],
         skip_numbering: false,
         sort_order: 0,
       },
@@ -842,7 +842,7 @@ describe('buildPayload + save 链路含删除集合', () => {
 })
 
 describe('procedureEditorStore.convertChapterToContent', () => {
-  function detailResponse(overrides: Partial<{ chapters: EditorChapter[]; steps: EditorStep[] }> = {}) {
+  function detailResponse(overrides: Partial<{ chapters: ChapterTreeNode[]; steps: StepOut[] }> = {}) {
     return {
       procedure: meta(),
       chapters: overrides.chapters ?? [],
@@ -906,7 +906,7 @@ describe('procedureEditorStore.splitChapterTitleContent', () => {
     vi.mocked(splitChapterTitleContentApi).mockReset()
   })
 
-  function detailResponse(overrides: Partial<{ chapters: EditorChapter[]; steps: EditorStep[] }> = {}) {
+  function detailResponse(overrides: Partial<{ chapters: ChapterTreeNode[]; steps: StepOut[] }> = {}) {
     return {
       procedure: meta(),
       chapters: overrides.chapters ?? [],
