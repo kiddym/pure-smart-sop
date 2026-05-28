@@ -137,3 +137,20 @@ def test_batch_update_mark_as_step_clears_review(factory, db) -> None:
         db, proc.id, {a.id: {"kind": "step", "heading_level": None, "input_schema": {"type": "COMMON"}}}
     )
     assert a.kind == "step" and a.heading_level is None and a.mark_status == "unmarked"
+
+
+def test_reorder_rewrites_sort_order(factory, db) -> None:
+    proc = _proc(factory)
+    a = factory.node(proc.id, body="<p>a</p>", sort_order=10, heading_level=1)
+    b = factory.node(proc.id, body="<p>b</p>", sort_order=20, heading_level=1)
+    # 把 b 排到 a 前面
+    node_service.reorder(db, proc.id, [b.id, a.id])
+    rows = node_service.get_nodes(db, proc.id)
+    assert [r["id"] for r in rows] == [b.id, a.id]
+
+
+def test_reorder_rejects_unknown_node(factory, db) -> None:
+    proc = _proc(factory)
+    a = factory.node(proc.id, body="<p>a</p>", sort_order=10, heading_level=1)
+    with pytest.raises(HTTPException):
+        node_service.reorder(db, proc.id, [a.id, "ghost-id"])

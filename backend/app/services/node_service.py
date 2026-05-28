@@ -187,3 +187,19 @@ def batch_update(
     db.flush()
     node_numbering.recompute(db, procedure_id)
     return changed
+
+
+def reorder(db: Session, procedure_id: str, ordered_ids: list[str]) -> None:
+    """按 ordered_ids 给本程序所有 active 节点重写 sort_order(gap 序)。
+    ordered_ids 必须恰好是本程序当前所有 active 节点 id 的一个排列。"""
+    rows = _active_nodes(db, procedure_id)
+    existing = {r.id for r in rows}
+    if set(ordered_ids) != existing or len(ordered_ids) != len(existing):
+        raise bad_request(
+            "BAD_REORDER", "reorder 的 id 列表必须恰好是本程序全部 active 节点的排列"
+        )
+    by_id = {r.id: r for r in rows}
+    for i, nid in enumerate(ordered_ids):
+        by_id[nid].sort_order = (i + 1) * _SORT_GAP
+    db.flush()
+    node_numbering.recompute(db, procedure_id)
