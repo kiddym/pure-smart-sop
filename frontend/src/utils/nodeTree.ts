@@ -87,6 +87,17 @@ export function subtreeIds(nodes: Node[], id: string): string[] {
   return [id, ...descendantIds(nodes, id)]
 }
 
+const LEVEL_SCALE: (number | null)[] = [null, 1, 2, 3]
+
+/** 缩进/反缩进一步：在 [正文, L1, L2, L3] 标尺上移动并夹紧。
+ * 'in' = 更深（→L3），'out' = 更浅（→正文）。未知层级（如旧 L>3）按最深处理。 */
+export function indentLevel(current: number | null, dir: 'in' | 'out'): number | null {
+  let idx = LEVEL_SCALE.indexOf(current)
+  if (idx < 0) idx = current === null ? 0 : LEVEL_SCALE.length - 1
+  const next = dir === 'in' ? Math.min(idx + 1, LEVEL_SCALE.length - 1) : Math.max(idx - 1, 0)
+  return LEVEL_SCALE[next]
+}
+
 export type CheckState = 'checked' | 'indeterminate' | 'unchecked'
 
 /** 每个节点的三态：其子树（含自身）全选=checked，部分=indeterminate，皆未选=unchecked。O(N)。 */

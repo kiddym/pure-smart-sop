@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { nodeTitle, hasChildren, visibleRows, descendantIds, subtreeIds, checkStates } from '@/utils/nodeTree'
+import { nodeTitle, hasChildren, visibleRows, descendantIds, subtreeIds, checkStates, indentLevel } from '@/utils/nodeTree'
 import type { Node } from '@/types/node'
 
 function n(over: Partial<Node>): Node {
@@ -100,5 +100,20 @@ describe('checkStates', () => {
   it('heading unchecked when nothing selected', () => {
     const s = checkStates(nodes, new Set())
     expect(s.get('c1')).toBe('unchecked')
+  })
+})
+
+describe('indentLevel', () => {
+  it('in: 正文→L1→L2→L3, clamped at L3', () => {
+    expect(indentLevel(null, 'in')).toBe(1)
+    expect(indentLevel(1, 'in')).toBe(2)
+    expect(indentLevel(2, 'in')).toBe(3)
+    expect(indentLevel(3, 'in')).toBe(3)
+  })
+  it('out: L3→L2→L1→正文, clamped at 正文', () => {
+    expect(indentLevel(3, 'out')).toBe(2)
+    expect(indentLevel(2, 'out')).toBe(1)
+    expect(indentLevel(1, 'out')).toBe(null)
+    expect(indentLevel(null, 'out')).toBe(null)
   })
 })
