@@ -20,7 +20,7 @@ def enforce_content_kind_invariant(
     commit 93d67c6 后 ProcedureStep.kind ∈ {"step", "content"} 同表共存，
     "content" 行的语义是"只有 title? + rich_content，不带 input_schema/attachment_marks"。
     本 helper 给所有写入 ProcedureStep 的 service 路径提供终态硬约束，
-    防止任何路径写出非法行（commit 93d67c6 之前的 step_service create/update
+    防止任何路径写出非法行（commit 93d67c6 之前的旧 step 写入路径
     完全无 cleanup 即是 latent hole；本约束为 fail-fast 兜底）。
 
     None 与空集合视为等价（"未设置"即 OK）。
