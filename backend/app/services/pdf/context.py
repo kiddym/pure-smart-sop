@@ -105,7 +105,7 @@ def _split_first_block(body: str) -> tuple[str, str]:
 
     注：rest 经 lxml 序列化，`<br/>` 会被规整为 `<br>`——纯快照层差异，html_render 两者
     同样渲染成 `<br/>`，视觉不受影响。首块的 tail 文本（块间裸文本）不并入 rest——
-    body 均由 node_sync 以 `<p>title</p>+content` 构造、content 为 Tiptap HTML，不产块间裸文本。"""
+    body 均由导入/节点写入以 `<p>title</p>+content` 构造、content 为 Tiptap HTML，不产块间裸文本。"""
     if not body or not body.strip():
         return "", ""
     try:

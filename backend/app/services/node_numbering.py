@@ -1,4 +1,4 @@
-"""节点编号引擎(从派生树算 code,沿用 numbering_service 语义)。
+"""节点编号引擎(从派生树算 code,沿用旧编号语义)。
 
 - heading(heading_level!=None,非 skip):按层级连续编号(1 / 1.1 / 1.1.1)。
 - kind='step'(非 skip):在父 heading 下连续编号(父 code + '.' + seq;无父 → seq)。
