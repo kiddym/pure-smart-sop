@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, nextTick } from 'vue'
 import { downloadPdf, fetchPdfLayout, fetchProcedureDetail } from '@/api/procedures'
 import { listNodes } from '@/api/nodes'
 import type { ProcedureDetail } from '@/types/procedure'
@@ -14,6 +14,7 @@ import {
   fmtDate,
   type PreviewModel,
 } from './pdfModel'
+import { stepZoom, fitZoom, activePageIndex, ZOOM_MIN, ZOOM_MAX } from './pdfChrome'
 import { isAlertType } from '@/utils/editor'
 import type { FormType } from '@/types/node'
 
@@ -33,6 +34,46 @@ const loading = ref(false)
 const downloading = ref(false)
 const detail = ref<ProcedureDetail | null>(null)
 const model = ref<PreviewModel | null>(null)
+
+const scrollEl = ref<HTMLElement | null>(null)
+const docEl = ref<HTMLElement | null>(null)
+const zoom = ref(1)
+const pageCount = ref(0)
+const currentPage = ref(0)
+const zoomPct = computed(() => Math.round(zoom.value * 100))
+
+function pageEls(): HTMLElement[] {
+  return Array.from(docEl.value?.querySelectorAll<HTMLElement>('.page') ?? [])
+}
+function zoomIn(): void {
+  zoom.value = stepZoom(zoom.value, 1)
+}
+function zoomOut(): void {
+  zoom.value = stepZoom(zoom.value, -1)
+}
+function fit(): void {
+  const cw = scrollEl.value?.clientWidth ?? 0
+  const pw = pageEls()[0]?.offsetWidth ?? 0
+  zoom.value = fitZoom(cw, pw)
+}
+function onScroll(): void {
+  const tops = pageEls().map((el) => el.offsetTop)
+  pageCount.value = tops.length
+  currentPage.value = activePageIndex(scrollEl.value?.scrollTop ?? 0, tops)
+}
+function goPage(i: number): void {
+  const n = pageEls().length
+  if (n === 0) return
+  const clamped = Math.min(n - 1, Math.max(0, i))
+  pageEls()[clamped]?.scrollIntoView({ block: 'start' })
+  currentPage.value = clamped
+}
+function prevPage(): void {
+  goPage(currentPage.value - 1)
+}
+function nextPage(): void {
+  goPage(currentPage.value + 1)
+}
 
 const meta = computed(() => detail.value?.procedure ?? null)
 const watermarkText = computed(() => {
@@ -55,6 +96,10 @@ watch(visible, async (open) => {
     ])
     detail.value = d
     model.value = buildModel(d, nodes, l)
+      await nextTick()
+      zoom.value = 1
+      currentPage.value = 0
+      pageCount.value = pageEls().length
   } catch {
     /* 拦截器已提示 */
     visible.value = false
@@ -116,15 +161,26 @@ function onPreviewClick(e: MouseEvent): void {
       <div class="pv-toolbar no-print">
         <span class="pv-title">PDF 预览 · {{ meta?.code }} {{ meta?.name }}</span>
         <div class="pv-actions">
-          <el-button :loading="downloading" @click="doDownload">下载 PDF</el-button>
+          <div v-if="model" class="pv-zoom">
+            <el-button size="small" :disabled="zoom <= ZOOM_MIN" @click="zoomOut">−</el-button>
+            <span class="pv-zoom-pct">{{ zoomPct }}%</span>
+            <el-button size="small" :disabled="zoom >= ZOOM_MAX" @click="zoomIn">＋</el-button>
+            <el-button size="small" @click="fit">适应</el-button>
+          </div>
+          <div v-if="model && pageCount" class="pv-pagenav">
+            <el-button size="small" :disabled="currentPage <= 0" @click="prevPage">‹ 上一页</el-button>
+            <span class="pv-pageind">{{ currentPage + 1 }} / {{ pageCount }}</span>
+            <el-button size="small" :disabled="currentPage >= pageCount - 1" @click="nextPage">下一页 ›</el-button>
+          </div>
+          <el-button :loading="downloading" @click="doDownload">{{ downloading ? '生成中…' : '下载 PDF' }}</el-button>
           <el-button type="primary" @click="doPrint">打印</el-button>
           <el-button @click="visible = false">关闭</el-button>
         </div>
       </div>
     </template>
 
-    <div v-loading="loading" class="pv-scroll">
-      <div v-if="model && meta" class="pv-doc" @click="onPreviewClick">
+    <div ref="scrollEl" v-loading="loading" class="pv-scroll" @scroll="onScroll">
+      <div v-if="model && meta" ref="docEl" class="pv-doc" :style="{ zoom }" @click="onPreviewClick">
         <!-- 封面（§3） -->
         <section class="page cover" :class="watermarkClass" :data-wm="watermarkText">
           <h1 class="cover-title">{{ meta.name }}</h1>
@@ -291,6 +347,18 @@ function onPreviewClick(e: MouseEvent): void {
 }
 .pv-title {
   font-weight: 600;
+}
+.pv-zoom,
+.pv-pagenav {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.pv-zoom-pct,
+.pv-pageind {
+  font-size: 12px;
+  min-width: 44px;
+  text-align: center;
 }
 .pv-scroll {
   height: calc(100vh - 90px);
@@ -592,6 +660,7 @@ h3.chapter-title {
   }
   .pv-doc {
     gap: 0 !important;
+    zoom: 1 !important;
   }
   .page {
     box-shadow: none !important;
