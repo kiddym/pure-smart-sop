@@ -31,6 +31,7 @@ Two sub-phases, mirroring the B3a/B3b "build the new path, then delete the old" 
 - `import_service` → build `ProcedureNode` directly from the parse-result tree.
 - `version_flow_service` → `_clone_tree` and `delete_group` operate on `ProcedureNode`.
 - `PUT /procedures/{id}` → metadata-only (`ProcedureUpdate`), no structural assembly, no legacy numbering.
+- `procedure_service.transition` publish-gate → count review **nodes** instead of review chapters.
 - `asset_service._scan_referenced_asset_ids` → scan `ProcedureNode.body`.
 - Content-size guard ported into `node_service` writes.
 - Delete: `chapter_service`, `step_service`, `conversion_service`, `mark_service`, `layer_apply_service`, `numbering_service`, `node_sync`, `editor_service`; routers `chapters.py`, `steps.py`; endpoints `apply-marks`, `apply-layer-roles` (and `convert-*` which live in the deleted routers); models `chapter.py`, `step.py`; legacy schemas; the `Procedure.chapters`/`Procedure.steps` relationships; `models/__init__` exports.
@@ -157,27 +158,10 @@ Keep the surrounding `ProcedureAssetReference` / `ProcedureAttachment` / `source
 
 The frontend's `updateProcedure` already sends only the `ProcedureUpdate` fields (`name`, `level_of_use`, `description`, `risk_level`, `quality_level`, `custom_values`, `version_update_notes`, `signoff_enabled`); the structural lists in `ProcedureSaveIn` arrive empty.
 
-Add a slim service function (lives in `procedure_service`, so `editor_service` can be deleted whole in B4b):
+**Reuse the existing `procedure_service.update_procedure`** (lines 240-285). It already does `_get` + `_assert_not_deprecated` + `_assert_editable` (`PROCEDURE_READONLY`) + `verify_revision` + `field_service.validate_values` + meta-field assignment + `optimistic_lock.bump` + audit-diff. It is currently **not wired to the PUT** (the PUT routes to `editor_service.save_procedure`). Two changes:
 
-```python
-def update_meta(db, proc_id, data: ProcedureUpdate, expected_revision: int, meta) -> Procedure:
-    proc = _get_editable(db, proc_id)            # is_current && DRAFT, else PROCEDURE_READONLY
-    optimistic_lock.verify_revision(proc.revision, expected_revision)
-    field_service.validate_values(db, data.custom_values, require_check=False)
-    proc.name = data.name
-    proc.level_of_use = data.level_of_use
-    proc.description = data.description
-    proc.risk_level = data.risk_level
-    proc.quality_level = data.quality_level
-    proc.custom_values = data.custom_values
-    proc.version_update_notes = data.version_update_notes
-    proc.signoff_enabled = data.signoff_enabled   # persists a field the legacy save silently dropped (no competing owner)
-    optimistic_lock.bump(proc)
-    db.flush()
-    audit_service.log_procedure_action(db, target_id=proc.id,
-        procedure_group_id=proc.procedure_group_id, action="update", meta=meta, new_value={})
-    return proc
-```
+1. Add the one missing field to `update_procedure`: `proc.signoff_enabled = data.signoff_enabled` (and include `signoff_enabled` in the audit `before`/`after` diff dicts). `ProcedureUpdate` already carries it.
+2. Point the PUT at `update_procedure` (below).
 
 Router:
 
@@ -186,14 +170,14 @@ Router:
 def update_procedure(procedure_id, payload: ProcedureUpdate, db=Depends(get_db),
                      meta=Depends(get_request_meta), if_match: str | None = Header(None, alias="If-Match")):
     expected = ensure_if_match(if_match)
-    proc = procedure_service.update_meta(db, procedure_id, payload, expected, meta)
+    proc = procedure_service.update_procedure(db, procedure_id, payload, expected, meta)
     db.commit()
     return procedure_service.to_meta(db, proc)
 ```
 
-- **Editable check:** reuse/port `editor_service._get_proc_editable`'s logic (`is_current && status == 'DRAFT'` → else `PROCEDURE_READONLY`) into `procedure_service._get_editable` (or reuse an existing helper if present).
+- **Guards:** `update_procedure` already enforces `PROCEDURE_READONLY` (non-current/non-DRAFT) and `PROCEDURE_DEPRECATED`; no new guard code needed.
 - **Response model `ProcedureMeta`** (was `ProcedureSaveResult` = meta + `id_map`). No node creation, so no `id_map`. **Frontend:** update `frontend/src/api/procedures.ts` `updateProcedure` return type to the meta shape (it already reads only `.revision`); drop any `id_map` reference. `ProcedureSaveResult` is deleted in B4b.
-- **`signoff_enabled` (resolved):** no request handler currently persists `proc.signoff_enabled` — the legacy `save_procedure` silently dropped it, and the only writers are `version_flow_service` (copy-on-fork) and `pdf/context` (read). The frontend sends it in the meta payload, so `update_meta` **persists it**, fixing a latent drop. No competing owner exists.
+- **`signoff_enabled` (resolved):** no request handler currently persists `proc.signoff_enabled` — the legacy `save_procedure` silently dropped it, and the only writers are `version_flow_service` (copy-on-fork) and `pdf/context` (read). The frontend sends it in the meta payload, so `update_procedure` **persists it**, fixing a latent drop. No competing owner exists.
 
 ### 5.4 `asset_service._scan_referenced_asset_ids` → node bodies
 
@@ -230,11 +214,30 @@ def _body_size_guard(body: str) -> None:
 
 Call it in `create_node` (on `data.get("body", "")`) and in `patch_node` (when `"body" in changes`). `batch_update` does not write `body` in practice, but guard it there too if `body` is present, for symmetry. Import `payload_too_large` from `app.errors`.
 
-### 5.6 Update affected tests (B4a)
+### 5.6 `transition` publish-gate → node review
 
-- `tests/unit/services/test_import_service.py` (+ `tests/integration/test_node_import_dualwrite.py` repurposed/renamed): assert import creates `ProcedureNode` rows with correct `heading_level`/`kind`/`body`/`sort_order`/`mark_status`, no legacy rows; content stays in document order (no relocation).
-- `tests/unit/services/test_version_flow_service.py`: assert clone copies nodes; `delete_group` removes node rows (no orphans).
-- `tests/integration/test_editor.py` / `tests/unit/services/test_editor_service.py`: replace batch-save tests with meta-only `PUT` tests (meta fields persisted, revision bumped, `If-Match` mismatch → conflict, non-DRAFT → `PROCEDURE_READONLY`); structural payload no longer accepted.
+**File:** `backend/app/services/procedure_service.py` — the `transition` function, inside the `if target == "PUBLISHED":` block (lines 305-317).
+
+The gate currently counts review **chapters**. Import marks review **nodes**, so a node-native procedure has zero review chapters and would wrongly pass. Switch the source to `ProcedureNode`:
+
+```python
+pending = db.execute(
+    select(func.count()).select_from(ProcedureNode).where(
+        ProcedureNode.procedure_id == proc.id,
+        ProcedureNode.is_active.is_(True),
+        ProcedureNode.mark_status == "review",
+    )
+).scalar_one()
+```
+
+Add `from app.models.node import ProcedureNode` to `procedure_service` (kept in B4b when the chapter/step imports are removed).
+
+### 5.7 Update affected tests (B4a)
+
+- `tests/unit/services/test_import_service.py` (and delete `tests/integration/test_node_import_dualwrite.py` — import no longer dual-writes): assert import creates `ProcedureNode` rows with correct `heading_level`/`kind`/`body`/`sort_order`/`mark_status`, no legacy rows; content stays in document order (no relocation).
+- `tests/unit/services/test_version_flow_service.py`: update legacy-clone assertions to nodes (`test_upgrade_forks_new_draft`, `test_copy_creates_new_group`, `test_delete_group_topological_chapter_delete`); assert clone copies nodes and `delete_group` removes node rows (no orphans).
+- `tests/integration/test_editor.py` / `tests/unit/services/test_editor_service.py`: replace batch-save tests with meta-only `PUT` tests (meta fields persisted, **`signoff_enabled` persisted**, revision bumped, `If-Match` mismatch → conflict, non-DRAFT → `PROCEDURE_READONLY`); structural payload no longer accepted.
+- Publish-gate test: a `ProcedureNode` with `mark_status='review'` blocks `transition` to `PUBLISHED` with `REVIEW_PENDING`.
 - Asset-scan test: references node bodies.
 - New `node_service` test: body > 5 MB → `CONTENT_TOO_LARGE`.
 
@@ -272,15 +275,17 @@ def upgrade():
     op.drop_table("tb_procedure_chapter")
 
 def downgrade():
-    # Best-effort reversibility (dev-only; data is NOT restored). Recreate both tables
-    # from their final model definition (models/chapter.py, models/step.py as of
-    # 20260526_0001_content_block_as_step): UUID/timestamp/soft-delete mixins + columns:
-    #   tb_procedure_chapter: procedure_id, parent_id(self FK), title, code, sort_order,
-    #     level, mark_status, skip_numbering, conversion_status (+ indexes)
-    #   tb_procedure_step: procedure_id, chapter_id(FK), title, code, content(LONGTEXT),
-    #     sort_order, skip_numbering, input_schema(JSON), attachment_marks(JSON), kind (+ indexes)
-    ...
+    # Irreversible by design. pytest builds its schema from ORM models
+    # (Base.metadata.create_all), not migrations, so this downgrade is never exercised;
+    # dev.db is rebuilt from head; there is no production data. A faithful recreate would
+    # be initial_schema + four subsequent alters — fragile DDL for zero practical value.
+    raise NotImplementedError(
+        "B4 removed the legacy chapter/step tables; downgrade past this revision is "
+        "unsupported — rebuild dev.db from head."
+    )
 ```
+
+(This is a deliberate trade-off, logged: an honest irreversible floor beats hand-reconstructed DDL that nothing runs.)
 
 ### 6.6 `dev.db` rebuild
 ```bash
