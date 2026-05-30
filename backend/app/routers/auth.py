@@ -8,7 +8,7 @@ from app import security, tenant
 from app.deps import get_db, get_current_user, _user_permission_codes
 from app.errors import conflict, unauthorized
 from app.models.role import Role
-from app.models.user import User
+from app.models.user import User, UserStatus
 from app.schemas.auth import (
     RegisterRequest, LoginRequest, RefreshRequest, TokenPair, CurrentUser,
 )
@@ -64,6 +64,8 @@ def refresh(payload: RefreshRequest, db: Session = Depends(get_db)):
     user = db.get(User, claims.get("sub"))
     if user is None:
         raise unauthorized("USER_NOT_FOUND", "用户不存在")
+    if user.status != UserStatus.active:
+        raise unauthorized("ACCOUNT_DISABLED", "账号已禁用")
     return _tokens(db, user)
 
 

@@ -17,7 +17,7 @@ from app.config import settings
 from app.db import get_db
 from app.errors import forbidden, unauthorized
 from app.models.role import Role
-from app.models.user import User
+from app.models.user import User, UserStatus
 from app.permissions import effective_codes
 from app.utils.net import extract_client_ip
 
@@ -61,6 +61,8 @@ def get_current_user(
     user = db.get(User, user_id)
     if user is None or user.company_id != company_id:
         raise unauthorized("USER_NOT_FOUND", "用户不存在")
+    if user.status != UserStatus.active:
+        raise unauthorized("ACCOUNT_DISABLED", "账号已禁用")
     return user
 
 

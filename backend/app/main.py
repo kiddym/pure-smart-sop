@@ -20,6 +20,7 @@ from app.db import SessionLocal, engine
 from app.logging_config import configure_logging
 from app.seed import run_seed
 from app.middleware import RequestIdMiddleware
+from app.tenant_middleware import TenantContextMiddleware
 from app.routers import (
     attachments,
     audit_logs,
@@ -61,6 +62,9 @@ app = FastAPI(
 )
 
 app.add_middleware(RequestIdMiddleware)
+# Sets tenant context from the bearer token for the whole request, so row-level
+# isolation is fail-closed by construction (see app/tenant_middleware.py).
+app.add_middleware(TenantContextMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
