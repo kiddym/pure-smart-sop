@@ -1,0 +1,127 @@
+"""工单 schema（Phase 1B）。"""
+from __future__ import annotations
+
+from datetime import date, datetime
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict, Field
+
+from app.models.work_order_status import WorkOrderPriority, WorkOrderStatus
+
+
+class WorkOrderCreate(BaseModel):
+    title: str = Field(min_length=1, max_length=300)
+    description: str = ""
+    priority: WorkOrderPriority = WorkOrderPriority.NONE
+    due_date: date | None = None
+    asset_id: str | None = None
+    location_id: str | None = None
+    primary_user_id: str | None = None
+    assignee_ids: list[str] = []
+    team_ids: list[str] = []
+    # 建单时可选立即挂接已发布 SOP
+    procedure_id: str | None = None
+
+
+class WorkOrderUpdate(BaseModel):
+    title: str | None = Field(default=None, min_length=1, max_length=300)
+    description: str | None = None
+    priority: WorkOrderPriority | None = None
+    due_date: date | None = None
+    asset_id: str | None = None
+    location_id: str | None = None
+    primary_user_id: str | None = None
+
+
+class WorkOrderTransition(BaseModel):
+    to_status: WorkOrderStatus
+    note: str = ""
+
+
+class AssigneesSet(BaseModel):
+    user_ids: list[str] = []
+
+
+class TeamsSet(BaseModel):
+    team_ids: list[str] = []
+
+
+class WorkOrderRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: str
+    custom_id: str
+    title: str
+    description: str
+    status: WorkOrderStatus
+    priority: WorkOrderPriority
+    due_date: date | None = None
+    asset_id: str | None = None
+    location_id: str | None = None
+    primary_user_id: str | None = None
+    procedure_id: str | None = None
+    procedure_group_id: str | None = None
+    completed_at: datetime | None = None
+    assignee_ids: list[str] = []
+    team_ids: list[str] = []
+
+
+class StepResultUpdate(BaseModel):
+    response: dict[str, Any] | None = None
+    is_done: bool | None = None
+    notes: str | None = None
+
+
+class StepResultRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: str
+    node_id: str
+    node_code: str
+    node_sort_order: int
+    input_schema: dict[str, Any] = {}
+    response: dict[str, Any] = {}
+    is_done: bool
+    done_by_user_id: str | None = None
+    done_at: datetime | None = None
+    notes: str
+
+
+class OutlineNode(BaseModel):
+    node_id: str
+    heading_level: int | None = None
+    kind: str
+    body: str
+    code: str
+    sort_order: int
+
+
+class ProcedureRef(BaseModel):
+    id: str
+    group_id: str | None = None
+    code: str
+    name: str
+    version: int
+
+
+class ExecutionView(BaseModel):
+    procedure: ProcedureRef | None = None
+    outline: list[OutlineNode] = []
+    steps: list[StepResultRead] = []
+
+
+class AttachProcedure(BaseModel):
+    procedure_id: str
+
+
+class CommentCreate(BaseModel):
+    comment: str = Field(min_length=1)
+
+
+class ActivityRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: str
+    activity_type: str
+    actor_user_id: str | None = None
+    from_status: str | None = None
+    to_status: str | None = None
+    comment: str
+    created_at: datetime
