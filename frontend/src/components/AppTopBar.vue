@@ -53,7 +53,7 @@ defineExpose({ MENU_COMMANDS, onCommand })
     >
       <el-icon><Expand v-if="collapsed" /><Fold v-else /></el-icon>
     </button>
-    <span class="app-brand">Smart SOP</span>
+    <span class="app-brand">{{ $t('app.name') }}</span>
     <input
       class="topbar-search"
       type="text"
