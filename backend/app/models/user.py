@@ -1,0 +1,34 @@
+"""User: tenant-scoped account. Email unique within a company."""
+from __future__ import annotations
+
+import enum
+from datetime import datetime
+
+from sqlalchemy import String, Boolean, ForeignKey, Enum as SAEnum, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column
+
+from app.models.base import Base, UUIDMixin, TimestampMixin, TenantMixin, DATETIME6
+
+
+class UserStatus(str, enum.Enum):
+    active = "active"
+    disabled = "disabled"
+
+
+class User(Base, UUIDMixin, TimestampMixin, TenantMixin):
+    __tablename__ = "tb_user"
+    __table_args__ = (UniqueConstraint("company_id", "email", name="uq_user_company_email"),)
+
+    email: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    name: Mapped[str] = mapped_column(String(128), nullable=False)
+    status: Mapped[UserStatus] = mapped_column(
+        SAEnum(UserStatus), nullable=False, default=UserStatus.active
+    )
+    role_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("tb_role.id", ondelete="SET NULL"), nullable=True
+    )
+    locale: Mapped[str] = mapped_column(String(16), nullable=False, default="zh-CN")
+    last_login_at: Mapped[datetime | None] = mapped_column(DATETIME6, default=None)
+    # Reserved: platform-operator identity (Phase 0: always False).
+    is_platform_admin: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)

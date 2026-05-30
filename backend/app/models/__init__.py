@@ -17,6 +17,7 @@ from app.models.procedure import Procedure
 from app.models.settings import ProcedureSettings
 from app.models.role import Role
 from app.models.source_docx import ProcedureSourceDocx
+from app.models.user import User
 
 __all__ = [
     "Base",
@@ -34,4 +35,5 @@ __all__ = [
     "ProcedureSettings",
     "ProcedureSourceDocx",
     "Role",
+    "User",
 ]
