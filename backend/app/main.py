@@ -34,6 +34,7 @@ from app.routers import (
     procedure_groups,
     procedures,
     teams,
+    work_orders,
 )
 from app.routers import auth
 from app.routers import company
@@ -101,6 +102,7 @@ app.include_router(auth.router)
 app.include_router(assets.router)
 app.include_router(locations.router)
 app.include_router(teams.router)
+app.include_router(work_orders.router)
 app.include_router(asset_categories.router)
 app.include_router(folders.router)
 app.include_router(audit_logs.router)
