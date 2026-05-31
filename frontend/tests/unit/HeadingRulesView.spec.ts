@@ -123,4 +123,15 @@ describe('HeadingRulesView', () => {
     await flushPromises()
     expect(pupdate).toHaveBeenCalledWith('np1', { status: 'disabled' })
   })
+
+  it('renders provenance badges for learned/manual rules', async () => {
+    list.mockResolvedValue([
+      rule({ id: 'r-l', style_name: '学到样式', source: 'learned' }),
+      rule({ id: 'r-m', style_name: '钉死样式', source: 'manual' }),
+    ])
+    const w = mountView()
+    await flushPromises()
+    expect(w.text()).toContain('自动学习')
+    expect(w.text()).toContain('手动钉死')
+  })
 })
