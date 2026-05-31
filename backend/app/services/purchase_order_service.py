@@ -104,3 +104,54 @@ def delete_purchase_order(db: Session, po: PurchaseOrder) -> None:
     po.is_active = False
     po.deleted_at = utcnow()
     db.commit()
+
+
+def list_activities(db: Session, purchase_order_id: str) -> list[PurchaseOrderActivity]:
+    return list(db.execute(
+        select(PurchaseOrderActivity)
+        .where(PurchaseOrderActivity.purchase_order_id == purchase_order_id)
+        .order_by(PurchaseOrderActivity.created_at, PurchaseOrderActivity.id)
+    ).scalars().all())
+
+
+def submit_purchase_order(db: Session, po: PurchaseOrder, company_id: str,
+                          actor_user_id: str | None) -> PurchaseOrder:
+    if not can_transition(po.status, PurchaseOrderStatus.SUBMITTED):
+        raise bad_request("PURCHASE_ORDER_BAD_TRANSITION",
+                          f"非法状态转移 {po.status.value}->SUBMITTED")
+    if not lines(db, po.id):
+        raise bad_request("PURCHASE_ORDER_EMPTY", "采购单无明细行，不可提交")
+    from_status = po.status.value
+    po.status = PurchaseOrderStatus.SUBMITTED
+    _log(db, po.id, company_id, "STATUS_CHANGE", actor_user_id=actor_user_id,
+         from_status=from_status, to_status=PurchaseOrderStatus.SUBMITTED.value)
+    db.commit()
+    db.refresh(po)
+    return po
+
+
+def _resolve(db: Session, po: PurchaseOrder, dst: PurchaseOrderStatus, note: str,
+             company_id: str, actor_user_id: str | None) -> PurchaseOrder:
+    if not can_transition(po.status, dst):
+        raise bad_request("PURCHASE_ORDER_BAD_TRANSITION",
+                          f"非法状态转移 {po.status.value}->{dst.value}")
+    from_status = po.status.value
+    po.status = dst
+    po.resolution_note = note
+    po.resolved_by_user_id = actor_user_id
+    po.resolved_at = utcnow()
+    _log(db, po.id, company_id, "STATUS_CHANGE", actor_user_id=actor_user_id,
+         from_status=from_status, to_status=dst.value, comment=note)
+    db.commit()
+    db.refresh(po)
+    return po
+
+
+def reject_purchase_order(db: Session, po: PurchaseOrder, note: str, company_id: str,
+                          actor_user_id: str | None) -> PurchaseOrder:
+    return _resolve(db, po, PurchaseOrderStatus.REJECTED, note, company_id, actor_user_id)
+
+
+def cancel_purchase_order(db: Session, po: PurchaseOrder, note: str, company_id: str,
+                          actor_user_id: str | None) -> PurchaseOrder:
+    return _resolve(db, po, PurchaseOrderStatus.CANCELED, note, company_id, actor_user_id)
