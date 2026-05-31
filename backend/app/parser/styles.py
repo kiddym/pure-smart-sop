@@ -16,6 +16,7 @@ from dataclasses import dataclass
 
 from lxml import etree
 
+from app.parser.resolvers import ResolverChain
 from app.parser.utils.opc import qn
 
 _MAX_DEPTH = 12  # basedOn 链防环
@@ -114,35 +115,47 @@ def classify_with_source(
 
     name = (info.name or "").strip()
 
+    # 五级反查平移为责任链（顺序与逻辑逐字节等价于原实现）：
     # 1. style_overrides（DB 组织级层）——按样式名覆盖
-    if style_overrides and name in style_overrides:
-        return style_overrides[name], "override"
+    def _override() -> tuple[int, str] | None:
+        if style_overrides and name in style_overrides:
+            return style_overrides[name], "override"
+        return None
 
     # 2. 标准 heading 名
-    std = _level_from_standard_name(name) if name else None
-    if std is not None:
-        return std, "style"
+    def _standard() -> tuple[int, str] | None:
+        std = _level_from_standard_name(name) if name else None
+        if std is not None:
+            return std, "style"
+        return None
 
     # 3. 中文/自定义同义词词典
-    if synonyms and name in synonyms:
-        return synonyms[name], "synonym"
+    def _synonym() -> tuple[int, str] | None:
+        if synonyms and name in synonyms:
+            return synonyms[name], "synonym"
+        return None
 
     # 4. 自身 outlineLvl（0-based → 1-based 层级）
-    if info.outline_lvl is not None:
-        return info.outline_lvl + 1, "outline"
+    def _outline() -> tuple[int, str] | None:
+        if info.outline_lvl is not None:
+            return info.outline_lvl + 1, "outline"
+        return None
 
     # 5. 沿 basedOn 链递归上溯
-    if info.based_on:
-        level, _ = classify_with_source(
-            info.based_on,
-            index,
-            synonyms=synonyms,
-            style_overrides=style_overrides,
-            _depth=_depth + 1,
-        )
-        if level is not None:
-            return level, "based_on"
-    return None, None
+    def _based_on() -> tuple[int, str] | None:
+        if info.based_on:
+            level, _ = classify_with_source(
+                info.based_on,
+                index,
+                synonyms=synonyms,
+                style_overrides=style_overrides,
+                _depth=_depth + 1,
+            )
+            if level is not None:
+                return level, "based_on"
+        return None
+
+    return ResolverChain([_override, _standard, _synonym, _outline, _based_on]).resolve()
 
 
 def classify_heading_style(
