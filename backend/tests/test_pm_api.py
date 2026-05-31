@@ -60,6 +60,19 @@ def test_manual_generate_returns_work_order(client):
     assert r.json()["custom_id"].startswith("WO")
 
 
+def test_manual_generate_response_includes_presets(client):
+    # /generate 响应须经 to_read 填充 assignee_ids/team_ids（防回归：勿返回裸 ORM）
+    t = _admin(client)
+    pid = client.post("/api/v1/preventive-maintenances",
+                      json=_create_body(start_date="2026-01-01",
+                                        assignee_ids=["u-1"], team_ids=["t-1"]),
+                      headers=_h(t)).json()["id"]
+    r = client.post(f"/api/v1/preventive-maintenances/{pid}/generate", headers=_h(t))
+    assert r.status_code == 201, r.text
+    assert r.json()["assignee_ids"] == ["u-1"]
+    assert r.json()["team_ids"] == ["t-1"]
+
+
 def test_activities_and_comment(client):
     t = _admin(client)
     pid = client.post("/api/v1/preventive-maintenances",

@@ -101,9 +101,11 @@ def generate_now(pm_id: str, db: Session = Depends(get_db),
                  current_user: User = Depends(
                      require_permission(permissions.PREVENTIVE_MAINTENANCE_CREATE))):
     from app.models.base import utcnow
+    from app.services import work_order_service as wos
     pm = _ensure(svc.get_pm(db, pm_id), current_user.company_id)
-    return svc.generate_once(db, pm, actor_user_id=current_user.id,
-                             now=utcnow(), enforce_due=False)
+    wo = svc.generate_once(db, pm, actor_user_id=current_user.id,
+                           now=utcnow(), enforce_due=False)
+    return wos.to_read(db, wo)
 
 
 @router.get("/{pm_id}/activities", response_model=list[PMActivityRead])
