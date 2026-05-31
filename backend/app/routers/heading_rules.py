@@ -10,7 +10,12 @@ from sqlalchemy.orm import Session
 
 from app.deps import get_db
 from app.schemas.heading_rule import HeadingRuleCreate, HeadingRuleOut, HeadingRuleUpdate
-from app.services import heading_rule_service
+from app.schemas.numbering_profile import (
+    NumberingProfileCreate,
+    NumberingProfileOut,
+    NumberingProfileUpdate,
+)
+from app.services import heading_rule_service, numbering_profile_service
 
 router = APIRouter(prefix="/api/v1", tags=["heading-rules"])
 
@@ -43,5 +48,47 @@ def update_heading_rule(
 def delete_heading_rule(rule_id: str, db: Session = Depends(get_db)) -> Response:
     rule = heading_rule_service.get_or_404(db, rule_id)
     heading_rule_service.delete(db, rule)
+    db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+# --------------------------------------------------------------------------- #
+# 编号体例（M4b）：/numbering-profiles
+# --------------------------------------------------------------------------- #
+@router.get("/numbering-profiles", response_model=list[NumberingProfileOut])
+def list_numbering_profiles(db: Session = Depends(get_db)) -> list[NumberingProfileOut]:
+    return [
+        NumberingProfileOut.model_validate(p)
+        for p in numbering_profile_service.list_profiles(db)
+    ]
+
+
+@router.post(
+    "/numbering-profiles", response_model=NumberingProfileOut, status_code=status.HTTP_201_CREATED
+)
+def create_numbering_profile(
+    payload: NumberingProfileCreate, db: Session = Depends(get_db)
+) -> NumberingProfileOut:
+    p = numbering_profile_service.create(db, payload)
+    db.commit()
+    db.refresh(p)
+    return NumberingProfileOut.model_validate(p)
+
+
+@router.put("/numbering-profiles/{profile_id}", response_model=NumberingProfileOut)
+def update_numbering_profile(
+    profile_id: str, payload: NumberingProfileUpdate, db: Session = Depends(get_db)
+) -> NumberingProfileOut:
+    p = numbering_profile_service.get_or_404(db, profile_id)
+    numbering_profile_service.update(db, p, payload)
+    db.commit()
+    db.refresh(p)
+    return NumberingProfileOut.model_validate(p)
+
+
+@router.delete("/numbering-profiles/{profile_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_numbering_profile(profile_id: str, db: Session = Depends(get_db)) -> Response:
+    p = numbering_profile_service.get_or_404(db, profile_id)
+    numbering_profile_service.delete(db, p)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
