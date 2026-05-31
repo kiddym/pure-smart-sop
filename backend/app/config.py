@@ -49,6 +49,7 @@ class Settings(BaseSettings):
     # 后台清理（§53.2 / Q332）
     cleanup_hour: int = 3  # 每日附件 + asset GC 执行时刻（服务器时区）
     temp_upload_ttl_hours: int = 24  # 临时上传过期时长（Q141）
+    notify_due_soon_days: int = 3  # 工单到期提醒提前天数（Phase 5A）
     asset_gc_grace_hours: int = 24  # asset ref_count=0 宽限（Q333）
     attachment_retention_days: int = 30  # 软删附件物理清理宽限（Q115/Q371）
 
