@@ -12,7 +12,9 @@ from app.errors import not_found
 from app.models.purchase_order import PurchaseOrder
 from app.models.user import User
 from app.schemas.purchase_order import (
+    POActivityRead,
     POLineRead,
+    POResolve,
     PurchaseOrderCreate,
     PurchaseOrderMini,
     PurchaseOrderRead,
@@ -78,3 +80,42 @@ def delete_purchase_order(po_id: str, db: Session = Depends(get_db),
                           current_user: User = Depends(require_permission(permissions.PURCHASE_ORDER_DELETE))):
     po = _ensure(svc.get_purchase_order(db, po_id), current_user.company_id)
     svc.delete_purchase_order(db, po)
+
+
+@router.post("/{po_id}/submit", response_model=PurchaseOrderRead)
+def submit_purchase_order(po_id: str, db: Session = Depends(get_db),
+                          current_user: User = Depends(require_permission(permissions.PURCHASE_ORDER_EDIT))):
+    po = _ensure(svc.get_purchase_order(db, po_id), current_user.company_id)
+    svc.submit_purchase_order(db, po, current_user.company_id, actor_user_id=current_user.id)
+    return _read(db, po)
+
+
+@router.post("/{po_id}/approve", response_model=PurchaseOrderRead)
+def approve_purchase_order(po_id: str, payload: POResolve, db: Session = Depends(get_db),
+                           current_user: User = Depends(require_permission(permissions.PURCHASE_ORDER_APPROVE))):
+    po = _ensure(svc.get_purchase_order(db, po_id), current_user.company_id)
+    svc.approve_purchase_order(db, po, payload.note, current_user.company_id, actor_user_id=current_user.id)
+    return _read(db, po)
+
+
+@router.post("/{po_id}/reject", response_model=PurchaseOrderRead)
+def reject_purchase_order(po_id: str, payload: POResolve, db: Session = Depends(get_db),
+                          current_user: User = Depends(require_permission(permissions.PURCHASE_ORDER_APPROVE))):
+    po = _ensure(svc.get_purchase_order(db, po_id), current_user.company_id)
+    svc.reject_purchase_order(db, po, payload.note, current_user.company_id, actor_user_id=current_user.id)
+    return _read(db, po)
+
+
+@router.post("/{po_id}/cancel", response_model=PurchaseOrderRead)
+def cancel_purchase_order(po_id: str, payload: POResolve, db: Session = Depends(get_db),
+                          current_user: User = Depends(require_permission(permissions.PURCHASE_ORDER_EDIT))):
+    po = _ensure(svc.get_purchase_order(db, po_id), current_user.company_id)
+    svc.cancel_purchase_order(db, po, payload.note, current_user.company_id, actor_user_id=current_user.id)
+    return _read(db, po)
+
+
+@router.get("/{po_id}/activities", response_model=list[POActivityRead])
+def list_purchase_order_activities(po_id: str, db: Session = Depends(get_db),
+                                   current_user: User = Depends(require_permission(permissions.PURCHASE_ORDER_VIEW))):
+    po = _ensure(svc.get_purchase_order(db, po_id), current_user.company_id)
+    return svc.list_activities(db, po.id)
