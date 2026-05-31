@@ -34,6 +34,7 @@ from app.routers import (
     parts,
     multi_parts,
     part_consumptions,
+    cost_categories,
     nodes,
     parse,
     procedure_groups,
@@ -117,6 +118,7 @@ app.include_router(part_categories.router)
 app.include_router(parts.router)
 app.include_router(multi_parts.router)
 app.include_router(part_consumptions.router)
+app.include_router(cost_categories.router)
 app.include_router(asset_categories.router)
 app.include_router(folders.router)
 app.include_router(audit_logs.router)
