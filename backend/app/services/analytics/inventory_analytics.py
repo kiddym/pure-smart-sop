@@ -46,7 +46,7 @@ def inventory_dashboard(
         key=lambda r: r["value"], reverse=True)
 
     # 窗内 top 消耗（按量降序）
-    start, end_excl, df, dt = resolve_window(date_from, date_to)
+    start, end_excl, _df, _dt = resolve_window(date_from, date_to)
     c_stmt = (
         select(PartConsumption.part_id, Part.custom_id, Part.name, PartConsumption.quantity)
         .join(Part, PartConsumption.part_id == Part.id)
