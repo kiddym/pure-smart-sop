@@ -24,10 +24,20 @@ const LEVEL_OPTIONS = [
   { value: 2, label: '二级' },
   { value: 3, label: '三级' },
 ]
-const SOURCE_LABEL: Record<string, string> = { manual: '钉死', learned: '自学习', disabled: '停用' }
+// provenance 文案（护城河体验化）：learned=本组织从编辑中自动学到；manual=本组织管理员钉死。
+const SOURCE_LABEL: Record<string, string> = {
+  manual: '手动钉死',
+  learned: '自动学习',
+  disabled: '停用',
+}
+const SOURCE_TITLE: Record<string, string> = {
+  manual: '本组织管理员钉死',
+  learned: '本组织从你的编辑中自动学到',
+  disabled: '已停用',
+}
 const SOURCE_TAG: Record<string, '' | 'success' | 'info' | 'warning'> = {
-  manual: 'success',
-  learned: 'info',
+  manual: 'info',
+  learned: 'success',
   disabled: 'warning',
 }
 const STATUS_LABEL: Record<string, string> = {
@@ -232,7 +242,7 @@ onMounted(() => {
         </el-table-column>
         <el-table-column label="来源" width="90">
           <template #default="{ row }">
-            <el-tag :type="SOURCE_TAG[row.source] ?? 'info'" size="small" disable-transitions>{{ SOURCE_LABEL[row.source] ?? row.source }}</el-tag>
+            <el-tag :type="SOURCE_TAG[row.source] ?? 'info'" size="small" disable-transitions :title="SOURCE_TITLE[row.source] ?? ''">{{ SOURCE_LABEL[row.source] ?? row.source }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="状态" width="80">
@@ -302,7 +312,7 @@ onMounted(() => {
         </el-table-column>
         <el-table-column label="来源" width="90">
           <template #default="{ row }">
-            <el-tag :type="SOURCE_TAG[row.source] ?? 'info'" size="small" disable-transitions>{{ SOURCE_LABEL[row.source] ?? row.source }}</el-tag>
+            <el-tag :type="SOURCE_TAG[row.source] ?? 'info'" size="small" disable-transitions :title="SOURCE_TITLE[row.source] ?? ''">{{ SOURCE_LABEL[row.source] ?? row.source }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="状态" width="80">
