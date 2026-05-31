@@ -17,6 +17,7 @@ from app.models.base import Base
 from app.models.company import Company
 from app.models.field import ProcedureField
 from app.models.folder import Folder, FolderSequence
+from app.models.heading_learning_event import HeadingLearningEvent
 from app.models.heading_rule import HeadingStyleRule
 from app.models.node import ProcedureNode
 from app.models.procedure import Procedure
@@ -64,6 +65,7 @@ __all__ = [
     "Folder",
     "FolderAuditLog",
     "FolderSequence",
+    "HeadingLearningEvent",
     "HeadingStyleRule",
     "Procedure",
     "ProcedureAsset",
