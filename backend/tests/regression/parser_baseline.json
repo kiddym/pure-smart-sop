@@ -1,0 +1,800 @@
+{
+  "smart": {
+    "1_程序模板.docx": {
+      "distribution": {
+        "1": 8,
+        "2": 10,
+        "3": 3
+      },
+      "review_required": 0,
+      "total_nodes": 21,
+      "warning_stages": {
+        "completeness": 1,
+        "discarded_by_design": 1
+      }
+    },
+    "TP试验程序.docx": {
+      "distribution": {
+        "1": 43,
+        "2": 107
+      },
+      "review_required": 0,
+      "total_nodes": 150,
+      "warning_stages": {
+        "completeness": 1,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/01-公司环境分析控制程序.docx": {
+      "distribution": {
+        "1": 7,
+        "2": 16,
+        "3": 2
+      },
+      "review_required": 10,
+      "total_nodes": 25,
+      "warning_stages": {
+        "boundary": 2,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/02-相关方需求和期望控制程序.docx": {
+      "distribution": {
+        "1": 7,
+        "2": 10,
+        "3": 8
+      },
+      "review_required": 13,
+      "total_nodes": 25,
+      "warning_stages": {
+        "boundary": 2,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/03-风险与机遇控制程序.docx": {
+      "distribution": {
+        "1": 7,
+        "2": 49,
+        "3": 49
+      },
+      "review_required": 13,
+      "total_nodes": 105,
+      "warning_stages": {
+        "boundary": 2,
+        "completeness": 1,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/04-质量目标控制程序.docx": {
+      "distribution": {
+        "1": 7,
+        "2": 28
+      },
+      "review_required": 8,
+      "total_nodes": 35,
+      "warning_stages": {
+        "boundary": 2,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/05-基础设施控制程序.docx": {
+      "distribution": {
+        "1": 7,
+        "2": 15,
+        "3": 13,
+        "4": 10
+      },
+      "review_required": 15,
+      "total_nodes": 45,
+      "warning_stages": {
+        "boundary": 2,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/06-过程运行环境控制程序.docx": {
+      "distribution": {
+        "1": 7,
+        "2": 22,
+        "3": 5
+      },
+      "review_required": 8,
+      "total_nodes": 34,
+      "warning_stages": {
+        "boundary": 2,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/07-监视与测量资源控制程序.docx": {
+      "distribution": {
+        "1": 19,
+        "2": 51,
+        "3": 31,
+        "4": 10
+      },
+      "review_required": 29,
+      "total_nodes": 111,
+      "warning_stages": {
+        "boundary": 2,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/08-组织知识控制程序.docx": {
+      "distribution": {
+        "1": 7,
+        "2": 16,
+        "3": 16,
+        "4": 14
+      },
+      "review_required": 14,
+      "total_nodes": 53,
+      "warning_stages": {
+        "boundary": 2,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/09-人力资源控制程序.docx": {
+      "distribution": {
+        "1": 7,
+        "2": 22,
+        "3": 33,
+        "4": 26
+      },
+      "review_required": 13,
+      "total_nodes": 88,
+      "warning_stages": {
+        "boundary": 2,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/10-沟通控制程序.docx": {
+      "distribution": {
+        "1": 8,
+        "2": 40,
+        "3": 5,
+        "4": 9
+      },
+      "review_required": 12,
+      "total_nodes": 62,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/11-成文信息控制程序.docx": {
+      "distribution": {
+        "1": 8,
+        "2": 40,
+        "3": 48,
+        "4": 7
+      },
+      "review_required": 24,
+      "total_nodes": 103,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/12-产品和服务的要求控制程序.docx": {
+      "distribution": {
+        "1": 8,
+        "2": 56
+      },
+      "review_required": 8,
+      "total_nodes": 64,
+      "warning_stages": {
+        "boundary": 1,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/13-外部提供产品、服务和过程控制程序.docx": {
+      "distribution": {
+        "1": 8,
+        "2": 18,
+        "3": 35,
+        "4": 12
+      },
+      "review_required": 23,
+      "total_nodes": 73,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/14-生产和服务提供控制程序.docx": {
+      "distribution": {
+        "1": 7,
+        "2": 31,
+        "3": 14
+      },
+      "review_required": 12,
+      "total_nodes": 52,
+      "warning_stages": {
+        "boundary": 1,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/15-标识和可追溯性控制程序.docx": {
+      "distribution": {
+        "1": 10,
+        "2": 27,
+        "3": 7,
+        "4": 4
+      },
+      "review_required": 17,
+      "total_nodes": 48,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/16-顾客财产控制程序.docx": {
+      "distribution": {
+        "1": 8,
+        "2": 25
+      },
+      "review_required": 8,
+      "total_nodes": 33,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/17-产品防护控制程序.docx": {
+      "distribution": {
+        "1": 8,
+        "2": 27
+      },
+      "review_required": 8,
+      "total_nodes": 35,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/18-产品和服务的放行控制程序.docx": {
+      "distribution": {
+        "1": 8,
+        "2": 79
+      },
+      "review_required": 8,
+      "total_nodes": 87,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/19-不合格输出控制程序.docx": {
+      "distribution": {
+        "1": 7,
+        "2": 27,
+        "3": 31
+      },
+      "review_required": 16,
+      "total_nodes": 65,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/20-顾客满意度控制程序.docx": {
+      "distribution": {
+        "1": 8,
+        "2": 52,
+        "3": 1,
+        "4": 6
+      },
+      "review_required": 10,
+      "total_nodes": 67,
+      "warning_stages": {
+        "completeness": 1,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/21-分析和评价控制程序.docx": {
+      "distribution": {
+        "1": 8,
+        "2": 21,
+        "3": 6,
+        "4": 2
+      },
+      "review_required": 11,
+      "total_nodes": 37,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/22-内部审核控制程序.docx": {
+      "distribution": {
+        "1": 8,
+        "2": 66
+      },
+      "review_required": 8,
+      "total_nodes": 74,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/23-管理评审控制程序.docx": {
+      "distribution": {
+        "1": 8,
+        "2": 22,
+        "3": 9,
+        "4": 19
+      },
+      "review_required": 14,
+      "total_nodes": 58,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/24-改进控制程序.docx": {
+      "distribution": {
+        "1": 8,
+        "2": 36,
+        "3": 13,
+        "4": 4
+      },
+      "review_required": 11,
+      "total_nodes": 61,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/25-各级人员质量职责和权限规定.docx": {
+      "distribution": {
+        "1": 5,
+        "2": 23,
+        "3": 30,
+        "4": 241
+      },
+      "review_required": 50,
+      "total_nodes": 299,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/程序文件目录.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 10,
+        "completeness": 1,
+        "discarded_by_design": 1
+      }
+    },
+    "公司运营管理.docx": {
+      "distribution": {
+        "1": 4,
+        "2": 14,
+        "3": 8
+      },
+      "review_required": 0,
+      "total_nodes": 26,
+      "warning_stages": {
+        "completeness": 1,
+        "discarded_by_design": 1
+      }
+    },
+    "公司运营管理_表格图片.docx": {
+      "distribution": {
+        "1": 4,
+        "2": 16,
+        "3": 8
+      },
+      "review_required": 0,
+      "total_nodes": 28,
+      "warning_stages": {
+        "completeness": 1,
+        "discarded_by_design": 1
+      }
+    },
+    "无格式标题word/02记录控制程序.docx": {
+      "distribution": {
+        "1": 6,
+        "2": 14,
+        "3": 9,
+        "4": 3
+      },
+      "review_required": 22,
+      "total_nodes": 32,
+      "warning_stages": {
+        "completeness": 1,
+        "discarded_by_design": 1
+      }
+    },
+    "无格式标题word/05人力资源控制程序.docx": {
+      "distribution": {
+        "1": 5,
+        "2": 11,
+        "3": 27,
+        "4": 17
+      },
+      "review_required": 21,
+      "total_nodes": 60,
+      "warning_stages": {
+        "completeness": 1,
+        "discarded_by_design": 1
+      }
+    },
+    "无格式标题word/3.危险源监控措施.docx": {
+      "distribution": {
+        "1": 5,
+        "2": 43
+      },
+      "review_required": 5,
+      "total_nodes": 48,
+      "warning_stages": {
+        "boundary": 2
+      }
+    },
+    "无格式标题word/CW-WI-7.4-01外发作业指导书及质量控制程序.docx": {
+      "distribution": {
+        "1": 5,
+        "2": 25,
+        "3": 2
+      },
+      "review_required": 28,
+      "total_nodes": 32,
+      "warning_stages": {
+        "completeness": 1,
+        "discarded_by_design": 1
+      }
+    },
+    "无格式标题word/有限空间作业管理办法.docx": {
+      "distribution": {
+        "1": 7,
+        "2": 65
+      },
+      "review_required": 7,
+      "total_nodes": 72,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    },
+    "电厂管理巡视规定.docx": {
+      "distribution": {
+        "1": 8,
+        "2": 26,
+        "3": 57
+      },
+      "review_required": 0,
+      "total_nodes": 91,
+      "warning_stages": {
+        "completeness": 1,
+        "discarded_by_design": 1
+      }
+    }
+  },
+  "standard": {
+    "1_程序模板.docx": {
+      "distribution": {
+        "1": 8,
+        "2": 10,
+        "3": 3
+      },
+      "review_required": 0,
+      "total_nodes": 21,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    },
+    "TP试验程序.docx": {
+      "distribution": {
+        "1": 43,
+        "2": 107
+      },
+      "review_required": 0,
+      "total_nodes": 150,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/01-公司环境分析控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 27,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/02-相关方需求和期望控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 27,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/03-风险与机遇控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 107,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/04-质量目标控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 37,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/05-基础设施控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 47,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/06-过程运行环境控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 36,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/07-监视与测量资源控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 113,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/08-组织知识控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 55,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/09-人力资源控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 90,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/10-沟通控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 63,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/11-成文信息控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 104,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/12-产品和服务的要求控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 65,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/13-外部提供产品、服务和过程控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 74,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/14-生产和服务提供控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 53,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/15-标识和可追溯性控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 49,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/16-顾客财产控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 34,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/17-产品防护控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 36,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/18-产品和服务的放行控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 88,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/19-不合格输出控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 66,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/20-顾客满意度控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 68,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/21-分析和评价控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 38,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/22-内部审核控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 75,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/23-管理评审控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 59,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/24-改进控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 62,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/25-各级人员质量职责和权限规定.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 300,
+        "discarded_by_design": 1
+      }
+    },
+    "extra doc/程序文件目录.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 10,
+        "discarded_by_design": 1
+      }
+    },
+    "公司运营管理.docx": {
+      "distribution": {
+        "1": 4,
+        "2": 14,
+        "3": 8
+      },
+      "review_required": 0,
+      "total_nodes": 26,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    },
+    "公司运营管理_表格图片.docx": {
+      "distribution": {
+        "1": 4,
+        "2": 16,
+        "3": 8
+      },
+      "review_required": 0,
+      "total_nodes": 28,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    },
+    "无格式标题word/02记录控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 33,
+        "discarded_by_design": 1
+      }
+    },
+    "无格式标题word/05人力资源控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 61,
+        "discarded_by_design": 1
+      }
+    },
+    "无格式标题word/3.危险源监控措施.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 50
+      }
+    },
+    "无格式标题word/CW-WI-7.4-01外发作业指导书及质量控制程序.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 33,
+        "discarded_by_design": 1
+      }
+    },
+    "无格式标题word/有限空间作业管理办法.docx": {
+      "distribution": {},
+      "review_required": 0,
+      "total_nodes": 0,
+      "warning_stages": {
+        "boundary": 72,
+        "discarded_by_design": 1
+      }
+    },
+    "电厂管理巡视规定.docx": {
+      "distribution": {
+        "1": 8,
+        "2": 26,
+        "3": 57
+      },
+      "review_required": 0,
+      "total_nodes": 91,
+      "warning_stages": {
+        "discarded_by_design": 1
+      }
+    }
+  }
+}
