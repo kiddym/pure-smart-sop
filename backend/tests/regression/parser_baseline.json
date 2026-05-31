@@ -9,29 +9,28 @@
       "review_required": 0,
       "total_nodes": 21,
       "warning_stages": {
-        "completeness": 1,
         "discarded_by_design": 1
       }
     },
     "TP试验程序.docx": {
       "distribution": {
-        "1": 43,
-        "2": 107
+        "1": 29,
+        "2": 63,
+        "3": 58
       },
-      "review_required": 0,
+      "review_required": 1,
       "total_nodes": 150,
       "warning_stages": {
-        "completeness": 1,
         "discarded_by_design": 1
       }
     },
     "extra doc/01-公司环境分析控制程序.docx": {
       "distribution": {
         "1": 7,
-        "2": 16,
-        "3": 2
+        "2": 13,
+        "3": 5
       },
-      "review_required": 10,
+      "review_required": 16,
       "total_nodes": 25,
       "warning_stages": {
         "boundary": 2,
@@ -41,10 +40,10 @@
     "extra doc/02-相关方需求和期望控制程序.docx": {
       "distribution": {
         "1": 7,
-        "2": 10,
-        "3": 8
+        "2": 14,
+        "3": 4
       },
-      "review_required": 13,
+      "review_required": 17,
       "total_nodes": 25,
       "warning_stages": {
         "boundary": 2,
@@ -54,23 +53,25 @@
     "extra doc/03-风险与机遇控制程序.docx": {
       "distribution": {
         "1": 7,
-        "2": 49,
-        "3": 49
+        "2": 23,
+        "3": 27,
+        "4": 48
       },
-      "review_required": 13,
+      "review_required": 29,
       "total_nodes": 105,
       "warning_stages": {
         "boundary": 2,
-        "completeness": 1,
         "discarded_by_design": 1
       }
     },
     "extra doc/04-质量目标控制程序.docx": {
       "distribution": {
         "1": 7,
-        "2": 28
+        "2": 13,
+        "3": 7,
+        "4": 8
       },
-      "review_required": 8,
+      "review_required": 23,
       "total_nodes": 35,
       "warning_stages": {
         "boundary": 2,
@@ -81,10 +82,9 @@
       "distribution": {
         "1": 7,
         "2": 15,
-        "3": 13,
-        "4": 10
+        "3": 23
       },
-      "review_required": 15,
+      "review_required": 42,
       "total_nodes": 45,
       "warning_stages": {
         "boundary": 2,
@@ -94,10 +94,10 @@
     "extra doc/06-过程运行环境控制程序.docx": {
       "distribution": {
         "1": 7,
-        "2": 22,
-        "3": 5
+        "2": 16,
+        "3": 11
       },
-      "review_required": 8,
+      "review_required": 29,
       "total_nodes": 34,
       "warning_stages": {
         "boundary": 2,
@@ -107,11 +107,10 @@
     "extra doc/07-监视与测量资源控制程序.docx": {
       "distribution": {
         "1": 19,
-        "2": 51,
-        "3": 31,
-        "4": 10
+        "2": 42,
+        "3": 50
       },
-      "review_required": 29,
+      "review_required": 96,
       "total_nodes": 111,
       "warning_stages": {
         "boundary": 2,
@@ -121,11 +120,11 @@
     "extra doc/08-组织知识控制程序.docx": {
       "distribution": {
         "1": 7,
-        "2": 16,
-        "3": 16,
-        "4": 14
+        "2": 15,
+        "3": 24,
+        "4": 7
       },
-      "review_required": 14,
+      "review_required": 41,
       "total_nodes": 53,
       "warning_stages": {
         "boundary": 2,
@@ -135,11 +134,11 @@
     "extra doc/09-人力资源控制程序.docx": {
       "distribution": {
         "1": 7,
-        "2": 22,
-        "3": 33,
-        "4": 26
+        "2": 19,
+        "3": 47,
+        "4": 15
       },
-      "review_required": 13,
+      "review_required": 54,
       "total_nodes": 88,
       "warning_stages": {
         "boundary": 2,
@@ -149,11 +148,11 @@
     "extra doc/10-沟通控制程序.docx": {
       "distribution": {
         "1": 8,
-        "2": 40,
-        "3": 5,
-        "4": 9
+        "2": 13,
+        "3": 17,
+        "4": 24
       },
-      "review_required": 12,
+      "review_required": 19,
       "total_nodes": 62,
       "warning_stages": {
         "discarded_by_design": 1
@@ -162,11 +161,11 @@
     "extra doc/11-成文信息控制程序.docx": {
       "distribution": {
         "1": 8,
-        "2": 40,
-        "3": 48,
-        "4": 7
+        "2": 28,
+        "3": 54,
+        "4": 13
       },
-      "review_required": 24,
+      "review_required": 44,
       "total_nodes": 103,
       "warning_stages": {
         "discarded_by_design": 1
@@ -175,9 +174,11 @@
     "extra doc/12-产品和服务的要求控制程序.docx": {
       "distribution": {
         "1": 8,
-        "2": 56
+        "2": 18,
+        "3": 32,
+        "4": 6
       },
-      "review_required": 8,
+      "review_required": 24,
       "total_nodes": 64,
       "warning_stages": {
         "boundary": 1,
@@ -187,11 +188,11 @@
     "extra doc/13-外部提供产品、服务和过程控制程序.docx": {
       "distribution": {
         "1": 8,
-        "2": 18,
+        "2": 23,
         "3": 35,
-        "4": 12
+        "4": 7
       },
-      "review_required": 23,
+      "review_required": 36,
       "total_nodes": 73,
       "warning_stages": {
         "discarded_by_design": 1
@@ -200,10 +201,11 @@
     "extra doc/14-生产和服务提供控制程序.docx": {
       "distribution": {
         "1": 7,
-        "2": 31,
-        "3": 14
+        "2": 20,
+        "3": 24,
+        "4": 1
       },
-      "review_required": 12,
+      "review_required": 36,
       "total_nodes": 52,
       "warning_stages": {
         "boundary": 1,
@@ -213,11 +215,11 @@
     "extra doc/15-标识和可追溯性控制程序.docx": {
       "distribution": {
         "1": 10,
-        "2": 27,
-        "3": 7,
-        "4": 4
+        "2": 19,
+        "3": 12,
+        "4": 7
       },
-      "review_required": 17,
+      "review_required": 27,
       "total_nodes": 48,
       "warning_stages": {
         "discarded_by_design": 1
@@ -226,9 +228,10 @@
     "extra doc/16-顾客财产控制程序.docx": {
       "distribution": {
         "1": 8,
-        "2": 25
+        "2": 17,
+        "3": 8
       },
-      "review_required": 8,
+      "review_required": 9,
       "total_nodes": 33,
       "warning_stages": {
         "discarded_by_design": 1
@@ -237,9 +240,11 @@
     "extra doc/17-产品防护控制程序.docx": {
       "distribution": {
         "1": 8,
-        "2": 27
+        "2": 17,
+        "3": 9,
+        "4": 1
       },
-      "review_required": 8,
+      "review_required": 16,
       "total_nodes": 35,
       "warning_stages": {
         "discarded_by_design": 1
@@ -248,9 +253,11 @@
     "extra doc/18-产品和服务的放行控制程序.docx": {
       "distribution": {
         "1": 8,
-        "2": 79
+        "2": 22,
+        "3": 47,
+        "4": 10
       },
-      "review_required": 8,
+      "review_required": 20,
       "total_nodes": 87,
       "warning_stages": {
         "discarded_by_design": 1
@@ -259,10 +266,11 @@
     "extra doc/19-不合格输出控制程序.docx": {
       "distribution": {
         "1": 7,
-        "2": 27,
-        "3": 31
+        "2": 14,
+        "3": 34,
+        "4": 10
       },
-      "review_required": 16,
+      "review_required": 29,
       "total_nodes": 65,
       "warning_stages": {
         "discarded_by_design": 1
@@ -271,25 +279,24 @@
     "extra doc/20-顾客满意度控制程序.docx": {
       "distribution": {
         "1": 8,
-        "2": 52,
-        "3": 1,
-        "4": 6
+        "2": 17,
+        "3": 17,
+        "4": 25
       },
-      "review_required": 10,
+      "review_required": 23,
       "total_nodes": 67,
       "warning_stages": {
-        "completeness": 1,
         "discarded_by_design": 1
       }
     },
     "extra doc/21-分析和评价控制程序.docx": {
       "distribution": {
         "1": 8,
-        "2": 21,
-        "3": 6,
+        "2": 20,
+        "3": 7,
         "4": 2
       },
-      "review_required": 11,
+      "review_required": 16,
       "total_nodes": 37,
       "warning_stages": {
         "discarded_by_design": 1
@@ -298,9 +305,11 @@
     "extra doc/22-内部审核控制程序.docx": {
       "distribution": {
         "1": 8,
-        "2": 66
+        "2": 24,
+        "3": 22,
+        "4": 20
       },
-      "review_required": 8,
+      "review_required": 24,
       "total_nodes": 74,
       "warning_stages": {
         "discarded_by_design": 1
@@ -309,11 +318,11 @@
     "extra doc/23-管理评审控制程序.docx": {
       "distribution": {
         "1": 8,
-        "2": 22,
-        "3": 9,
-        "4": 19
+        "2": 16,
+        "3": 18,
+        "4": 16
       },
-      "review_required": 14,
+      "review_required": 23,
       "total_nodes": 58,
       "warning_stages": {
         "discarded_by_design": 1
@@ -322,11 +331,11 @@
     "extra doc/24-改进控制程序.docx": {
       "distribution": {
         "1": 8,
-        "2": 36,
-        "3": 13,
-        "4": 4
+        "2": 13,
+        "3": 17,
+        "4": 23
       },
-      "review_required": 11,
+      "review_required": 19,
       "total_nodes": 61,
       "warning_stages": {
         "discarded_by_design": 1
@@ -351,7 +360,6 @@
       "total_nodes": 0,
       "warning_stages": {
         "boundary": 10,
-        "completeness": 1,
         "discarded_by_design": 1
       }
     },
@@ -364,7 +372,6 @@
       "review_required": 0,
       "total_nodes": 26,
       "warning_stages": {
-        "completeness": 1,
         "discarded_by_design": 1
       }
     },
@@ -377,7 +384,6 @@
       "review_required": 0,
       "total_nodes": 28,
       "warning_stages": {
-        "completeness": 1,
         "discarded_by_design": 1
       }
     },
@@ -391,7 +397,6 @@
       "review_required": 22,
       "total_nodes": 32,
       "warning_stages": {
-        "completeness": 1,
         "discarded_by_design": 1
       }
     },
@@ -405,7 +410,6 @@
       "review_required": 21,
       "total_nodes": 60,
       "warning_stages": {
-        "completeness": 1,
         "discarded_by_design": 1
       }
     },
@@ -429,7 +433,6 @@
       "review_required": 28,
       "total_nodes": 32,
       "warning_stages": {
-        "completeness": 1,
         "discarded_by_design": 1
       }
     },
@@ -453,7 +456,6 @@
       "review_required": 0,
       "total_nodes": 91,
       "warning_stages": {
-        "completeness": 1,
         "discarded_by_design": 1
       }
     }
@@ -473,10 +475,11 @@
     },
     "TP试验程序.docx": {
       "distribution": {
-        "1": 43,
-        "2": 107
+        "1": 29,
+        "2": 63,
+        "3": 58
       },
-      "review_required": 0,
+      "review_required": 1,
       "total_nodes": 150,
       "warning_stages": {
         "discarded_by_design": 1
