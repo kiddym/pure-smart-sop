@@ -23,6 +23,9 @@ from app.models.request import Request
 from app.models.request_activity import RequestActivity
 from app.models.preventive_maintenance import PMAssignee, PMTeam, PreventiveMaintenance
 from app.models.pm_activity import PMActivity
+from app.models.meter import Meter
+from app.models.meter_reading import MeterReading
+from app.models.meter_trigger import MeterTrigger, MeterTriggerAssignee, MeterTriggerTeam
 from app.models.sequence import Sequence
 from app.models.settings import ProcedureSettings
 from app.models.role import Role
@@ -63,6 +66,11 @@ __all__ = [
     "PMAssignee",
     "PMTeam",
     "PreventiveMaintenance",
+    "Meter",
+    "MeterReading",
+    "MeterTrigger",
+    "MeterTriggerAssignee",
+    "MeterTriggerTeam",
     "Role",
     "Sequence",
     "User",
