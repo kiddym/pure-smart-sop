@@ -16,7 +16,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 from app.config import settings
 from app.db import SessionLocal
 from app.logging_config import configure_logging
-from app.tasks import asset_gc, cleanup_attachments, cleanup_uploads, pm_generate
+from app.tasks import asset_gc, cleanup_attachments, cleanup_uploads, due_reminder, pm_generate
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +49,14 @@ def _run_pm_generate() -> None:
         db.close()
 
 
+def _run_due_reminder() -> None:
+    db = SessionLocal()
+    try:
+        due_reminder.run(db)
+    finally:
+        db.close()
+
+
 def build_scheduler() -> BlockingScheduler:
     """装配 scheduler（不启动），便于测试。"""
     sched = BlockingScheduler(timezone=None)
@@ -74,6 +82,12 @@ def build_scheduler() -> BlockingScheduler:
         _run_pm_generate,
         CronTrigger(hour=settings.cleanup_hour, minute=45),
         id="pm_generate",
+        replace_existing=True,
+    )
+    sched.add_job(
+        _run_due_reminder,
+        CronTrigger(hour=settings.cleanup_hour, minute=15),
+        id="due_reminder",
         replace_existing=True,
     )
     return sched
