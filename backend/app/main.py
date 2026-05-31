@@ -40,6 +40,7 @@ from app.routers import (
     customers,
     purchase_orders,
     analytics,
+    notifications,
     nodes,
     parse,
     procedure_groups,
@@ -128,6 +129,7 @@ app.include_router(vendors.router)
 app.include_router(customers.router)
 app.include_router(purchase_orders.router)
 app.include_router(analytics.router)
+app.include_router(notifications.router)
 app.include_router(asset_categories.router)
 app.include_router(folders.router)
 app.include_router(audit_logs.router)
