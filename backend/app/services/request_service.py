@@ -37,6 +37,9 @@ def create_request(db: Session, payload: RequestCreate, company_id: str,
         location_id=payload.location_id, company_id=company_id,
     )
     db.add(r)
+    db.flush()
+    from app.services import notification_service as _notif
+    _notif.on_request_submitted(db, r, actor_user_id=actor_user_id)
     db.commit()
     db.refresh(r)
     return r

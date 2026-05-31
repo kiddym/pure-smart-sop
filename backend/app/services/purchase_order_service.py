@@ -126,6 +126,8 @@ def submit_purchase_order(db: Session, po: PurchaseOrder, company_id: str,
     po.status = PurchaseOrderStatus.SUBMITTED
     _log(db, po.id, company_id, "STATUS_CHANGE", actor_user_id=actor_user_id,
          from_status=from_status, to_status=PurchaseOrderStatus.SUBMITTED.value)
+    from app.services import notification_service as _notif
+    _notif.on_po_submitted(db, po, actor_user_id=actor_user_id)
     db.commit()
     db.refresh(po)
     return po
@@ -179,6 +181,8 @@ def approve_purchase_order(db: Session, po: PurchaseOrder, note: str, company_id
     _log(db, po.id, company_id, "STATUS_CHANGE", actor_user_id=actor_user_id,
          from_status=from_status, to_status=PurchaseOrderStatus.APPROVED.value, comment=note)
     _log(db, po.id, company_id, "RECEIVED", actor_user_id=actor_user_id)
+    from app.services import notification_service as _notif
+    _notif.on_po_approved(db, po, actor_user_id=actor_user_id)
     db.commit()
     db.refresh(po)
     return po
