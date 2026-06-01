@@ -146,5 +146,17 @@ export const useBatchReviewStore = defineStore('batchReview', {
       await api.undoItem(this.jobId, itemId)
       await this.refresh()
     },
+
+    selectPrev(): void {
+      const ids = this.riskSortedItems.map((i) => i.id)
+      const idx = ids.indexOf(this.currentItemId ?? '')
+      this.currentItemId = ids[Math.max(0, idx - 1)] ?? ids[0] ?? null
+    },
+
+    selectNext(): void {
+      const ids = this.riskSortedItems.map((i) => i.id)
+      const idx = ids.indexOf(this.currentItemId ?? '')
+      this.currentItemId = ids[Math.min(ids.length - 1, idx + 1)] ?? null
+    },
   },
 })
