@@ -39,16 +39,16 @@ async function submit(): Promise<void> {
     <h2 class="auth-title">{{ t('auth.register') }}</h2>
     <el-form @submit.prevent="submit">
       <el-form-item :label="t('auth.companyName')">
-        <el-input v-model="companyName" data-test="companyName" />
+        <el-input v-model="companyName" data-test="companyName" autocomplete="organization" />
       </el-form-item>
       <el-form-item :label="t('auth.name')">
-        <el-input v-model="name" data-test="name" />
+        <el-input v-model="name" data-test="name" autocomplete="name" />
       </el-form-item>
       <el-form-item :label="t('auth.email')">
-        <el-input v-model="email" data-test="email" type="email" />
+        <el-input v-model="email" data-test="email" type="email" autocomplete="email" />
       </el-form-item>
       <el-form-item :label="t('auth.password')">
-        <el-input v-model="password" data-test="password" type="password" show-password />
+        <el-input v-model="password" data-test="password" type="password" show-password autocomplete="new-password" @keyup.enter="submit" />
       </el-form-item>
       <el-button type="primary" :loading="submitting" data-test="submit" style="width: 100%" @click="submit">
         {{ t('auth.register') }}
