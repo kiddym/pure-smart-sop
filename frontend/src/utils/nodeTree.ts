@@ -13,6 +13,20 @@ export function nodeTitle(node: Node): string {
   return trimmed || FALLBACK
 }
 
+export type ContentKind = 'table' | 'image'
+
+/** 正文行的内容类型标识；纯文字或章节标题行返回 null（不打标）。
+ *  仅对正文行（heading_level === null）判定。表格优先于图片
+ *  （表格单元格内可能内嵌图，整体语义仍是表格）。
+ *  依据 body HTML 是否含 <table>/<img>，与后端序列化输出对应。 */
+export function contentKind(node: Node): ContentKind | null {
+  if (node.heading_level !== null) return null
+  const body = node.body ?? ''
+  if (/<table[\s>]/i.test(body)) return 'table'
+  if (/<img[\s>]/i.test(body)) return 'image'
+  return null
+}
+
 /** 该节点是否有派生子（有任何节点 parent_id === id）。 */
 export function hasChildren(nodes: Node[], id: string): boolean {
   return nodes.some((x) => x.parent_id === id)
@@ -21,6 +35,7 @@ export function hasChildren(nodes: Node[], id: string): boolean {
 export interface TreeRow {
   node: Node
   title: string
+  contentKind: ContentKind | null
   hasChildren: boolean
   expanded: boolean
 }
@@ -61,7 +76,13 @@ export function visibleRows(
     if (q && !title.toLowerCase().includes(q)) continue
     // search/reviewOnly 激活时不做折叠（展开匹配项可见）；否则按展开态折叠。
     if (!q && !filter.reviewOnly && hiddenByCollapse(node)) continue
-    rows.push({ node, title, hasChildren: parentIds.has(node.id), expanded: isExpanded(node.id) })
+    rows.push({
+      node,
+      title,
+      contentKind: contentKind(node),
+      hasChildren: parentIds.has(node.id),
+      expanded: isExpanded(node.id),
+    })
   }
   return rows
 }

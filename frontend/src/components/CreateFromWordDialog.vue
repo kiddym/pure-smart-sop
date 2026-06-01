@@ -2,8 +2,10 @@
 import { computed, reactive, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { fetchFolderTree } from '@/api/folders'
-import { importFromWord, type ImportStage } from '@/api/parse'
+import { uploadAndParse, importParsed, type ImportStage } from '@/api/parse'
 import type { FolderTreeNode } from '@/types/folder'
+import type { ParseResponse, ParseWarning } from '@/types/parse'
+import ParseConfirmDialog from '@/components/ParseConfirmDialog.vue'
 
 const props = defineProps<{ modelValue: boolean }>()
 const emit = defineEmits<{
@@ -19,6 +21,10 @@ const form = reactive({ folder_id: '', name: '' })
 const stage = ref<ImportStage | ''>('')
 const uploadPct = ref(0)
 const errorMsg = ref('')
+const parsed = ref<ParseResponse | null>(null)
+const uploadToken = ref('')
+const confirmVisible = ref(false)
+const blockingWarnings = ref<ParseWarning[]>([])
 const busy = computed(() => stage.value !== '')
 const stageLabel = computed(() => {
   if (stage.value === 'uploading') return `上传中… ${uploadPct.value}%`
@@ -66,19 +72,58 @@ async function submit(): Promise<void> {
   if (!form.name.trim()) { ElMessage.warning('请输入程序名称'); return }
   errorMsg.value = ''
   try {
-    const proc = await importFromWord(file.value, form.folder_id, form.name.trim(), (s, pct) => {
+    const r = await uploadAndParse(file.value, (s, pct) => {
       stage.value = s
       if (pct !== undefined) uploadPct.value = pct
+    })
+    parsed.value = r.parsed
+    uploadToken.value = r.uploadToken
+    const blocking = r.parsed.warnings.filter((w) => w.severity === 'blocking')
+    if (blocking.length) {
+      blockingWarnings.value = blocking
+      confirmVisible.value = true
+      stage.value = ''
+      uploadPct.value = 0
+      return
+    }
+    await doImport()
+  } catch (e) {
+    errorMsg.value = errorMessage(e)
+    stage.value = ''
+    uploadPct.value = 0
+  }
+}
+
+async function doImport(): Promise<void> {
+  if (!parsed.value) return
+  try {
+    stage.value = 'creating'
+    const proc = await importParsed({
+      uploadToken: uploadToken.value,
+      folderId: form.folder_id,
+      name: form.name.trim(),
+      chapters: parsed.value.chapters,
+      importNotes: parsed.value.warnings,
     })
     ElMessage.success(`已创建 ${proc.code}`)
     visible.value = false
     emit('imported', proc.id)
   } catch (e) {
-    errorMsg.value = errorMessage(e) // 内联错误，保持打开可重试
+    errorMsg.value = errorMessage(e)
   } finally {
     stage.value = ''
     uploadPct.value = 0
   }
+}
+
+function onConfirmContinue(): void {
+  confirmVisible.value = false
+  void doImport()
+}
+function onCancelImport(): void {
+  confirmVisible.value = false
+  stage.value = ''
+  uploadPct.value = 0
 }
 </script>
 
@@ -104,6 +149,12 @@ async function submit(): Promise<void> {
       <el-button type="primary" :loading="busy" @click="submit">导入并编辑</el-button>
     </template>
   </el-dialog>
+  <ParseConfirmDialog
+    v-model="confirmVisible"
+    :warnings="blockingWarnings"
+    @confirm="onConfirmContinue"
+    @cancel="onCancelImport"
+  />
 </template>
 
 <style scoped>

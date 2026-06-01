@@ -73,8 +73,9 @@ export interface ValidationReport {
 }
 
 export interface ParseWarning {
-  stage: string // boundary | completeness | image | structure
+  stage: string // boundary | completeness | image | structure | discarded_by_design
   message: string
+  severity: 'blocking' | 'info'
 }
 
 export interface ParseMetadata {
@@ -116,6 +117,7 @@ export interface ImportRequest {
   description?: string
   upload_token?: string
   chapters: ImportNode[]
+  import_notes?: ParseWarning[]
 }
 
 // ---- 编辑器图片直传（Q214） ---- //

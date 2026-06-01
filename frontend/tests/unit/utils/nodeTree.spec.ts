@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { nodeTitle, hasChildren, visibleRows, descendantIds, subtreeIds, checkStates, indentLevel, arrowNav } from '@/utils/nodeTree'
+import { nodeTitle, hasChildren, visibleRows, descendantIds, subtreeIds, checkStates, indentLevel, arrowNav, contentKind } from '@/utils/nodeTree'
 import type { TreeRow } from '@/utils/nodeTree'
 import type { Node } from '@/types/node'
 
@@ -59,6 +59,15 @@ describe('visibleRows', () => {
     const rows = visibleRows(nodes, { a: true, b: true }, { search: '', reviewOnly: false })
     expect(rows[0]).toMatchObject({ title: 'A', hasChildren: true, expanded: true })
     expect(rows[0].node.id).toBe('a')
+  })
+  it('row carries contentKind (table/image/null)', () => {
+    const ns = [
+      n({ id: 't', body: '<table><tr><td>x</td></tr></table>' }),
+      n({ id: 'i', body: '<p><img src="x.png"/></p>' }),
+      n({ id: 'p', body: '<p>文字</p>' }),
+    ]
+    const rows = visibleRows(ns, {}, { search: '', reviewOnly: false })
+    expect(rows.map((r) => r.contentKind)).toEqual(['table', 'image', null])
   })
   it('visibleRows: hasChildren reflects parent_id membership (O(N) parent set)', () => {
     const twoNodes = [
@@ -128,7 +137,7 @@ describe('indentLevel', () => {
 })
 
 function row(over: Partial<Node>, rowOver: Partial<TreeRow> = {}): TreeRow {
-  return { node: n(over), title: '', hasChildren: false, expanded: true, ...rowOver }
+  return { node: n(over), title: '', contentKind: null, hasChildren: false, expanded: true, ...rowOver }
 }
 
 describe('arrowNav', () => {
@@ -158,5 +167,26 @@ describe('arrowNav', () => {
   it('unknown/null currentId → up/down picks the first row; left/right null', () => {
     expect(arrowNav(rows, 'zzz', 'down')).toEqual({ type: 'select', id: 'c1' })
     expect(arrowNav(rows, null, 'right')).toBeNull()
+  })
+})
+
+describe('contentKind', () => {
+  it('table body → table', () => {
+    expect(contentKind(n({ body: '<table border="1"><tr><td>a</td></tr></table>' }))).toBe('table')
+  })
+  it('img body → image', () => {
+    expect(contentKind(n({ body: '<p><img src="x.png"/></p>' }))).toBe('image')
+  })
+  it('table wins when both present', () => {
+    expect(contentKind(n({ body: '<table><tr><td><img src="x.png"/></td></tr></table>' }))).toBe('table')
+  })
+  it('plain text → null', () => {
+    expect(contentKind(n({ body: '<p>纯文字</p>' }))).toBe(null)
+  })
+  it('empty body → null', () => {
+    expect(contentKind(n({ body: '' }))).toBe(null)
+  })
+  it('chapter row (heading_level set) → null even with table', () => {
+    expect(contentKind(n({ heading_level: 1, body: '<table><tr><td>a</td></tr></table>' }))).toBe(null)
   })
 })

@@ -50,26 +50,38 @@ export const importProcedure = async (payload: ImportRequest): Promise<Procedure
 
 export type ImportStage = 'uploading' | 'parsing' | 'creating'
 
-// 从 Word 一步创建草稿：upload→parse→import（triage 移到编辑器，故此处无标定）。
-// onStage 回报阶段（uploading 带 0-100 上传百分比），供对话框展示分阶段进度。
-export const importFromWord = async (
+// 上传 + 解析（不落库）。triage 在调用方按 warnings.severity 决定是否强确认。
+export const uploadAndParse = async (
   file: File,
-  folderId: string,
-  name: string,
   onStage?: (stage: ImportStage, uploadPct?: number) => void,
-): Promise<ProcedureMeta> => {
+): Promise<{ uploadToken: string; parsed: ParseResponse }> => {
   onStage?.('uploading', 0)
   const up = await uploadDocx(file, (e) => {
     if (e.total) onStage?.('uploading', Math.round((e.loaded / e.total) * 100))
   })
   onStage?.('parsing')
   const parsed = await parseDocx(up.upload_token, 'smart')
+  return { uploadToken: up.upload_token, parsed }
+}
+
+// 用审查后的 chapters + 全量 warnings 快照落库创建草稿。
+export const importParsed = async (
+  args: {
+    uploadToken: string
+    folderId: string
+    name: string
+    chapters: ParseResponse['chapters']
+    importNotes: ParseResponse['warnings']
+  },
+  onStage?: (stage: ImportStage) => void,
+): Promise<ProcedureMeta> => {
   onStage?.('creating')
   return importProcedure({
-    name,
-    folder_id: folderId,
-    upload_token: up.upload_token,
-    chapters: parsed.chapters,
+    name: args.name,
+    folder_id: args.folderId,
+    upload_token: args.uploadToken,
+    chapters: args.chapters,
+    import_notes: args.importNotes,
   })
 }
 

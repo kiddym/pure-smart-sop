@@ -59,6 +59,7 @@ function detail(): ProcedureDetail {
         { version: 1, change_type: 'create', changed_at: '2026-05-19T10:00:00Z', description: '创建' },
       ],
       created_at: '2026-05-01T00:00:00Z', updated_at: '2026-05-02T00:00:00Z',
+      import_notes: [],
     },
     // B5 后 get_detail 不再返回 chapters/steps；预览结构由 nodes() 提供。
     attachments: [],

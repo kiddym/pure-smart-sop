@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import EditorTopBar from '@/components/editor/EditorTopBar.vue'
 import NodeTreePanel from '@/components/editor/NodeTreePanel.vue'
+import ParseNoticeBar from '@/components/editor/ParseNoticeBar.vue'
 import NodeDetailPanel from '@/components/editor/NodeDetailPanel.vue'
 import ProcedureDetailsPanel from '@/components/editor/ProcedureDetailsPanel.vue'
 import PublishChecklistDialog from '@/components/editor/PublishChecklistDialog.vue'
@@ -205,6 +206,7 @@ function goBack(): void {
       <div class="body">
         <EditorPreviewPane v-if="store.hasSourceDocx" :procedure-id="store.procedure.id" />
         <div class="left">
+          <ParseNoticeBar :notes="store.procedure?.import_notes ?? []" />
           <NodeTreePanel :readonly="!store.editable" />
         </div>
         <CollapsiblePanel

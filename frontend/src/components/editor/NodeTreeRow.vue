@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { TreeRow } from '@/utils/nodeTree'
+import { Grid, Picture } from '@element-plus/icons-vue'
+
+const TYPE_ICON = { table: Grid, image: Picture } as const
+const TYPE_LABEL = { table: '表格', image: '图片' } as const
 
 // 单个节点行（B3a-2）。仅展示 + 派发意图。chip command：l0(正文)/l1/l2/l3/step/node。
 interface Props {
@@ -100,6 +104,10 @@ function onKeydown(ev: KeyboardEvent): void {
       </el-dropdown>
     </span>
     <span class="ntr-code">{{ n.code }}</span>
+    <span v-if="row.contentKind" class="ntr-type" :class="`ntr-type--${row.contentKind}`">
+      <el-icon><component :is="TYPE_ICON[row.contentKind]" /></el-icon>
+      {{ TYPE_LABEL[row.contentKind] }}
+    </span>
     <span class="ntr-title">{{ row.title }}</span>
     <span v-if="n.mark_status === 'review'" class="ntr-review" title="解析存疑，待确认">待确认</span>
     <el-button v-if="!readonly" class="ntr-del" size="small" text title="删除" @click.stop="emit('remove')">✕</el-button>
@@ -120,6 +128,8 @@ function onKeydown(ev: KeyboardEvent): void {
 .ntr-code { color: #888; font-variant-numeric: tabular-nums; flex: none; }
 .ntr-title { overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; }
 .ntr-review { flex: none; font-size: 11px; line-height: 1; padding: 1px 4px; border-radius: 3px; color: #b88230; background: #fdf6ec; border: 1px solid #f5dab1; }
+.ntr-type { flex: none; display: inline-flex; align-items: center; gap: 2px; font-size: 11px; line-height: 1; padding: 1px 4px; border-radius: 3px; color: #5c6b7a; background: #eef1f4; border: 1px solid #dde3e9; }
+.ntr-type .el-icon { font-size: 12px; }
 .ntr-del { flex: none; display: none; }
 .ntr:hover .ntr-del { display: inline-flex; }
 </style>

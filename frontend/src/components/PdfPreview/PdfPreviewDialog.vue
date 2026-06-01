@@ -734,6 +734,25 @@ h3.chapter-title {
   display: block;
   margin: 8px auto;
 }
+/* 公式/SmartArt/chart 占位（B 项）：行内公式 + 块状图示两态 */
+:deep(.sop-ph) {
+  display: inline-block;
+  padding: 0 6px;
+  margin: 0 2px;
+  font-size: 12px;
+  color: #b88230;
+  background: #fdf6ec;
+  border: 1px dashed #f5dab1;
+  border-radius: 3px;
+}
+:deep(.sop-ph[data-ph='smartart']),
+:deep(.sop-ph[data-ph='chart']),
+:deep(.sop-ph[data-ph='vector']) {
+  display: block;
+  padding: 8px 12px;
+  margin: 6px 0;
+  text-align: center;
+}
 </style>
 
 <style>

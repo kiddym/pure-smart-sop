@@ -6,9 +6,10 @@ vi.mock('@/api/http', () => ({ http: { get, post } }))
 
 import {
   fetchParseMethods,
-  importFromWord,
+  importParsed,
   importProcedure,
   parseDocx,
+  uploadAndParse,
   uploadAsset,
   uploadDocx,
 } from '@/api/parse'
@@ -77,23 +78,40 @@ describe('parse api', () => {
     expect(post).toHaveBeenCalledWith('/procedures/import', payload)
   })
 
-  it('importFromWord 串 upload→parse→import 并按序回报阶段', async () => {
+  it('uploadAndParse 串 upload→parse 并按序回报阶段', async () => {
     post.mockImplementation((url: string) => {
       if (url === '/uploads') return Promise.resolve({ data: { upload_token: 'tk' } })
-      if (url === '/parse') return Promise.resolve({ data: { chapters: [{ title: 'x' }] } })
-      return Promise.resolve({ data: { id: 'p1', code: 'QC-1' } }) // /procedures/import
+      return Promise.resolve({ data: { chapters: [{ title: 'x' }], warnings: [] } }) // /parse
     })
     const stages: string[] = []
-    const out = await importFromWord(
+    const { uploadToken, parsed } = await uploadAndParse(
       new File([new Uint8Array([1])], 'a.docx'),
-      'f1',
-      '名',
+      (s) => stages.push(s),
+    )
+    expect(uploadToken).toBe('tk')
+    expect(parsed.chapters).toHaveLength(1)
+    expect(stages).toEqual(['uploading', 'parsing'])
+    expect(post.mock.calls.map((c) => c[0])).toEqual(['/uploads', '/parse'])
+  })
+
+  it('importParsed POST /procedures/import 携带 chapters + import_notes 并回报 creating', async () => {
+    post.mockResolvedValue({ data: { id: 'p1', code: 'QC-1' } })
+    const stages: string[] = []
+    const out = await importParsed(
+      {
+        uploadToken: 'tk',
+        folderId: 'f1',
+        name: '名',
+        chapters: [{ title: 'x' }] as never,
+        importNotes: [{ stage: 'completeness', message: '缺图', severity: 'blocking' }],
+      },
       (s) => stages.push(s),
     )
     expect(out.id).toBe('p1')
-    expect(stages).toEqual(['uploading', 'parsing', 'creating'])
+    expect(stages).toEqual(['creating'])
     const importCall = post.mock.calls.find((c) => c[0] === '/procedures/import')
     expect(importCall?.[1]).toMatchObject({ name: '名', folder_id: 'f1', upload_token: 'tk' })
+    expect(importCall?.[1].import_notes).toHaveLength(1)
   })
 
   it('uploadAsset 以 multipart 发到 /procedures/{id}/assets', async () => {

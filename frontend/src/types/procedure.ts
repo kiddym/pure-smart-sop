@@ -1,6 +1,7 @@
 // 程序类型（与后端 app/schemas/procedure.py 对齐）
 
 import type { FieldOption, FieldType } from '@/types/field'
+import type { ParseWarning } from '@/types/parse'
 
 export type LevelOfUse = 'reference' | 'continuous' | 'information'
 export type ProcedureStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED'
@@ -51,6 +52,7 @@ export interface ProcedureMeta {
   version_change_log: Array<Record<string, unknown>>
   created_at: string
   updated_at: string
+  import_notes: ParseWarning[]
 }
 
 export interface ProcedureFieldView {

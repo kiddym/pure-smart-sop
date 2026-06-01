@@ -3,9 +3,10 @@ import { flushPromises, mount } from '@vue/test-utils'
 import type { VueWrapper } from '@vue/test-utils'
 import ElementPlus from 'element-plus'
 
-const { importFromWord } = vi.hoisted(() => ({ importFromWord: vi.fn() }))
+const { uploadAndParse } = vi.hoisted(() => ({ uploadAndParse: vi.fn() }))
+const { importParsed } = vi.hoisted(() => ({ importParsed: vi.fn() }))
 const { fetchFolderTree } = vi.hoisted(() => ({ fetchFolderTree: vi.fn() }))
-vi.mock('@/api/parse', () => ({ importFromWord }))
+vi.mock('@/api/parse', () => ({ uploadAndParse, importParsed }))
 vi.mock('@/api/folders', () => ({ fetchFolderTree }))
 
 import CreateFromWordDialog from '@/components/CreateFromWordDialog.vue'
@@ -21,6 +22,15 @@ const OptionStub = {
   name: 'ElOption',
   props: { value: { type: String, default: '' }, label: { type: String, default: '' } },
   template: '<div class="el-option-stub">{{ label }}</div>',
+}
+
+const PARSED_CLEAN = { uploadToken: 'tok', parsed: { chapters: [{ id: 'c' }], warnings: [] } }
+const PARSED_BLOCKING = {
+  uploadToken: 'tok',
+  parsed: {
+    chapters: [{ id: 'c' }],
+    warnings: [{ stage: 'completeness', message: '图片可能遗漏：原始 3 / 解析 1', severity: 'blocking' }],
+  },
 }
 
 // 关→开切换触发 watch(visible)（非 immediate）→ 走真实的 reset + loadLeaves。
@@ -57,7 +67,8 @@ async function clickSubmit(wrapper: VueWrapper): Promise<void> {
 
 describe('CreateFromWordDialog', () => {
   beforeEach(() => {
-    importFromWord.mockReset()
+    uploadAndParse.mockReset()
+    importParsed.mockReset()
     fetchFolderTree.mockReset().mockResolvedValue([])
   })
 
@@ -86,35 +97,62 @@ describe('CreateFromWordDialog', () => {
     expect((nameInput.element as HTMLInputElement).value).toBe('采购控制程序')
   })
 
-  it('缺文件时提交：不调用 importFromWord', async () => {
+  it('缺文件时提交：不调用 uploadAndParse', async () => {
     const wrapper = await open()
     await clickSubmit(wrapper)
     await flushPromises()
-    expect(importFromWord).not.toHaveBeenCalled()
+    expect(uploadAndParse).not.toHaveBeenCalled()
   })
 
-  it('提交成功：调 importFromWord、emit imported、关闭对话框', async () => {
-    importFromWord.mockResolvedValue({ id: 'p9', code: 'QC-009' })
+  it('干净文档（无 blocking）：直接 import、不弹强确认、关闭对话框', async () => {
+    uploadAndParse.mockResolvedValue(PARSED_CLEAN)
+    importParsed.mockResolvedValue({ id: 'p9', code: 'QC-009' })
     const wrapper = await open()
-    const file = await pickFile(wrapper, '记录控制.docx')
+    await pickFile(wrapper, '记录控制.docx')
     await setFolder(wrapper, 'f1')
     await clickSubmit(wrapper)
     await flushPromises()
-    expect(importFromWord).toHaveBeenCalledWith(file, 'f1', '记录控制', expect.any(Function))
+    expect(importParsed).toHaveBeenCalledTimes(1)
     expect(wrapper.emitted('imported')?.[0]).toEqual(['p9'])
-    expect(wrapper.emitted('update:modelValue')?.some((e) => e[0] === false)).toBe(true)
   })
 
-  it('提交失败：保持打开、不 emit imported', async () => {
-    importFromWord.mockRejectedValue(new Error('PARSE_NO_HEADINGS'))
+  it('有 blocking：弹强确认且未直接 import', async () => {
+    uploadAndParse.mockResolvedValue(PARSED_BLOCKING)
+    importParsed.mockResolvedValue({ id: 'p9', code: 'QC-009' })
     const wrapper = await open()
-    await pickFile(wrapper, 'bad.docx')
+    await pickFile(wrapper, '脏文档.docx')
     await setFolder(wrapper, 'f1')
     await clickSubmit(wrapper)
     await flushPromises()
-    expect(importFromWord).toHaveBeenCalled()
+    expect(importParsed).not.toHaveBeenCalled()
+    expect(wrapper.findComponent({ name: 'ParseConfirmDialog' }).props('modelValue')).toBe(true)
+  })
+
+  it('blocking 后确认继续：调 importParsed 并回传全量 warnings', async () => {
+    uploadAndParse.mockResolvedValue(PARSED_BLOCKING)
+    importParsed.mockResolvedValue({ id: 'p9', code: 'QC-009' })
+    const wrapper = await open()
+    await pickFile(wrapper, '脏文档.docx')
+    await setFolder(wrapper, 'f1')
+    await clickSubmit(wrapper)
+    await flushPromises()
+    wrapper.findComponent({ name: 'ParseConfirmDialog' }).vm.$emit('confirm')
+    await flushPromises()
+    expect(importParsed).toHaveBeenCalledTimes(1)
+    expect(importParsed.mock.calls[0][0].importNotes).toEqual(PARSED_BLOCKING.parsed.warnings)
+    expect(wrapper.emitted('imported')?.[0]).toEqual(['p9'])
+  })
+
+  it('blocking 后取消：不 import、对话框保持打开', async () => {
+    uploadAndParse.mockResolvedValue(PARSED_BLOCKING)
+    const wrapper = await open()
+    await pickFile(wrapper, '脏文档.docx')
+    await setFolder(wrapper, 'f1')
+    await clickSubmit(wrapper)
+    await flushPromises()
+    wrapper.findComponent({ name: 'ParseConfirmDialog' }).vm.$emit('cancel')
+    await flushPromises()
+    expect(importParsed).not.toHaveBeenCalled()
     expect(wrapper.emitted('imported')).toBeUndefined()
-    expect(wrapper.emitted('update:modelValue')?.some((e) => e[0] === false)).toBeFalsy()
-    expect(wrapper.text()).toContain('导入失败') // 内联错误而非仅 toast
   })
 })

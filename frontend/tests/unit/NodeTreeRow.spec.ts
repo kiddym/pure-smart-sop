@@ -14,7 +14,7 @@ function node(over: Partial<Node>): Node {
 }
 function treeRow(over: Partial<Node> = {}, row: Partial<TreeRow> = {}): TreeRow {
   const nd = node(over)
-  return { node: nd, title: '章节', hasChildren: false, expanded: true, ...row }
+  return { node: nd, title: '章节', contentKind: null, hasChildren: false, expanded: true, ...row }
 }
 
 const baseProps = { selected: false, selectedForMark: false, dropHint: '' as const }
@@ -69,6 +69,20 @@ describe('NodeTreeRow', () => {
   it('review node renders 待确认 badge', () => {
     const w = mountRow(treeRow({ mark_status: 'review' }))
     expect(w.find('.ntr-review').exists()).toBe(true)
+  })
+
+  it('table content row renders 表格 tag', () => {
+    const w = mountRow(treeRow({ heading_level: null }, { contentKind: 'table' }))
+    expect(w.find('.ntr-type').exists()).toBe(true)
+    expect(w.find('.ntr-type').text()).toContain('表格')
+  })
+  it('image content row renders 图片 tag', () => {
+    const w = mountRow(treeRow({ heading_level: null }, { contentKind: 'image' }))
+    expect(w.find('.ntr-type').text()).toContain('图片')
+  })
+  it('text/chapter row renders no type tag', () => {
+    const w = mountRow(treeRow({}, { contentKind: null }))
+    expect(w.find('.ntr-type').exists()).toBe(false)
   })
 
   it('dragstart/dragover/drop/dragend are forwarded', async () => {
