@@ -113,12 +113,36 @@ def _build_nodes(
     db.flush()
 
 
+def _has_applied_duplicate(db: Session, item: BatchImportItem) -> bool:
+    """是否已有同 content_hash 的已落库条目（与 preview_apply 的 duplicate 判定同语义）。
+
+    须在 item 的租户上下文内调用——查询受 ORM 隔离自动限定到本租户。
+    """
+    hit = db.execute(
+        select(BatchImportItem.id).where(
+            BatchImportItem.status == "applied",
+            BatchImportItem.content_hash == item.content_hash,
+            BatchImportItem.content_hash != "",
+            BatchImportItem.is_active.is_(True),
+            BatchImportItem.id != item.id,
+        )
+    ).first()
+    return hit is not None
+
+
 def apply_item(db: Session, item: BatchImportItem) -> None:
     """落库单项：进入租户上下文，幂等检查，建 procedure + 节点树 + 源 docx。"""
     token = tenant.set_current_company_id(item.company_id)
     try:
         if item.created_procedure_id is not None:
             item.status = "applied"
+            batch_parse_service.recompute_counts(db, item.job_id)
+            return
+        # content_hash 去重：已有同 hash 的已落库条目 → 跳过（兑现 dry-run preview 的 duplicate_skip 承诺）
+        if item.content_hash and _has_applied_duplicate(db, item):
+            item.status = "skipped"
+            item.leased_until = None
+            item.error = None
             batch_parse_service.recompute_counts(db, item.job_id)
             return
         job = db.get(BatchImportJob, item.job_id)

@@ -134,7 +134,7 @@ def recompute_counts(db: Session, job_id: str) -> None:
             )
         ).scalars()
     )
-    counts = {"total": len(items), "parsed": 0, "review": 0, "applied": 0, "failed": 0}
+    counts = {"total": len(items), "parsed": 0, "review": 0, "applied": 0, "failed": 0, "skipped": 0}
     for it in items:
         if it.status == "review":
             counts["review"] += 1
@@ -144,12 +144,19 @@ def recompute_counts(db: Session, job_id: str) -> None:
             counts["parsed"] += 1
         elif it.status == "failed":
             counts["failed"] += 1
+        elif it.status == "skipped":
+            counts["skipped"] += 1
     job = db.get(BatchImportJob, job_id)
     if job is not None:
         job.counts = counts
-        terminal = counts["total"] > 0 and counts["applied"] + counts["failed"] == counts["total"]
+        # 终态 = 无待处理项（applied/failed/skipped 占满），skipped 也算"已了结"，
+        # 否则全跳过的批次会永远卡在 reviewing。
+        terminal = (
+            counts["total"] > 0
+            and counts["applied"] + counts["failed"] + counts["skipped"] == counts["total"]
+        )
         if terminal:
-            # 终态：全失败 → failed；否则（含部分失败）→ completed
+            # 终态：全失败 → failed；否则（含部分失败/跳过）→ completed
             job.status = "failed" if counts["failed"] == counts["total"] else "completed"
         elif counts["review"] > 0 or counts["applied"] > 0:
             job.status = "reviewing"

@@ -37,6 +37,7 @@ def enqueue_apply(
     for item in items:
         item.status = "applying"
         item.leased_until = None
+    batch_parse_service.recompute_counts(db, job_id)  # 入队后即时刷新计数（review 数下降）
     db.flush()
     return len(items)
 

@@ -63,9 +63,12 @@ describe('batchReview store', () => {
     expect(store.reviewRevision).toBe(4)
   })
 
-  it('applyReviewOps swallows 409 (reload-wins): reloads blob, bumps revision, no throw', async () => {
+  it('applyReviewOps swallows 409 (reload-wins): reloads authoritative revision, no throw', async () => {
     vi.spyOn(api, 'fetchBatchJob').mockResolvedValue(job as never)
-    vi.spyOn(api, 'fetchBatchItems').mockResolvedValue(items as never)
+    // 服务端权威版本已推进到 7（模拟他端连改两次）
+    vi.spyOn(api, 'fetchBatchItems').mockResolvedValue(
+      [{ ...items[0], review_revision: 7 }] as never,
+    )
     const blobSpy = vi.spyOn(api, 'fetchParseResult').mockResolvedValue(blob as never)
     vi.spyOn(api, 'patchReviewItem').mockRejectedValue({ response: { status: 409 } })
     const warnSpy = vi.spyOn(ElMessage, 'warning').mockImplementation(() => ({}) as never)
@@ -73,12 +76,12 @@ describe('batchReview store', () => {
     const store = useBatchReviewStore()
     await store.load('j1')
     await store.openItem('i1') // fetchParseResult #1
-    store.reviewRevision = 1
+    store.reviewRevision = 1 // 本地陈旧
     await expect(
       store.applyReviewOps([{ node_id: 'n1', action: 'accept' }]),
     ).resolves.toBeUndefined() // 不抛
     expect(warnSpy).toHaveBeenCalled()
-    expect(store.reviewRevision).toBe(2) // 本地 +1
+    expect(store.reviewRevision).toBe(7) // 读权威版本（非盲猜 +1=2）
     expect(blobSpy).toHaveBeenCalledTimes(2) // openItem + reload-wins
   })
 

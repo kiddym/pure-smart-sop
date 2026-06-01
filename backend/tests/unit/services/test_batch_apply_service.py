@@ -119,3 +119,27 @@ def test_apply_item_is_idempotent(db: Session, storage_tmp, factory) -> None:
     batch_apply_service.apply_item(db, item)
     db.commit()
     assert db.get(BatchImportItem, item.id).created_procedure_id == first_pid
+
+
+def test_apply_item_skips_content_hash_duplicate(db: Session, storage_tmp, factory) -> None:
+    """已有同 content_hash 的已落库条目 → 本项跳过、不建程序（兑现 dry-run 承诺）。"""
+    tenant.set_current_company_id("co-1")
+    folder = factory.folder(name="目标", prefix="QC")
+    factory.sequence(folder.id)
+    item = _seed_review_item(db, folder_id=folder.id)
+    item.content_hash = "DUPHASH"
+    # 同租户、同 hash 的既有已落库条目
+    sibling = BatchImportItem(
+        job_id=item.job_id, filename="prior.docx", status="applied",
+        content_hash="DUPHASH", created_procedure_id="p-prior",
+    )
+    db.add(sibling)
+    db.commit()
+
+    batch_apply_service.apply_item(db, item)
+    db.commit()
+
+    fresh = db.get(BatchImportItem, item.id)
+    assert fresh is not None
+    assert fresh.status == "skipped"
+    assert fresh.created_procedure_id is None  # 未建程序

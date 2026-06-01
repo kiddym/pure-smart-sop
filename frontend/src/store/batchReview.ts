@@ -108,7 +108,9 @@ export const useBatchReviewStore = defineStore('batchReview', {
       } catch (err) {
         if (isVersionConflict(err)) {
           ElMessage.warning('该条目已被修改，已为你刷新最新内容')
-          this.reviewRevision += 1
+          // reload-wins：拉权威版本（而非盲猜 +1），多端并发改判时才正确
+          await this.refresh()
+          this.reviewRevision = this.currentItem?.review_revision ?? this.reviewRevision + 1
           await this.reloadBlob()
           return
         }

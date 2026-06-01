@@ -128,7 +128,33 @@ def test_recompute_counts_terminal_with_some_success_marks_completed(db: Session
     fresh = db.get(BatchImportJob, job.id)
     assert fresh is not None
     assert fresh.status == "completed"
-    assert fresh.counts == {"total": 2, "parsed": 1, "review": 0, "applied": 1, "failed": 1}
+    assert fresh.counts == {
+        "total": 2, "parsed": 1, "review": 0, "applied": 1, "failed": 1, "skipped": 0,
+    }
+
+
+def test_recompute_counts_skipped_items_reach_terminal(db: Session) -> None:
+    """skipped 也算已了结：applied + skipped 占满 → completed（不卡 reviewing）。"""
+    tenant.set_current_company_id("co-1")
+    job = BatchImportJob(
+        folder_id="f1",
+        counts={"total": 0, "parsed": 0, "review": 0, "applied": 0, "failed": 0},
+    )
+    db.add(job)
+    db.flush()
+    ok = BatchImportItem(job_id=job.id, filename="ok.docx", status="applied", docx_ref="a")
+    sk = BatchImportItem(job_id=job.id, filename="sk.docx", status="skipped", docx_ref="b")
+    db.add_all([ok, sk])
+    db.commit()
+
+    batch_parse_service.recompute_counts(db, job.id)
+    db.commit()
+    tenant.set_current_company_id(None)
+
+    fresh = db.get(BatchImportJob, job.id)
+    assert fresh is not None
+    assert fresh.status == "completed"  # 而非永久卡 reviewing
+    assert fresh.counts["skipped"] == 1
 
 
 def test_scheduler_registers_batch_jobs() -> None:

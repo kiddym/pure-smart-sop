@@ -9,6 +9,7 @@ export interface BatchCounts {
   review: number
   applied: number
   failed: number
+  skipped?: number
 }
 
 export interface BatchImportJob {
