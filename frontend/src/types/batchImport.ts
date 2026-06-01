@@ -27,6 +27,7 @@ export interface BatchImportItem {
   status: BatchItemStatus
   content_hash: string
   summary: { chapter_count?: number; confidence_tier?: string; warning_count?: number }
+  review_revision: number
   error: string | null
 }
 

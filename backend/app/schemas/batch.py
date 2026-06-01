@@ -35,6 +35,7 @@ class BatchImportItemOut(BaseModel):
     status: str
     content_hash: str
     summary: dict[str, Any]
+    review_revision: int  # 暂存改判乐观锁当前版本（前端 PATCH review 携带）
     error: str | None
 
 

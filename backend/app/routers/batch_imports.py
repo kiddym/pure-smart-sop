@@ -52,6 +52,7 @@ def _item_out(item: BatchImportItem) -> BatchImportItemOut:
         status=item.status,
         content_hash=item.content_hash,
         summary=item.summary or {},
+        review_revision=item.review_revision,
         error=item.error,
     )
 
