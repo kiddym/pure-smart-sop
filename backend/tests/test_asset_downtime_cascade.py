@@ -77,3 +77,30 @@ def test_manual_downtime_decoupled(client):
     client.post(f"/api/v1/assets/{aid}/downtimes", headers=_h(t),
                 json={"started_at": "2026-05-01T00:00:00"})
     assert _status(client, t, aid) == "OPERATIONAL"  # 手动停机不改状态
+
+
+def test_cross_tenant_cascade_isolation(client):
+    ta = _admin(client, company="Acme", email="a@acme.com")
+    tb = _admin(client, company="Beta", email="b@beta.com")
+    # 两租户各建 父->子
+    a_parent = _mk(client, ta, "A父")
+    a_child = _mk(client, ta, "A子", a_parent)
+    b_parent = _mk(client, tb, "B父")
+    b_child = _mk(client, tb, "B子", b_parent)
+    # A 父停机
+    client.patch(f"/api/v1/assets/{a_parent}", headers=_h(ta), json={"status": "DOWN"})
+    # B 侧完全不受影响
+    assert _status(client, tb, b_child) == "OPERATIONAL"
+    assert _downtimes(client, tb, b_child) == []
+    # A 子被级联
+    assert _status(client, ta, a_child) == "DOWN"
+
+
+def test_down_internal_switch_no_extra_record(client):
+    t = _admin(client)
+    aid = _mk(client, t, "泵")
+    client.patch(f"/api/v1/assets/{aid}", headers=_h(t), json={"status": "DOWN"})
+    n1 = len(_downtimes(client, t, aid))
+    # DOWN -> EMERGENCY_SHUTDOWN 仍属 DOWN 类，不应再建记录
+    client.patch(f"/api/v1/assets/{aid}", headers=_h(t), json={"status": "EMERGENCY_SHUTDOWN"})
+    assert len(_downtimes(client, t, aid)) == n1
