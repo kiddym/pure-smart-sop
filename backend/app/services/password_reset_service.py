@@ -23,6 +23,8 @@ def _find_user(db: Session, email: str, company_slug: str | None) -> User | None
         from app.models.company import Company
 
         stmt = stmt.join(Company, Company.id == User.company_id).where(Company.slug == company_slug)
+    # email 仅在公司内唯一；未带 company_slug 时同邮箱可能跨多公司存在。此处有意取首条
+    # （而非像登录那样要求公司标识）——防枚举优先于精确定位，误发的重置邮件仍单次+1h 过期，危害低。
     return db.execute(stmt).scalars().first()
 
 
