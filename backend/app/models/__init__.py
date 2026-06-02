@@ -32,7 +32,7 @@ from app.models.node import ProcedureNode
 from app.models.notification import Notification, NotificationArm
 from app.models.notification_preference import NotificationPreference
 from app.models.numbering_profile import NumberingProfile
-from app.models.part import Part, PartAsset, PartAssignee, PartLocation, PartTeam
+from app.models.part import Part, PartAsset, PartAssignee, PartLocation, PartPM, PartTeam
 from app.models.part_category import PartCategory
 from app.models.part_consumption import PartConsumption
 from app.models.password_reset_token import PasswordResetToken
@@ -106,6 +106,7 @@ __all__ = [
     "PartCategory",
     "PartConsumption",
     "PartLocation",
+    "PartPM",
     "PartTeam",
     "PasswordResetToken",
     "PreventiveMaintenance",

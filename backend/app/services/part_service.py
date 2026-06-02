@@ -11,7 +11,8 @@ from sqlalchemy.orm import Session
 from app.errors import not_found
 from app.models.base import utcnow
 from app.models.location import Location
-from app.models.part import Part, PartAsset, PartAssignee, PartLocation, PartTeam
+from app.models.part import Part, PartAsset, PartAssignee, PartLocation, PartPM, PartTeam
+from app.models.preventive_maintenance import PreventiveMaintenance
 from app.schemas.part import PartCreate, PartUpdate
 from app.services import sequence_service
 
@@ -62,6 +63,24 @@ def location_ids(db: Session, part_id: str) -> list[str]:
     )
 
 
+def pm_ids(db: Session, part_id: str) -> list[str]:
+    return list(
+        db.execute(
+            select(PartPM.pm_id).where(PartPM.part_id == part_id).order_by(PartPM.pm_id)
+        )
+        .scalars()
+        .all()
+    )
+
+
+def _validate_pm_ids(db: Session, ids: list[str], company_id: str) -> None:
+    # 守红线：目标 PM 必须属当前 company（且未软删），否则跨租户引用 → 404
+    for pid in dict.fromkeys(ids):
+        pm = db.get(PreventiveMaintenance, pid)
+        if pm is None or not pm.is_active or pm.company_id != company_id:
+            raise not_found("PREVENTIVE_MAINTENANCE_NOT_FOUND", "预防性维护不存在")
+
+
 def _validate_location_ids(db: Session, ids: list[str], company_id: str) -> None:
     # 守红线：目标位置必须属当前 company（且未软删），否则跨租户引用 → 404
     for lid in dict.fromkeys(ids):
@@ -78,6 +97,7 @@ def _set_relations(
     team_id_list: list[str],
     asset_id_list: list[str],
     location_id_list: list[str],
+    pm_id_list: list[str],
 ) -> None:
     for uid in dict.fromkeys(user_ids):
         db.add(PartAssignee(part_id=part_id, user_id=uid, company_id=company_id))
@@ -87,6 +107,8 @@ def _set_relations(
         db.add(PartAsset(part_id=part_id, asset_id=aid, company_id=company_id))
     for lid in dict.fromkeys(location_id_list):
         db.add(PartLocation(part_id=part_id, location_id=lid, company_id=company_id))
+    for pid in dict.fromkeys(pm_id_list):
+        db.add(PartPM(part_id=part_id, pm_id=pid, company_id=company_id))
 
 
 def create_part(
@@ -109,6 +131,7 @@ def create_part(
     db.add(p)
     db.flush()
     _validate_location_ids(db, payload.location_ids, company_id)
+    _validate_pm_ids(db, payload.pm_ids, company_id)
     _set_relations(
         db,
         p.id,
@@ -117,6 +140,7 @@ def create_part(
         payload.team_ids,
         payload.asset_ids,
         payload.location_ids,
+        payload.pm_ids,
     )
     db.commit()
     db.refresh(p)
@@ -157,6 +181,7 @@ def update_part(
     new_teams = data.pop("team_ids", None)
     new_assets = data.pop("asset_ids", None)
     new_locations = data.pop("location_ids", None)
+    new_pms = data.pop("pm_ids", None)
     for k, v in data.items():
         setattr(p, k, v)
     if new_assignees is not None:
@@ -176,6 +201,11 @@ def update_part(
         db.execute(delete(PartLocation).where(PartLocation.part_id == p.id))
         for lid in dict.fromkeys(new_locations):
             db.add(PartLocation(part_id=p.id, location_id=lid, company_id=company_id))
+    if new_pms is not None:
+        _validate_pm_ids(db, new_pms, company_id)
+        db.execute(delete(PartPM).where(PartPM.part_id == p.id))
+        for pid in dict.fromkeys(new_pms):
+            db.add(PartPM(part_id=p.id, pm_id=pid, company_id=company_id))
     db.commit()
     db.refresh(p)
     return p
