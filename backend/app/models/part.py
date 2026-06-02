@@ -83,3 +83,27 @@ class PartAsset(Base, UUIDMixin, TimestampMixin, TenantMixin):
     asset_id: Mapped[str] = mapped_column(
         String(36), ForeignKey("tb_asset.id", ondelete="CASCADE"), index=True
     )
+
+
+class PartLocation(Base, UUIDMixin, TimestampMixin, TenantMixin):
+    __tablename__ = "tb_part_location"
+    __table_args__ = (UniqueConstraint("part_id", "location_id", name="uq_part_location"),)
+
+    part_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("tb_part.id", ondelete="CASCADE"), index=True
+    )
+    location_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("tb_location.id", ondelete="CASCADE"), index=True
+    )
+
+
+class PartPM(Base, UUIDMixin, TimestampMixin, TenantMixin):
+    __tablename__ = "tb_part_pm"
+    __table_args__ = (UniqueConstraint("part_id", "pm_id", name="uq_part_pm"),)
+
+    part_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("tb_part.id", ondelete="CASCADE"), index=True
+    )
+    pm_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("tb_preventive_maintenance.id", ondelete="CASCADE"), index=True
+    )

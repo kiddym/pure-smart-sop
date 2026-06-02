@@ -1,4 +1,4 @@
-"""客户（Customer，每租户）+ M:N 关联备件。billing_currency 为裸货币码（Currency 实体延后）。"""
+"""客户（Customer，每租户）+ M:N 关联备件/资产/位置。billing_currency 为裸货币码（Currency 实体延后）。"""
 
 from __future__ import annotations
 
@@ -41,4 +41,28 @@ class CustomerPart(Base, UUIDMixin, TimestampMixin, TenantMixin):
     )
     part_id: Mapped[str] = mapped_column(
         String(36), ForeignKey("tb_part.id", ondelete="CASCADE"), index=True
+    )
+
+
+class CustomerAsset(Base, UUIDMixin, TimestampMixin, TenantMixin):
+    __tablename__ = "tb_customer_asset"
+    __table_args__ = (UniqueConstraint("customer_id", "asset_id", name="uq_customer_asset"),)
+
+    customer_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("tb_customer.id", ondelete="CASCADE"), index=True
+    )
+    asset_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("tb_asset.id", ondelete="CASCADE"), index=True
+    )
+
+
+class CustomerLocation(Base, UUIDMixin, TimestampMixin, TenantMixin):
+    __tablename__ = "tb_customer_location"
+    __table_args__ = (UniqueConstraint("customer_id", "location_id", name="uq_customer_location"),)
+
+    customer_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("tb_customer.id", ondelete="CASCADE"), index=True
+    )
+    location_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("tb_location.id", ondelete="CASCADE"), index=True
     )

@@ -21,6 +21,8 @@ class PartCreate(BaseModel):
     assignee_ids: list[str] = []
     team_ids: list[str] = []
     asset_ids: list[str] = []
+    location_ids: list[str] = []
+    pm_ids: list[str] = []
 
 
 class PartUpdate(BaseModel):
@@ -36,6 +38,8 @@ class PartUpdate(BaseModel):
     assignee_ids: list[str] | None = None
     team_ids: list[str] | None = None
     asset_ids: list[str] | None = None
+    location_ids: list[str] | None = None
+    pm_ids: list[str] | None = None
 
 
 class PartRead(BaseModel):
@@ -55,6 +59,8 @@ class PartRead(BaseModel):
     assignee_ids: list[str] = []
     team_ids: list[str] = []
     asset_ids: list[str] = []
+    location_ids: list[str] = []
+    pm_ids: list[str] = []
 
 
 class PartMini(BaseModel):

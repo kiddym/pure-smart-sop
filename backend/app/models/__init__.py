@@ -16,7 +16,7 @@ from app.models.company import Company
 from app.models.company_settings import CompanySettings
 from app.models.cost_category import CostCategory
 from app.models.currency import Currency
-from app.models.customer import Customer, CustomerPart
+from app.models.customer import Customer, CustomerAsset, CustomerLocation, CustomerPart
 from app.models.email_outbox import EmailOutbox
 from app.models.field import ProcedureField
 from app.models.folder import Folder, FolderSequence
@@ -32,7 +32,7 @@ from app.models.node import ProcedureNode
 from app.models.notification import Notification, NotificationArm
 from app.models.notification_preference import NotificationPreference
 from app.models.numbering_profile import NumberingProfile
-from app.models.part import Part, PartAsset, PartAssignee, PartTeam
+from app.models.part import Part, PartAsset, PartAssignee, PartLocation, PartPM, PartTeam
 from app.models.part_category import PartCategory
 from app.models.part_consumption import PartConsumption
 from app.models.password_reset_token import PasswordResetToken
@@ -44,6 +44,7 @@ from app.models.purchase_order import (
     PurchaseOrderActivity,
     PurchaseOrderLine,
 )
+from app.models.purchase_order_category import PurchaseOrderCategory
 from app.models.request import Request
 from app.models.request_activity import RequestActivity
 from app.models.role import Role
@@ -54,7 +55,7 @@ from app.models.team import Team, TeamUser
 from app.models.time_category import TimeCategory
 from app.models.user import User
 from app.models.user_invitation import UserInvitation
-from app.models.vendor import Vendor, VendorPart
+from app.models.vendor import Vendor, VendorAsset, VendorLocation, VendorPart
 from app.models.work_order import WorkOrder, WorkOrderAssignee, WorkOrderTeam
 from app.models.work_order_activity import WorkOrderActivity
 from app.models.work_order_additional_cost import WorkOrderAdditionalCost
@@ -77,6 +78,8 @@ __all__ = [
     "CostCategory",
     "Currency",
     "Customer",
+    "CustomerAsset",
+    "CustomerLocation",
     "CustomerPart",
     "EmailOutbox",
     "Folder",
@@ -106,6 +109,8 @@ __all__ = [
     "PartAssignee",
     "PartCategory",
     "PartConsumption",
+    "PartLocation",
+    "PartPM",
     "PartTeam",
     "PasswordResetToken",
     "PreventiveMaintenance",
@@ -119,6 +124,7 @@ __all__ = [
     "ProcedureSourceDocx",
     "PurchaseOrder",
     "PurchaseOrderActivity",
+    "PurchaseOrderCategory",
     "PurchaseOrderLine",
     "Request",
     "RequestActivity",
@@ -130,6 +136,8 @@ __all__ = [
     "User",
     "UserInvitation",
     "Vendor",
+    "VendorAsset",
+    "VendorLocation",
     "VendorPart",
     "WorkOrder",
     "WorkOrderActivity",

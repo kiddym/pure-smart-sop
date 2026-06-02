@@ -25,6 +25,8 @@ def _ensure(c: Customer | None, company_id: str) -> Customer:
 def _read(db: Session, c: Customer) -> CustomerRead:
     data = CustomerRead.model_validate(c)
     data.part_ids = svc.part_ids(db, c.id)
+    data.asset_ids = svc.asset_ids(db, c.id)
+    data.location_ids = svc.location_ids(db, c.id)
     return data
 
 

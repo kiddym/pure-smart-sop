@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field
@@ -33,12 +33,22 @@ class POLineRead(BaseModel):
 class PurchaseOrderCreate(BaseModel):
     vendor_id: str = Field(min_length=1)
     notes: str = ""
+    category_id: str | None = None
+    shipping_address: str = ""
+    shipping_method: str = ""
+    terms_of_payment: str = ""
+    expected_delivery_date: date | None = None
     lines: list[POLineCreate] = []
 
 
 class PurchaseOrderUpdate(BaseModel):
     vendor_id: str | None = Field(default=None, min_length=1)
     notes: str | None = None
+    category_id: str | None = None
+    shipping_address: str | None = None
+    shipping_method: str | None = None
+    terms_of_payment: str | None = None
+    expected_delivery_date: date | None = None
     lines: list[POLineCreate] | None = None
 
 
@@ -49,6 +59,11 @@ class PurchaseOrderRead(BaseModel):
     vendor_id: str
     status: PurchaseOrderStatus
     notes: str
+    category_id: str | None = None
+    shipping_address: str = ""
+    shipping_method: str = ""
+    terms_of_payment: str = ""
+    expected_delivery_date: date | None = None
     resolution_note: str
     resolved_by_user_id: str | None
     resolved_at: datetime | None

@@ -97,6 +97,10 @@ PURCHASE_ORDER_EDIT = "purchase_order.edit"
 PURCHASE_ORDER_DELETE = "purchase_order.delete"
 PURCHASE_ORDER_APPROVE = "purchase_order.approve"
 
+# --- 采购单分类（库存补全 T5）---
+PURCHASE_ORDER_CATEGORY_VIEW = "purchase_order_category.view"
+PURCHASE_ORDER_CATEGORY_MANAGE = "purchase_order_category.manage"
+
 # --- 分析与报表（Phase 4）---
 ANALYTICS_VIEW = "analytics.view"
 
@@ -160,6 +164,7 @@ _PURCHASE_ORDER = [
     PURCHASE_ORDER_DELETE,
     PURCHASE_ORDER_APPROVE,
 ]
+_PURCHASE_ORDER_CATEGORY = [PURCHASE_ORDER_CATEGORY_VIEW, PURCHASE_ORDER_CATEGORY_MANAGE]
 _ANALYTICS = [ANALYTICS_VIEW]
 
 ALL_PERMISSIONS: list[str] = (
@@ -178,6 +183,7 @@ ALL_PERMISSIONS: list[str] = (
     + _TIME_CATEGORY
     + _WORK_ORDER_CATEGORY
     + _PURCHASE_ORDER
+    + _PURCHASE_ORDER_CATEGORY
     + _ANALYTICS
 )
 
@@ -213,6 +219,7 @@ BUILTIN_ROLES: list[dict[str, Any]] = [
             TIME_CATEGORY_VIEW,
             WORK_ORDER_CATEGORY_VIEW,
             PURCHASE_ORDER_VIEW,
+            PURCHASE_ORDER_CATEGORY_VIEW,
         ],
     },
     {
