@@ -221,7 +221,27 @@ def _go_down(db: Session, asset: Asset, company_id: str) -> None:
             company_id=company_id,
         )
     )
-    # 向下级联（T3 填充；T2 先留空体以便自动触发测试通过）
+    # 向下级联：遍历全部 active 后代，UP 的置 DOWN 并记 prior，已 DOWN 的仅记依赖。
+    for did in _descendant_ids(db, asset.id):
+        d = db.get(Asset, did)
+        if d is None or not d.is_active:
+            continue
+        if d.status in DOWN_STATUSES:
+            db.add(
+                AssetDowntime(
+                    asset_id=d.id, downtime_type="cascade", source_asset_id=asset.id,
+                    prior_status=None, started_at=now, company_id=company_id,
+                )
+            )
+        else:
+            prior = d.status.value
+            d.status = AssetStatus.DOWN
+            db.add(
+                AssetDowntime(
+                    asset_id=d.id, downtime_type="cascade", source_asset_id=asset.id,
+                    prior_status=prior, started_at=now, company_id=company_id,
+                )
+            )
 
 
 def _recover(db: Session, asset: Asset, company_id: str) -> None:
@@ -229,7 +249,34 @@ def _recover(db: Session, asset: Asset, company_id: str) -> None:
     for dt in _open_downtimes_for(db, asset.id):
         if dt.source_asset_id is None and dt.downtime_type == "auto":
             dt.ended_at = now
-    # 级联反转（T3 填充）
+    # 级联反转：关闭所有 source=本资产的 open cascade，再按 prior_status 还原后代状态。
+    cascade_rows = list(
+        db.execute(
+            select(AssetDowntime)
+            .where(
+                AssetDowntime.source_asset_id == asset.id, AssetDowntime.ended_at.is_(None)
+            )
+            .order_by(AssetDowntime.started_at)
+        )
+        .scalars()
+        .all()
+    )
+    affected: dict[str, str | None] = {}
+    for dt in cascade_rows:
+        dt.ended_at = now
+        # 按 started_at 升序遍历，取每个后代最早一条非空 prior_status
+        if dt.asset_id not in affected or (
+            affected[dt.asset_id] is None and dt.prior_status is not None
+        ):
+            affected[dt.asset_id] = dt.prior_status
+    db.flush()  # 让 ended_at 对随后的 open 复查可见
+    for did, prior in affected.items():
+        d = db.get(Asset, did)
+        if d is None or not d.is_active:
+            continue
+        if _open_downtimes_for(db, did):
+            continue  # 仍有独立 open 停机 -> 维持 DOWN
+        d.status = AssetStatus(prior) if prior is not None else AssetStatus.OPERATIONAL
 
 
 def apply_status_transition(
