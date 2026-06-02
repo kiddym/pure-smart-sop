@@ -239,6 +239,35 @@ def copy_for_version(db: Session, src_procedure_id: str, dst_procedure_id: str) 
 # --------------------------------------------------------------------------- #
 # 30 天孤儿磁盘清理（Q115 / Q332 / §53.2 / Q371）—— 由 task 调用，逐项提交
 # --------------------------------------------------------------------------- #
+def soft_delete_orphaned_by_host(db: Session) -> int:
+    """扫各 entity_type 的 active 附件，宿主不存在 → 软删附件。返回软删条数。bypass 跨租户。"""
+    soft_deleted = 0
+    with tenant.bypass_tenant_scope():
+        rows = list(
+            db.execute(select(Attachment).where(Attachment.is_active.is_(True))).scalars()
+        )
+        existing: dict[tuple[str, str], bool] = {}
+        for att in rows:
+            spec = entities.ENTITY_REGISTRY.get(att.entity_type)
+            if spec is None:
+                continue
+            key = (att.entity_type, att.entity_id)
+            if key not in existing:
+                host = db.execute(
+                    select(spec.model.id).where(
+                        spec.model.id == att.entity_id,
+                        spec.model.is_active.is_(True),
+                    )
+                ).scalar_one_or_none()
+                existing[key] = host is not None
+            if not existing[key]:
+                att.is_active = False
+                att.deleted_at = utcnow()
+                soft_deleted += 1
+        db.flush()
+    return soft_deleted
+
+
 def _active_ref_count(db: Session, storage_path: str) -> int:
     return int(
         db.execute(
