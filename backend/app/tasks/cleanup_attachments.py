@@ -32,9 +32,12 @@ def run(
     retention_days: int | None = None,
     commit: bool = True,
 ) -> dict[str, int]:
-    """执行一次清理（逐项提交）。返回 ``{scanned, deleted, errors}`` 摘要。"""
+    """执行一次清理（逐项提交）。返回 ``{scanned, deleted, errors, orphaned}`` 摘要。"""
     started = now or utcnow()
     retention = retention_days if retention_days is not None else settings.attachment_retention_days
+    orphaned = attachment_service.soft_delete_orphaned_by_host(db)
+    if commit and orphaned:
+        db.commit()
     paths = attachment_service.orphan_storage_paths(db, retention_days=retention, now=started)
     deleted = 0
     errors = 0
@@ -55,7 +58,7 @@ def run(
             errors += 1
             logger.exception("cleanup_attachments 删除失败 storage_path=%s", path)
 
-    summary = {"scanned": len(paths), "deleted": deleted, "errors": errors}
+    summary = {"scanned": len(paths), "deleted": deleted, "errors": errors, "orphaned": orphaned}
     logger.info(
         json.dumps(
             {"task": TASK_NAME, "started_at": started.isoformat(), **summary}, ensure_ascii=False
