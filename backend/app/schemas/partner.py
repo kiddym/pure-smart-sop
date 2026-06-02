@@ -68,6 +68,8 @@ class CustomerCreate(BaseModel):
     email: str = Field(default="", max_length=200)
     website: str = Field(default="", max_length=300)
     part_ids: list[str] = []
+    asset_ids: list[str] = []
+    location_ids: list[str] = []
 
 
 class CustomerUpdate(BaseModel):
@@ -81,6 +83,8 @@ class CustomerUpdate(BaseModel):
     email: str | None = Field(default=None, max_length=200)
     website: str | None = Field(default=None, max_length=300)
     part_ids: list[str] | None = None
+    asset_ids: list[str] | None = None
+    location_ids: list[str] | None = None
 
 
 class CustomerRead(BaseModel):
@@ -96,6 +100,8 @@ class CustomerRead(BaseModel):
     email: str
     website: str
     part_ids: list[str] = []
+    asset_ids: list[str] = []
+    location_ids: list[str] = []
 
 
 class CustomerMini(BaseModel):

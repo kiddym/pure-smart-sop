@@ -16,7 +16,7 @@ from app.models.company import Company
 from app.models.company_settings import CompanySettings
 from app.models.cost_category import CostCategory
 from app.models.currency import Currency
-from app.models.customer import Customer, CustomerPart
+from app.models.customer import Customer, CustomerAsset, CustomerLocation, CustomerPart
 from app.models.email_outbox import EmailOutbox
 from app.models.field import ProcedureField
 from app.models.folder import Folder, FolderSequence
@@ -76,6 +76,8 @@ __all__ = [
     "CostCategory",
     "Currency",
     "Customer",
+    "CustomerAsset",
+    "CustomerLocation",
     "CustomerPart",
     "EmailOutbox",
     "Folder",
