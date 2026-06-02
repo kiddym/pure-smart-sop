@@ -32,3 +32,28 @@ def test_soft_delete_when_host_missing(db: Session) -> None:
     with tenant.bypass_tenant_scope():
         alive = {a.entity_id for a in db.query(Attachment).filter(Attachment.is_active.is_(True))}
     assert alive == {aid}
+
+
+def test_soft_delete_when_host_soft_deleted(db: Session) -> None:
+    from app.models.base import utcnow
+
+    tenant.set_current_company_id("co-1")
+    asset = Asset(custom_id="A2", name="泵2")
+    db.add(asset)
+    db.flush()
+    aid = asset.id
+    db.add(Attachment(
+        entity_type="asset", entity_id=aid, file_name="c.pdf",
+        storage_path="x/c.pdf", mime_type="application/pdf", size_bytes=1,
+    ))
+    asset.is_active = False
+    asset.deleted_at = utcnow()
+    db.commit()
+    tenant.set_current_company_id(None)
+
+    n = svc.soft_delete_orphaned_by_host(db)
+    db.commit()
+    assert n == 1
+    with tenant.bypass_tenant_scope():
+        alive = list(db.query(Attachment).filter(Attachment.is_active.is_(True)))
+    assert alive == []

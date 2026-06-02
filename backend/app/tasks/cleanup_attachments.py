@@ -32,7 +32,7 @@ def run(
     retention_days: int | None = None,
     commit: bool = True,
 ) -> dict[str, int]:
-    """执行一次清理（逐项提交）。返回 ``{scanned, deleted, errors}`` 摘要。"""
+    """执行一次清理（逐项提交）。返回 ``{scanned, deleted, errors, orphaned}`` 摘要。"""
     started = now or utcnow()
     retention = retention_days if retention_days is not None else settings.attachment_retention_days
     orphaned = attachment_service.soft_delete_orphaned_by_host(db)
