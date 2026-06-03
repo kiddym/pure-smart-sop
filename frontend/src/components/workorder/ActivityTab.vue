@@ -5,25 +5,17 @@ import { listWorkOrderActivities, addWorkOrderComment } from '@/api/workOrders'
 import { listUsers } from '@/api/users'
 import { useAuthStore } from '@/store/auth'
 import { formatDateTime } from '@/utils/format'
-import type { WorkOrderActivityRead } from '@/types/workOrder'
+import { WO_STATUS_LABELS } from '@/utils/workOrder'
+import type { WorkOrderActivityRead, WorkOrderStatus } from '@/types/workOrder'
 import type { UserRead } from '@/types/platform'
 
 const props = defineProps<{ workOrderId: string }>()
 
 const auth = useAuthStore()
 
-// ── constants ──────────────────────────────────────────────
-const WO_STATUS_LABELS: Record<string, string> = {
-  OPEN: '待处理',
-  IN_PROGRESS: '进行中',
-  ON_HOLD: '挂起',
-  COMPLETE: '已完成',
-  CANCELED: '已取消',
-}
-
 // ── helpers ────────────────────────────────────────────────
 function statusText(s: string | null): string {
-  return s ? (WO_STATUS_LABELS[s] ?? s) : '—'
+  return s ? (WO_STATUS_LABELS[s as WorkOrderStatus] ?? s) : '—'
 }
 
 function userName(id: string | null): string {

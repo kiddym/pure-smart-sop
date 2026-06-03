@@ -11,6 +11,7 @@ import WorkOrderFormDialog from '@/components/workorder/WorkOrderFormDialog.vue'
 import WorkOrderCategoryManageDialog from '@/components/maintenance/WorkOrderCategoryManageDialog.vue'
 import { useAuthStore } from '@/store/auth'
 import { formatDate } from '@/utils/format'
+import { WO_STATUS_LABELS, WO_STATUS_TAG } from '@/utils/workOrder'
 import type { WorkOrderRead, WorkOrderStatus, WorkOrderPriority } from '@/types/workOrder'
 import type { AssetMini, LocationMini } from '@/types/maindata'
 import type { UserRead } from '@/types/platform'
@@ -19,20 +20,6 @@ const router = useRouter()
 const auth = useAuthStore()
 
 // ── mappings ───────────────────────────────────────────────
-const WO_STATUS_LABELS: Record<WorkOrderStatus, string> = {
-  OPEN: '待处理',
-  IN_PROGRESS: '进行中',
-  ON_HOLD: '挂起',
-  COMPLETE: '已完成',
-  CANCELED: '已取消',
-}
-const WO_STATUS_TAG: Record<WorkOrderStatus, string> = {
-  OPEN: 'info',
-  IN_PROGRESS: 'primary',
-  ON_HOLD: 'warning',
-  COMPLETE: 'success',
-  CANCELED: 'info',
-}
 const PRIORITY_LABELS: Record<WorkOrderPriority, string> = {
   NONE: '无',
   LOW: '低',

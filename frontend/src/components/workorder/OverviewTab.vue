@@ -71,7 +71,7 @@ function priorityLabel(p: WorkOrderPriority): string {
 function procedureName(id: string | null): string {
   if (!id) return '—'
   const p = procedures.value.find((x) => x.id === id)
-  return p ? p.name : id
+  return p ? p.name : '—'
 }
 
 // ── init ───────────────────────────────────────────────────

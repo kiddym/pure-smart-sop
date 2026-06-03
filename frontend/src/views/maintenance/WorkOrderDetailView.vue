@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getWorkOrder, transitionWorkOrder } from '@/api/workOrders'
+import { WO_STATUS_LABELS, WO_STATUS_TAG } from '@/utils/workOrder'
 import { useAuthStore } from '@/store/auth'
 import OverviewTab from '@/components/workorder/OverviewTab.vue'
 import LaborCostTab from '@/components/workorder/LaborCostTab.vue'
@@ -12,22 +13,6 @@ import WorkOrderFormDialog from '@/components/workorder/WorkOrderFormDialog.vue'
 import type { WorkOrderRead, WorkOrderStatus } from '@/types/workOrder'
 
 // ── constants ──────────────────────────────────────────────
-const WO_STATUS_LABELS: Record<WorkOrderStatus, string> = {
-  OPEN: '待处理',
-  IN_PROGRESS: '进行中',
-  ON_HOLD: '挂起',
-  COMPLETE: '已完成',
-  CANCELED: '已取消',
-}
-
-const WO_STATUS_TAG: Record<WorkOrderStatus, string> = {
-  OPEN: 'warning',
-  IN_PROGRESS: 'primary',
-  ON_HOLD: 'info',
-  COMPLETE: 'success',
-  CANCELED: 'danger',
-}
-
 const TRANSITIONS: Record<WorkOrderStatus, { to: WorkOrderStatus; label: string }[]> = {
   OPEN: [
     { to: 'IN_PROGRESS', label: '开始' },
