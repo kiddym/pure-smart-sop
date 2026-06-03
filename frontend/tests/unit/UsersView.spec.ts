@@ -64,6 +64,40 @@ describe('UsersView', () => {
     expect(w.text()).toContain('管理员')
   })
 
+  it('邀请用户提交仅传 email/role_id，不含 name、password', async () => {
+    iu.mockResolvedValue({ id: 'i1', email: 'new@x.com', status: 'invited' })
+    const w = mountView()
+    await flushPromises()
+
+    // open the invite dialog via toolbar button
+    const inviteBtn = w.findAll('.el-button').find((b) => b.text() === '邀请用户')
+    expect(inviteBtn).toBeTruthy()
+    await inviteBtn!.trigger('click')
+    await flushPromises()
+
+    // fill email (+ optional role) directly through the dialog's email input
+    const emailInput = document.querySelector(
+      '.el-dialog input[placeholder="请输入邮箱"]',
+    ) as HTMLInputElement
+    expect(emailInput).toBeTruthy()
+    emailInput.value = 'new@x.com'
+    emailInput.dispatchEvent(new Event('input'))
+    await flushPromises()
+
+    // submit via dialog footer "发送邀请" button
+    const submitBtn = Array.from(document.querySelectorAll('.el-dialog .el-button')).find(
+      (b) => b.textContent?.trim() === '发送邀请',
+    ) as HTMLElement
+    expect(submitBtn).toBeTruthy()
+    submitBtn.click()
+    await flushPromises()
+
+    expect(iu).toHaveBeenCalledWith(expect.objectContaining({ email: 'new@x.com' }))
+    const arg = iu.mock.calls[0][0]
+    expect(arg).not.toHaveProperty('name')
+    expect(arg).not.toHaveProperty('password')
+  })
+
   it('确认删除后调用 deleteUser', async () => {
     vi.spyOn(ElMessageBox, 'confirm').mockResolvedValue('confirm' as never)
     const w = mountView()

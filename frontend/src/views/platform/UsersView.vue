@@ -135,7 +135,7 @@ async function submitForm() {
       if (!editingId.value) return
       const payload: UserUpdate = {
         name: form.name,
-        role_id: form.role_id ?? undefined,
+        role_id: form.role_id,
         status: form.status,
       }
       if (form.password.trim()) {
