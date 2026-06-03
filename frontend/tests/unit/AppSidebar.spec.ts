@@ -31,6 +31,8 @@ function makeRouter(initialPath: string): Router {
       { path: '/maintenance/requests', component: { template: '<div/>' } },
       { path: '/maintenance/preventive-maintenances', component: { template: '<div/>' } },
       { path: '/maintenance/meters', component: { template: '<div/>' } },
+      { path: '/maintenance/work-orders', component: { template: '<div/>' } },
+      { path: '/maintenance/work-orders/:id', component: { template: '<div/>' } },
       { path: '/analytics', component: { template: '<div/>' } },
       { path: '/', component: { template: '<div/>' } },
     ],
@@ -131,20 +133,16 @@ describe('AppSidebar', () => {
     expect((w.vm as unknown as { activeMenu: string }).activeMenu).toBe('')
   })
 
-  it('维护组：资产/位置/请求/预防性维护/计量 可点（无 is-disabled、不渲染「即将上线」），仅工单仍禁用', async () => {
+  it('维护组：资产/位置/请求/预防性维护/计量/工单 均可点（无 is-disabled、不渲染「即将上线」）', async () => {
     const w = await mountSidebar('/procedures/library')
     const items = w.findAll('.el-menu-item')
     const find = (label: string) => items.find((i) => i.text().includes(label))!
 
-    for (const label of ['资产', '位置', '请求', '预防性维护', '计量']) {
+    for (const label of ['资产', '位置', '请求', '预防性维护', '计量', '工单']) {
       const it = find(label)
       expect(it.classes()).not.toContain('is-disabled')
       expect(it.text()).not.toContain('即将上线')
     }
-
-    const wo = find('工单')
-    expect(wo.classes()).toContain('is-disabled')
-    expect(wo.text()).toContain('即将上线')
   })
 
   it('在 /maintenance/* 时 activeMenu 为该路径', async () => {
@@ -199,5 +197,23 @@ describe('AppSidebar', () => {
     setUser('super_admin')
     const w = await mountSidebar('/analytics')
     expect((w.vm as unknown as { activeMenu: string }).activeMenu).toBe('/analytics')
+  })
+
+  it('维护组：工单有 path /maintenance/work-orders、无 soon', async () => {
+    const w = await mountSidebar('/procedures/library')
+    const groups = (
+      w.vm as unknown as {
+        groups: { label: string; items: { label: string; path?: string; soon?: boolean }[] }[]
+      }
+    ).groups
+    const maintenance = groups.find((g) => g.label === '维护')!
+    const wo = maintenance.items.find((i) => i.label === '工单')!
+    expect(wo.path).toBe('/maintenance/work-orders')
+    expect(wo.soon).toBeFalsy()
+  })
+
+  it('在 /maintenance/work-orders/abc 时 activeMenu 为 /maintenance/work-orders', async () => {
+    const w = await mountSidebar('/maintenance/work-orders/abc')
+    expect((w.vm as unknown as { activeMenu: string }).activeMenu).toBe('/maintenance/work-orders')
   })
 })
