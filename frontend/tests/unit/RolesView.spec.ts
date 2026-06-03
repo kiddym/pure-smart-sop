@@ -64,9 +64,13 @@ describe('RolesView', () => {
     // 类型列
     expect(w.text()).toContain('内置')
     expect(w.text()).toContain('自定义')
-    // 权限数列：管理员 1，编辑员 2
-    expect(w.text()).toContain('1')
-    expect(w.text()).toContain('2')
+    // 权限数列：精确定位到该行第 4 列（td index 3）
+    // 列顺序：名称(0)/标识(1)/类型(2)/权限数(3)/操作(4)
+    const rows = w.findAll('.el-table__body-wrapper tbody tr')
+    const adminRow = rows.find((r) => r.text().includes('管理员'))!
+    const editorRow = rows.find((r) => r.text().includes('编辑员'))!
+    expect(adminRow.findAll('td').at(3)!.text()).toBe('1')
+    expect(editorRow.findAll('td').at(3)!.text()).toBe('2')
   })
 
   it('内置角色行的编辑/删除按钮被禁用', async () => {
