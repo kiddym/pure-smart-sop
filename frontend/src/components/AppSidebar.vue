@@ -57,7 +57,7 @@ const groups = computed<NavGroup[]>(() => [
   {
     label: '维护',
     items: [
-      { label: '工单', soon: true },
+      { label: '工单', path: '/maintenance/work-orders' },
       { label: '资产', path: '/maindata/assets' },
       { label: '位置', path: '/maindata/locations' },
       { label: '请求', path: '/maintenance/requests' },
@@ -88,6 +88,7 @@ const activeMenu = computed<string>(() => {
   if (route.path.startsWith('/platform/')) return route.path
   if (route.path.startsWith('/maindata/')) return route.path
   if (route.path.startsWith('/inventory/')) return route.path
+  if (route.path.startsWith('/maintenance/work-orders')) return '/maintenance/work-orders'
   if (route.path.startsWith('/maintenance/')) return route.path
   if (route.path.startsWith('/analytics')) return route.path
   if (route.path.startsWith('/procedures/drafts')) return '/procedures/drafts'
@@ -97,7 +98,7 @@ const activeMenu = computed<string>(() => {
   return ''
 })
 
-defineExpose({ activeMenu, platformItems, insightItems })
+defineExpose({ activeMenu, platformItems, insightItems, groups })
 </script>
 
 <template>

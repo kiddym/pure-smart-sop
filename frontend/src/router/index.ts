@@ -178,6 +178,18 @@ const routes: RouteRecordRaw[] = [
     meta: { title: '计量', requiresAuth: true, requiredPermission: 'meter.view' },
   },
   {
+    path: '/maintenance/work-orders',
+    name: 'maintenance-work-orders',
+    component: () => import('@/views/maintenance/WorkOrdersView.vue'),
+    meta: { title: '工单', requiresAuth: true, requiredPermission: 'work_order.view' },
+  },
+  {
+    path: '/maintenance/work-orders/:id',
+    name: 'maintenance-work-order-detail',
+    component: () => import('@/views/maintenance/WorkOrderDetailView.vue'),
+    meta: { title: '工单详情', requiresAuth: true, requiredPermission: 'work_order.view' },
+  },
+  {
     path: '/analytics',
     name: 'analytics',
     component: () => import('@/views/analytics/AnalyticsView.vue'),
