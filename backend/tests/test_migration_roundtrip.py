@@ -21,7 +21,10 @@ _ROOT = Path(__file__).resolve().parent.parent
 
 
 def _alembic_cfg() -> Config:
-    cfg = Config(str(_ROOT / "alembic.ini"))
+    # 不传 alembic.ini：否则 env.py 的 fileConfig() 会按 ini 的 [logging] 重配全局
+    # logging（disable_existing_loggers），污染后续断言 warning 的测试。仅显式设
+    # script_location；DB url 由 env.py 读 settings.database_url。
+    cfg = Config()
     cfg.set_main_option("script_location", str(_ROOT / "alembic"))
     return cfg
 
