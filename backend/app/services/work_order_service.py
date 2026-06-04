@@ -246,13 +246,21 @@ def transition(
     src, dst = wo.status, payload.to_status
     if not can_transition(src, dst):
         raise bad_request("WORKORDER_BAD_TRANSITION", f"非法状态转移 {src.value}->{dst.value}")
+    # 首次离开 OPEN：戳记首响时间（只记一次，重开不覆盖）
+    if src == WorkOrderStatus.OPEN and wo.first_responded_at is None:
+        wo.first_responded_at = utcnow()
     if dst == WorkOrderStatus.COMPLETE:
         from app.services import work_order_execution_service as exe
 
         exe.assert_completable(db, wo)
         wo.completed_at = utcnow()
+        wo.completed_by_user_id = actor_user_id
+        # 合规快照：无截止日视为合规；否则按完成日 <= 截止日
+        wo.is_compliant = wo.due_date is None or wo.completed_at.date() <= wo.due_date
     if src == WorkOrderStatus.COMPLETE and dst == WorkOrderStatus.IN_PROGRESS:
         wo.completed_at = None
+        wo.completed_by_user_id = None
+        wo.is_compliant = None
     wo.status = dst
     _log(
         db,
