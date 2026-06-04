@@ -336,6 +336,26 @@ def list_activities(db: Session, work_order_id: str) -> list[WorkOrderActivity]:
     )
 
 
+def relation_to_dict(db: Session, wo: WorkOrder, rel: WorkOrderRelation) -> dict[str, object]:
+    """Return the relation dict as seen from `wo` (direction, other-WO fields)."""
+    is_source = rel.source_work_order_id == wo.id
+    other_id = rel.target_work_order_id if is_source else rel.source_work_order_id
+    if rel.relation_type in SYMMETRIC_RELATION_TYPES:
+        direction = "symmetric"
+    else:
+        direction = "outgoing" if is_source else "incoming"
+    other = db.get(WorkOrder, other_id)
+    return {
+        "id": rel.id,
+        "relation_type": rel.relation_type,
+        "direction": direction,
+        "related_work_order_id": other_id,
+        "related_custom_id": other.custom_id if other else None,
+        "related_title": other.title if other else None,
+        "related_status": other.status if other else None,
+    }
+
+
 def create_relation(
     db: Session,
     wo: WorkOrder,
@@ -349,6 +369,7 @@ def create_relation(
     target = get_work_order(db, target_id)
     if target is None or target.company_id != company_id:
         raise not_found("WORKORDER_NOT_FOUND", "目标工单不存在")
+    # Directional duplicate: exact (source, target, type) pair
     dup = db.execute(
         select(WorkOrderRelation).where(
             WorkOrderRelation.source_work_order_id == wo.id,
@@ -358,6 +379,17 @@ def create_relation(
     ).scalar_one_or_none()
     if dup is not None:
         raise conflict("WORKORDER_RELATION_DUPLICATE", "关联已存在")
+    # Symmetric reverse-duplicate: for symmetric types, (target→wo) with same type is also a dup
+    if relation_type in SYMMETRIC_RELATION_TYPES:
+        rev_dup = db.execute(
+            select(WorkOrderRelation).where(
+                WorkOrderRelation.source_work_order_id == target_id,
+                WorkOrderRelation.target_work_order_id == wo.id,
+                WorkOrderRelation.relation_type == relation_type,
+            )
+        ).scalar_one_or_none()
+        if rev_dup is not None:
+            raise conflict("WORKORDER_RELATION_DUPLICATE", "关联已存在")
     rel = WorkOrderRelation(
         source_work_order_id=wo.id,
         target_work_order_id=target_id,
@@ -382,27 +414,7 @@ def list_relations(db: Session, wo: WorkOrder) -> list[dict[str, object]]:
         .scalars()
         .all()
     )
-    out: list[dict[str, object]] = []
-    for r in rels:
-        is_source = r.source_work_order_id == wo.id
-        other_id = r.target_work_order_id if is_source else r.source_work_order_id
-        if r.relation_type in SYMMETRIC_RELATION_TYPES:
-            direction = "symmetric"
-        else:
-            direction = "outgoing" if is_source else "incoming"
-        other = db.get(WorkOrder, other_id)
-        out.append(
-            {
-                "id": r.id,
-                "relation_type": r.relation_type,
-                "direction": direction,
-                "related_work_order_id": other_id,
-                "related_custom_id": other.custom_id if other else None,
-                "related_title": other.title if other else None,
-                "related_status": other.status if other else None,
-            }
-        )
-    return out
+    return [relation_to_dict(db, wo, r) for r in rels]
 
 
 def delete_relation(db: Session, wo: WorkOrder, relation_id: str, company_id: str) -> None:

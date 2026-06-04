@@ -233,10 +233,7 @@ def create_relation(
         current_user.company_id,
         actor_user_id=current_user.id,
     )
-    for item in svc.list_relations(db, wo):
-        if item["id"] == rel.id:
-            return item
-    raise not_found("WORKORDER_RELATION_NOT_FOUND", "关联不存在")
+    return svc.relation_to_dict(db, wo, rel)
 
 
 @router.delete("/{work_order_id}/relations/{relation_id}", status_code=204, response_model=None)

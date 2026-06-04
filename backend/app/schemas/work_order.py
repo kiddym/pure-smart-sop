@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -149,7 +149,7 @@ class WorkOrderRelationCreate(BaseModel):
 class WorkOrderRelationRead(BaseModel):
     id: str
     relation_type: WorkOrderRelationType
-    direction: str  # "symmetric" | "outgoing" | "incoming"
+    direction: Literal["symmetric", "outgoing", "incoming"]
     related_work_order_id: str
     related_custom_id: str | None = None
     related_title: str | None = None
