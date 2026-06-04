@@ -10,10 +10,10 @@ const emit = defineEmits<{ (e: 'open', id: string): void }>()
 </script>
 
 <template>
+  <!-- 工业风=线条：只用行线不用斑马纹（docs/design-system.md §3.7）。 -->
   <el-table
     v-loading="loading"
     :data="rows"
-    stripe
     @row-click="(row: ProcedureRow) => emit('open', row.id)"
   >
     <template #empty>

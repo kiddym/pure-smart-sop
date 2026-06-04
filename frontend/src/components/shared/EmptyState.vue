@@ -36,18 +36,18 @@ withDefaults(
 }
 .empty-icon {
   font-size: 40px;
-  color: #c8bfb2;
+  color: var(--text-disabled);
   margin-bottom: 2px;
 }
 .empty-title {
   margin: 0;
   font-size: 14px;
-  color: #6b635a;
+  color: var(--text-secondary);
 }
 .empty-desc {
   margin: 0;
   font-size: 12px;
-  color: #9a8e80;
+  color: var(--text-tertiary);
 }
 .empty-cta {
   margin-top: 10px;

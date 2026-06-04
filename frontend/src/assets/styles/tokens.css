@@ -9,9 +9,21 @@
 
   /* 壳色 / 强调 */
   --accent: #d97757;
-  --bg-surface: #f5f3ef;
-  --bg-elevated: #eceae5;
-  --text-primary: #1a1714;
+  --accent-foreground: #ffffff; /* accent 实底上的前景（badge 字） */
+  --accent-bg: rgba(217, 119, 87, 0.12); /* 选中行底 / 焦点环底（§2.1 accent-bg） */
+  --accent-bg-hover: rgba(217, 119, 87, 0.16); /* 选中项 hover 时的略深底 */
+  --bg-base: #faf8f4; /* 主内容区底（亮纸色，§2.1 paper-bg 同值） */
+  --bg-surface: #f5f3ef; /* 侧栏 / 顶栏 / 面板 */
+  --bg-elevated: #eceae5; /* 卡片 / 下拉 / 弹层 */
+  --text-primary: #1a1714; /* 正文最深 / 品牌 */
+
+  /* 壳层灰阶语义令牌（浅色实现，值=当前渲染色；切暗色只改此处的值，不动组件）。
+     命名对齐 design-system.md §4.1，禁止再在组件里散落灰阶 hex。 */
+  --border-subtle: #e0dbd3; /* 主分隔线（1px 线不靠影） */
+  --text-regular: #3a3530; /* 导航 / 图标 / 菜单文字 */
+  --text-secondary: #6b635a; /* 次要文字 / 标签 */
+  --text-tertiary: #9a8e80; /* 占位 / 分组标题 / 计数 */
+  --text-disabled: #bbbbbb; /* 禁用（即将上线 / 锁标 / 空态图标） */
 
   /* 字体 */
   --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;

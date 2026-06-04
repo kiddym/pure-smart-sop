@@ -102,7 +102,7 @@ defineExpose({ MENU_COMMANDS, onCommand })
   padding: 0 14px;
   gap: 14px;
   background: var(--bg-surface);
-  border-bottom: 1px solid #e0dbd3;
+  border-bottom: 1px solid var(--border-subtle);
   flex-shrink: 0;
 }
 .topbar-toggle {
@@ -112,7 +112,7 @@ defineExpose({ MENU_COMMANDS, onCommand })
   background: transparent;
   border-radius: 4px;
   cursor: pointer;
-  color: #3a3530;
+  color: var(--text-regular);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -131,7 +131,7 @@ defineExpose({ MENU_COMMANDS, onCommand })
 }
 .topbar-unread {
   font-size: 12px;
-  color: #6b635a;
+  color: var(--text-secondary);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -139,7 +139,7 @@ defineExpose({ MENU_COMMANDS, onCommand })
 .topbar-unread .badge {
   padding: 1px 7px;
   background: var(--accent);
-  color: #fff;
+  color: var(--accent-foreground);
   border-radius: 9px;
   font-size: 10px;
   line-height: 1.4;
@@ -151,14 +151,14 @@ defineExpose({ MENU_COMMANDS, onCommand })
   background: transparent;
   border-radius: 4px;
   cursor: pointer;
-  color: #3a3530;
+  color: var(--text-regular);
   display: inline-flex;
   align-items: center;
   gap: 1px;
 }
 .topbar-cog .caret {
   font-size: 9px;
-  color: #9a8e80;
+  color: var(--text-tertiary);
 }
 .topbar-cog:hover {
   background: rgba(0, 0, 0, 0.04);
@@ -170,7 +170,7 @@ defineExpose({ MENU_COMMANDS, onCommand })
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #9a8e80;
+  color: var(--text-tertiary);
   padding: 6px 14px 2px;
   cursor: default;
   background: transparent;

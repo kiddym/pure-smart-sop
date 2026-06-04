@@ -35,7 +35,7 @@ onMounted(() => {
   width: 220px;
   flex-shrink: 0;
   background: var(--bg-surface);
-  border-right: 1px solid #e0dbd3;
+  border-right: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -45,12 +45,12 @@ onMounted(() => {
   display: flex;
   align-items: center;
   padding: 0 14px;
-  border-bottom: 1px solid #e0dbd3;
+  border-bottom: 1px solid var(--border-subtle);
   flex-shrink: 0;
 }
 .pane-header .title {
   font-size: 12px;
-  color: #9a8e80;
+  color: var(--text-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }

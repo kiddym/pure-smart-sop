@@ -141,7 +141,7 @@ defineExpose({ activeMenu, platformItems, insightItems, groups })
       :collapse="collapsed"
       :collapse-transition="false"
       router
-      text-color="#3a3530"
+      text-color="var(--text-regular)"
       background-color="transparent"
       :style="{ '--el-menu-active-color': 'var(--accent)' }"
     >
@@ -167,7 +167,7 @@ defineExpose({ activeMenu, platformItems, insightItems, groups })
 .app-aside {
   width: 240px;
   background: var(--bg-surface);
-  border-right: 1px solid #e0dbd3;
+  border-right: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
   transition: width 0.2s ease;
@@ -184,19 +184,19 @@ defineExpose({ activeMenu, platformItems, insightItems, groups })
 .menu-group-label {
   padding: 14px 16px 4px;
   font-size: 11px;
-  color: #9a8e80;
+  color: var(--text-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 .soon-tag {
   margin-left: 6px;
   font-size: 10px;
-  color: #bbb;
+  color: var(--text-disabled);
 }
 .lock-icon {
   margin-left: 6px;
   font-size: 12px;
-  color: #bbb;
+  color: var(--text-disabled);
   vertical-align: middle;
 }
 
@@ -204,7 +204,7 @@ defineExpose({ activeMenu, platformItems, insightItems, groups })
    EP 默认仅给激活项换文字色，这里补足竖条与底色，强化层级辨识。 */
 .app-aside :deep(.el-menu-item.is-active) {
   position: relative;
-  background: rgba(217, 119, 87, 0.12);
+  background: var(--accent-bg);
 }
 .app-aside :deep(.el-menu-item.is-active)::before {
   content: '';
@@ -217,6 +217,6 @@ defineExpose({ activeMenu, platformItems, insightItems, groups })
 }
 /* hover 不盖过选中底色 */
 .app-aside :deep(.el-menu-item.is-active:hover) {
-  background: rgba(217, 119, 87, 0.16);
+  background: var(--accent-bg-hover);
 }
 </style>

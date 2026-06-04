@@ -72,6 +72,6 @@ watch(
   overflow: auto;
   /* padding 下放到各 view 根容器（让 FolderTreePane 能贴 .app-main 左缘） */
   padding: 0;
-  background: #faf8f4;
+  background: var(--bg-base);
 }
 </style>
