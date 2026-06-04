@@ -344,7 +344,7 @@ onMounted(() => {
 .lvl-select { width: 150px; }
 .votes { color: var(--el-text-color-secondary); font-variant-numeric: tabular-nums; }
 .status { font-size: 12px; padding: 1px 6px; border-radius: 3px; }
-.status-active { color: #2c7a3f; background: #eef7f0; border: 1px solid #b7e0c2; }
-.status-candidate { color: #b88230; background: #fdf6ec; border: 1px solid #f5dab1; }
-.status-disabled { color: #909399; background: #f4f4f5; border: 1px solid #e0e0e2; }
+.status-active { color: var(--st-published); background: var(--diff-add-bg); border: 1px solid transparent; }
+.status-candidate { color: var(--accent); background: var(--review-bg); border: 1px solid transparent; }
+.status-disabled { color: var(--text-tertiary); background: var(--bg-hover); border: 1px solid transparent; }
 </style>

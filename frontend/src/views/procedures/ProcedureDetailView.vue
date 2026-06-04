@@ -550,7 +550,7 @@ async function onDialogConfirm(payload: VersionActionResult): Promise<void> {
   display: flex;
   align-items: center;
   gap: 14px;
-  color: #666;
+  color: var(--text-secondary);
 }
 .actions {
   display: flex;
@@ -574,7 +574,7 @@ async function onDialogConfirm(payload: VersionActionResult): Promise<void> {
 }
 .notes-ro {
   margin: 0;
-  color: #606266;
+  color: var(--text-secondary);
   white-space: pre-wrap;
 }
 .full {

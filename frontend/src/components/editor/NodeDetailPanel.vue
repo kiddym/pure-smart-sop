@@ -197,5 +197,5 @@ const alertClass = computed(() => (isAlertType(schema.value.type) ? `alert-${sch
 .mark-row { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
 .mark-kind { width: 120px; flex: none; }
 .review-bar { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
-.review-tag { font-size: 12px; color: #b88230; background: #fdf6ec; border: 1px solid #f5dab1; border-radius: 3px; padding: 1px 6px; }
+.review-tag { font-size: 12px; color: var(--accent); background: var(--review-bg); border: 1px solid var(--accent-bg); border-radius: 3px; padding: 1px 6px; }
 </style>

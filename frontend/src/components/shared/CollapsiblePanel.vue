@@ -88,8 +88,8 @@ const collapseArrow = computed(() => (props.side === 'left' ? '«' : '»'))
   justify-content: center;
   border: 1px solid var(--el-border-color, #dcdfe6);
   border-radius: 4px;
-  background: #fff;
-  color: #909399;
+  background: var(--bg-elevated);
+  color: var(--text-tertiary);
   font-size: 12px;
   cursor: pointer;
   opacity: 0;

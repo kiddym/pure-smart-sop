@@ -36,7 +36,7 @@ const treeProps = { children: 'children', label: 'name' }
   gap: 6px;
 }
 .ft-count {
-  color: #999;
+  color: var(--text-tertiary);
   font-size: 12px;
 }
 </style>

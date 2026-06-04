@@ -26,12 +26,12 @@ const info = computed(() => props.notes.filter((n) => n.severity !== 'blocking')
 </template>
 
 <style scoped>
-.parse-notice { border: 1px solid #f5dab1; background: #fdf6ec; border-radius: 4px; margin: 0 0 8px; }
+.parse-notice { border: 1px solid var(--accent-bg); background: var(--review-bg); border-radius: 4px; margin: 0 0 8px; }
 .pn-head { display: flex; align-items: center; gap: 6px; width: 100%; border: 0; background: none;
-  padding: 6px 10px; font-size: 12px; color: #b88230; cursor: pointer; }
-.pn-toggle { margin-left: auto; color: #909399; }
+  padding: 6px 10px; font-size: 12px; color: var(--accent); cursor: pointer; }
+.pn-toggle { margin-left: auto; color: var(--text-tertiary); }
 .pn-list { margin: 0; padding: 0 12px 8px 28px; font-size: 12px; }
 .pn-list li { margin: 2px 0; }
 .pn-blocking { color: var(--el-color-danger, #f56c6c); }
-.pn-info { color: #606266; }
+.pn-info { color: var(--text-secondary); }
 </style>

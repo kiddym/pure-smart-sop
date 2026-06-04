@@ -27,7 +27,7 @@ const arrow = computed(() => (props.side === 'left' ? '»' : '«'))
   cursor: pointer;
   background: var(--el-fill-color-light, #f5f7fa);
   user-select: none;
-  color: #606266;
+  color: var(--text-secondary);
 }
 .rail-left { border-right: 1px solid var(--el-border-color-lighter, #ebeef5); }
 .rail-right { border-left: 1px solid var(--el-border-color-lighter, #ebeef5); }

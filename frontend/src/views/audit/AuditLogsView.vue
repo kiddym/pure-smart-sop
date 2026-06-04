@@ -366,13 +366,13 @@ onMounted(() => {
 .detail-label {
   font-weight: 600;
   margin-bottom: 6px;
-  color: #606266;
+  color: var(--text-secondary);
   font-size: 13px;
 }
 
 .detail-json {
-  background: #f5f7fa;
-  border: 1px solid #e4e7ed;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-subtle);
   border-radius: 4px;
   padding: 12px;
   font-size: 12px;
@@ -388,6 +388,6 @@ onMounted(() => {
   flex-direction: column;
   gap: 6px;
   font-size: 13px;
-  color: #606266;
+  color: var(--text-secondary);
 }
 </style>

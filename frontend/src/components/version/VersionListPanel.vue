@@ -178,7 +178,7 @@ function toggleNotes(id: string): void {
   min-width: 36px;
 }
 .time {
-  color: #909399;
+  color: var(--text-tertiary);
   font-size: 12px;
 }
 .spacer {
@@ -187,16 +187,16 @@ function toggleNotes(id: string): void {
 .notes {
   margin: 6px 0 2px 46px;
   padding: 8px 12px;
-  background: #fafafa;
+  background: var(--bg-hover);
   border-radius: 4px;
   font-size: 13px;
-  color: #606266;
+  color: var(--text-secondary);
   white-space: pre-wrap;
 }
 .notes-preview {
   margin: 4px 0 2px 46px;
   font-size: 12px;
-  color: #909399;
+  color: var(--text-tertiary);
   cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
