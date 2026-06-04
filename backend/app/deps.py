@@ -92,6 +92,15 @@ def require_permission(code: str) -> Callable[[User, Session], User]:
     return checker
 
 
+def require_platform_admin(
+    current_user: User = Depends(get_current_user),
+) -> User:
+    """仅平台运营身份（is_platform_admin）可通过。普通公司 super_admin 不可。"""
+    if not current_user.is_platform_admin:
+        raise forbidden("PLATFORM_ONLY", "仅平台管理员可操作")
+    return current_user
+
+
 def require_feature(feature: Feature) -> Callable[..., User]:
     """Return a dependency enforcing the company's plan includes the feature.
 
@@ -121,5 +130,6 @@ __all__ = [
     "oauth2_scheme",
     "require_feature",
     "require_permission",
+    "require_platform_admin",
     "user_permission_codes",
 ]

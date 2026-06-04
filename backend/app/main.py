@@ -46,6 +46,7 @@ from app.routers import (
     part_categories,
     part_consumptions,
     parts,
+    platform,
     preventive_maintenances,
     procedure_groups,
     procedures,
@@ -170,6 +171,7 @@ app.include_router(roles.router)
 app.include_router(permissions_router.router)
 app.include_router(users.router)
 app.include_router(currencies.router)
+app.include_router(platform.router)
 
 
 @app.get("/healthz", tags=["health"])
