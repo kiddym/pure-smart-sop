@@ -12,6 +12,8 @@ from sqlalchemy.orm import Session
 
 from app.errors import bad_request, not_found
 from app.models.base import utcnow
+from app.models.role import Role
+from app.models.user import User
 from app.models.work_order import WorkOrder, WorkOrderAssignee, WorkOrderTeam
 from app.models.work_order_activity import WorkOrderActivity
 from app.models.work_order_category import WorkOrderCategory
@@ -51,7 +53,21 @@ def team_ids(db: Session, work_order_id: str) -> list[str]:
     )
 
 
-def to_read(db: Session, wo: WorkOrder) -> dict[str, object]:
+def can_edit_work_order(db: Session, user: User, wo: WorkOrder) -> bool:
+    """对象级可编辑谓词：角色 → 终态锁 → 归属。仅用于 PATCH 字段编辑，不锁 reopen。"""
+    role = db.get(Role, user.role_id) if user.role_id else None
+    if role is not None and role.code in {"super_admin", "admin"}:
+        return True
+    if wo.status in {WorkOrderStatus.COMPLETE, WorkOrderStatus.CANCELED}:
+        return False
+    if user.id == wo.created_by_user_id:
+        return True
+    if user.id == wo.primary_user_id:
+        return True
+    return user.id in set(assignee_ids(db, wo.id))
+
+
+def to_read(db: Session, wo: WorkOrder, viewer: User | None = None) -> dict[str, object]:
     return {
         "id": wo.id,
         "custom_id": wo.custom_id,
@@ -78,6 +94,7 @@ def to_read(db: Session, wo: WorkOrder) -> dict[str, object]:
         "is_compliant": wo.is_compliant,
         "assignee_ids": assignee_ids(db, wo.id),
         "team_ids": team_ids(db, wo.id),
+        "can_be_edited": can_edit_work_order(db, viewer, wo) if viewer is not None else False,
     }
 
 

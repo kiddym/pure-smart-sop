@@ -76,6 +76,7 @@ class WorkOrderRead(BaseModel):
     is_compliant: bool | None = None
     assignee_ids: list[str] = []
     team_ids: list[str] = []
+    can_be_edited: bool = False
 
 
 class StepResultUpdate(BaseModel):
