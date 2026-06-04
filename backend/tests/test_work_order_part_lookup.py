@@ -36,11 +36,18 @@ def test_list_part_filter_tenant_isolated(client, db):
     ta = _admin(client, "Acme", "a@a.com")
     tb = _admin(client, "Beta", "b@b.com")
     cid_a = _company_id(db, "acme")
+    # Acme: WO "A" consumes part p1
     a = client.post("/api/v1/work-orders", headers=_h(ta), json={"title": "A"}).json()["id"]
     tenant.set_current_company_id(cid_a)
     db.add(
         PartConsumption(part_id="p1", work_order_id=a, quantity=1, unit_cost=1, company_id=cid_a)
     )
     db.commit()
+    # Beta: WO "B" exists but did NOT consume p1
+    client.post("/api/v1/work-orders", headers=_h(tb), json={"title": "B"})
+    # Beta querying with Acme's part_id must return nothing (suppress B, don't leak A)
     rows = client.get("/api/v1/work-orders?part_id=p1", headers=_h(tb)).json()
     assert rows == []
+    # Sanity: Beta's no-filter list returns its own WO, proving the empty result above is meaningful
+    all_rows = client.get("/api/v1/work-orders", headers=_h(tb)).json()
+    assert {r["title"] for r in all_rows} == {"B"}
