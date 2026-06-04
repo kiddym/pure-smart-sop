@@ -35,15 +35,16 @@ const klass = computed(() => `status-${props.status.toLowerCase()}`)
 /* 胶囊底色：各状态色 12% 浅染（不新增配色令牌，用现有 st-*） */
 .status-draft {
   background: color-mix(in srgb, var(--st-draft) 12%, transparent);
-  color: var(--st-draft);
+  /* 文字向主文色加深，提升浅底上的对比度（WCAG AA） */
+  color: color-mix(in srgb, var(--st-draft) 65%, var(--text-primary));
 }
 .status-published {
   background: color-mix(in srgb, var(--st-published) 14%, transparent);
-  color: var(--st-published);
+  color: color-mix(in srgb, var(--st-published) 70%, var(--text-primary));
 }
 .status-archived {
   background: color-mix(in srgb, var(--st-archived) 14%, transparent);
-  color: var(--st-archived);
+  color: color-mix(in srgb, var(--st-archived) 80%, var(--text-primary));
 }
 .dot {
   width: 8px;
