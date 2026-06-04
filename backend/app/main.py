@@ -28,6 +28,7 @@ from app.routers import (
     audit_logs,
     auth,
     batch_imports,
+    billing,
     company,
     company_settings,
     cost_categories,
@@ -172,6 +173,7 @@ app.include_router(permissions_router.router)
 app.include_router(users.router)
 app.include_router(currencies.router)
 app.include_router(platform.router)
+app.include_router(billing.router)
 
 
 @app.get("/healthz", tags=["health"])

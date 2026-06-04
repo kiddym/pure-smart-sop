@@ -24,3 +24,18 @@ class SubscriptionUpdate(BaseModel):
         if v not in ALL_STATUSES:
             raise ValueError("无效的订阅状态")
         return v
+
+
+class PlanCatalogEntry(BaseModel):
+    plan: str
+    seat_limit: int | None
+    features: list[str]
+
+
+class SubscriptionRead(BaseModel):
+    plan: str
+    subscription_status: str
+    seat_used: int
+    seat_limit: int | None
+    features: list[str]
+    catalog: list[PlanCatalogEntry]
