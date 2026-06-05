@@ -9,13 +9,13 @@ import {
 } from 'element-plus'
 import { Expand, Fold, Moon, Setting, Sunny } from '@element-plus/icons-vue'
 import UserMenu from '@/components/UserMenu.vue'
+import NotificationBell from '@/components/NotificationBell.vue'
 import { useThemeStore } from '@/store/theme'
 
 const theme = useThemeStore()
 
 defineProps<{
   collapsed: boolean
-  unreadCount?: number
 }>()
 
 defineEmits<{
@@ -62,12 +62,7 @@ defineExpose({ MENU_COMMANDS, onCommand })
     <!-- 全库搜索为路线图功能，未上线前不在顶栏占位（避免常驻的禁用控件传递半成品感）。
          上线时在此处恢复一个可用的搜索入口。 -->
     <span class="topbar-spacer" />
-    <span
-      v-if="(unreadCount ?? 0) > 0"
-      class="topbar-unread font-mono"
-    >
-      待阅读 <span class="badge">{{ unreadCount }}</span>
-    </span>
+    <NotificationBell />
     <button
       class="topbar-theme"
       :aria-label="theme.isDark ? '切换到浅色' : '切换到暗色'"
@@ -139,21 +134,6 @@ defineExpose({ MENU_COMMANDS, onCommand })
 }
 .topbar-spacer {
   flex: 1;
-}
-.topbar-unread {
-  font-size: 12px;
-  color: var(--text-secondary);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.topbar-unread .badge {
-  padding: 1px 7px;
-  background: var(--accent);
-  color: var(--accent-foreground);
-  border-radius: 9px;
-  font-size: 10px;
-  line-height: 1.4;
 }
 .topbar-cog {
   width: 28px;

@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { createRouter, createMemoryHistory } from 'vue-router'
 import AppTopBar from '@/components/AppTopBar.vue'
+import NotificationBell from '@/components/NotificationBell.vue'
 import i18n from '@/i18n'
 import { useThemeStore } from '@/store/theme'
 
@@ -24,7 +25,7 @@ function makeRouter() {
 function mountTopBar(props: Record<string, unknown> = {}) {
   return mount(AppTopBar, {
     props: { collapsed: false, ...props },
-    global: { plugins: [makeRouter(), i18n] },
+    global: { plugins: [makeRouter(), i18n], stubs: { NotificationBell: true } },
   })
 }
 
@@ -68,22 +69,9 @@ describe('AppTopBar', () => {
     expect(theme.isDark).toBe(!before)
   })
 
-  it('unreadCount 默认（不传）不渲染徽标', () => {
+  it('顶栏含通知铃铛', () => {
     const w = mountTopBar()
-    expect(w.find('.topbar-unread').exists()).toBe(false)
-  })
-
-  it('unreadCount=0 不渲染徽标', () => {
-    const w = mountTopBar({ unreadCount: 0 })
-    expect(w.find('.topbar-unread').exists()).toBe(false)
-  })
-
-  it('unreadCount=3 渲染徽标，含 mono 字体 class，徽标数字为 3', () => {
-    const w = mountTopBar({ unreadCount: 3 })
-    const badge = w.find('.topbar-unread')
-    expect(badge.exists()).toBe(true)
-    expect(badge.classes()).toContain('font-mono')
-    expect(badge.find('.badge').text()).toBe('3')
+    expect(w.findComponent(NotificationBell).exists()).toBe(true)
   })
 
   it('exposes MENU_COMMANDS 命令契约：5 项，路径与现行路由一致', () => {
@@ -102,7 +90,7 @@ describe('AppTopBar', () => {
     const push = vi.spyOn(router, 'push')
     const w = mount(AppTopBar, {
       props: { collapsed: false },
-      global: { plugins: [router, i18n] },
+      global: { plugins: [router, i18n], stubs: { NotificationBell: true } },
     })
     const onCommand = (w.vm as unknown as { onCommand: (p: string) => void }).onCommand
     onCommand('/folders')
