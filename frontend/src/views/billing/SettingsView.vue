@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { usePermission } from '@/composables/usePermission'
@@ -11,10 +11,18 @@ const { hasPermission } = usePermission()
 
 const isCheckoutSuccess = computed(() => route?.query?.checkout === 'success')
 
+const confirming = ref(false)
+const confirmTimedOut = ref(false)
+const busy = ref(false)
+
 onMounted(async () => {
   await billing.loadSubscription()
   if (isCheckoutSuccess.value && billing.subscription) {
-    await billing.pollUntilPlanChange(billing.subscription.plan)
+    const prevPlan = billing.subscription.plan
+    confirming.value = true
+    const ok = await billing.pollUntilPlanChange(prevPlan)
+    confirming.value = false
+    confirmTimedOut.value = !ok
   }
 })
 
@@ -26,7 +34,12 @@ const seatText = computed(() => {
 })
 
 async function manage(): Promise<void> {
-  await billing.openPortal()
+  busy.value = true
+  try {
+    await billing.openPortal()
+  } finally {
+    busy.value = false
+  }
 }
 </script>
 
@@ -47,12 +60,15 @@ async function manage(): Promise<void> {
       <router-link to="/billing/plans">查看套餐对比</router-link>
       <el-button
         v-if="billing.planName === 'pro' && hasPermission('billing.manage')"
+        :loading="busy"
+        :disabled="busy"
         @click="manage"
       >
         管理订阅 / 改支付方式
       </el-button>
-      <p v-if="isCheckoutSuccess" class="checkout-hint">
-        支付已提交，正在确认订阅状态…
+      <p v-if="confirming" class="checkout-hint">支付已提交，正在确认订阅状态…</p>
+      <p v-else-if="confirmTimedOut" class="checkout-hint checkout-hint--timeout">
+        如未自动更新，请刷新页面或联系支持
       </p>
     </el-card>
   </div>

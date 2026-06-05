@@ -33,4 +33,24 @@ describe('PlansView', () => {
     await wrapper.vm.$nextTick()
     expect(wrapper.text()).toContain('订阅')
   })
+
+  it('enterprise 卡片显示联系销售文案', async () => {
+    const store = useBillingStore()
+    store.subscription = {
+      plan: 'free',
+      subscription_status: 'active',
+      seat_used: 1,
+      seat_limit: 3,
+      features: [],
+      catalog: [
+        { plan: 'free', seat_limit: 3, features: [] },
+        { plan: 'enterprise', seat_limit: null, features: ['meters', 'analytics'] },
+      ],
+    }
+    const wrapper = mount(PlansView, {
+      global: { stubs: { 'el-card': slot, 'el-tag': slot, 'el-button': slot } },
+    })
+    await wrapper.vm.$nextTick()
+    expect(wrapper.text()).toContain('联系销售')
+  })
 })

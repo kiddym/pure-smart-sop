@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
 
 const api = vi.hoisted(() => ({
@@ -28,6 +28,8 @@ describe('useBillingStore', () => {
     setActivePinia(createPinia())
     api.getSubscription.mockReset().mockResolvedValue(MOCK_FREE)
   })
+
+  afterEach(() => vi.unstubAllGlobals())
 
   it('loadSubscription 拉取并存订阅', async () => {
     const store = useBillingStore()
@@ -67,6 +69,15 @@ describe('useBillingStore', () => {
     expect(assign).toHaveBeenCalledWith('https://checkout/x')
   })
 
+  it('openPortal 跳转到门户 url', async () => {
+    api.createPortalSession.mockResolvedValue({ url: 'https://portal/p' })
+    const assign = vi.fn()
+    vi.stubGlobal('window', { ...window, location: { assign } })
+    const store = useBillingStore()
+    await store.openPortal()
+    expect(assign).toHaveBeenCalledWith('https://portal/p')
+  })
+
   it('pollUntilPlanChange 在 plan 翻新后停止', async () => {
     let plan = 'free'
     api.getSubscription.mockImplementation(async () => ({
@@ -82,7 +93,19 @@ describe('useBillingStore', () => {
     setTimeout(() => {
       plan = 'pro'
     }, 0)
-    await store.pollUntilPlanChange('free', 5, 1)
+    const result = await store.pollUntilPlanChange('free', 5, 1)
+    expect(result).toBe(true)
     expect(store.subscription?.plan).toBe('pro')
+  })
+
+  it('pollUntilPlanChange 耗尽返回 false', async () => {
+    api.getSubscription.mockResolvedValue({
+      ...MOCK_FREE,
+      plan: 'free',
+    })
+    const store = useBillingStore()
+    await store.loadSubscription()
+    const result = await store.pollUntilPlanChange('free', 2, 1)
+    expect(result).toBe(false)
   })
 })
