@@ -21,6 +21,7 @@ from app.models.customer import Customer, CustomerAsset, CustomerLocation, Custo
 from app.models.email_outbox import EmailOutbox
 from app.models.field import ProcedureField
 from app.models.folder import Folder, FolderSequence
+from app.models.form_field_config import FormFieldConfig
 from app.models.heading_learning_event import HeadingLearningEvent
 from app.models.heading_rule import HeadingStyleRule
 from app.models.location import Location, LocationTeam, LocationUser
@@ -118,6 +119,7 @@ __all__ = [
     "PreventiveMaintenance",
     "Procedure",
     "ProcedureAsset",
+    "FormFieldConfig",
     "ProcedureAssetReference",
     "ProcedureAuditLog",
     "ProcedureField",

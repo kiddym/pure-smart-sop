@@ -34,6 +34,7 @@ from app.routers import (
     cost_categories,
     currencies,
     customers,
+    field_configurations,
     fields,
     folders,
     heading_rules,
@@ -161,6 +162,7 @@ app.include_router(batch_imports.router)
 app.include_router(heading_rules.router)
 app.include_router(attachments.router)
 app.include_router(fields.router)
+app.include_router(field_configurations.router)
 app.include_router(settings_router.router)
 app.include_router(nodes.router)
 app.include_router(company.router)
