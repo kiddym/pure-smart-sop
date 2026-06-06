@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { listParts, createPart, updatePart, deletePart } from '@/api/parts'
 import { listPartCategories } from '@/api/partCategories'
@@ -23,8 +24,13 @@ import type { UserRead, TeamRead } from '@/types/platform'
 import { useAuthStore } from '@/store/auth'
 
 const auth = useAuthStore()
+const router = useRouter()
 
 defineProps<{ embedded?: boolean }>()
+
+function openDetail(row: PartRead) {
+  router.push(`/inventory/parts/${row.id}`)
+}
 
 // ── state ──────────────────────────────────────────────────
 const loading = ref(false)
@@ -302,8 +308,9 @@ async function handleDelete(row: PartRead) {
           <el-tag v-if="row.is_low_stock" type="danger">低库存</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="160" align="center" fixed="right">
+      <el-table-column label="操作" width="220" align="center" fixed="right">
         <template #default="{ row }">
+          <el-button link type="primary" @click="openDetail(row)"> 详情 </el-button>
           <el-button
             v-if="auth.hasPermission('part.edit')"
             link

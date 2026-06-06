@@ -214,6 +214,14 @@ export const routes: RouteRecordRaw[] = [
   },
   { path: '/inventory/multi-parts', redirect: '/inventory/parts/kits' },
   {
+    // 动态详情路由：置于静态 /inventory/parts 与 /inventory/parts/kits 之后，
+    // vue-router 静态路径优先匹配，kits 不会被 :id 遮蔽。
+    path: '/inventory/parts/:id',
+    name: 'inventory-part-detail',
+    component: () => import('@/views/inventory/PartDetailView.vue'),
+    meta: { title: '备件详情', requiresAuth: true, requiredPermission: 'part.view' },
+  },
+  {
     path: '/inventory/purchase-orders',
     name: 'inventory-purchase-orders',
     component: () => import('@/views/inventory/PurchaseOrdersView.vue'),
