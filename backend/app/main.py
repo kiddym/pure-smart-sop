@@ -34,6 +34,7 @@ from app.routers import (
     cost_categories,
     currencies,
     customers,
+    deprecations,
     field_configurations,
     fields,
     folders,
@@ -155,6 +156,7 @@ app.include_router(analytics.router)
 app.include_router(notifications.router)
 app.include_router(notification_preferences.router)
 app.include_router(asset_categories.router)
+app.include_router(deprecations.router)
 app.include_router(folders.router)
 app.include_router(audit_logs.router)
 app.include_router(procedures.router)
