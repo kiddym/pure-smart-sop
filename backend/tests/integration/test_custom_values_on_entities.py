@@ -169,9 +169,7 @@ def test_location_custom_values_roundtrip(client):
     assert r.status_code == 201, r.text
     lid = r.json()["id"]
     assert r.json()["custom_values"] == {"note": "x"}
-    assert (
-        client.get(f"/api/v1/locations/{lid}", headers=h).json()["custom_values"]["note"] == "x"
-    )
+    assert client.get(f"/api/v1/locations/{lid}", headers=h).json()["custom_values"]["note"] == "x"
 
 
 def test_location_unknown_key_422(client):
@@ -205,9 +203,7 @@ def test_location_update_merges_preserving_archived(client):
 def test_part_custom_values_roundtrip(client):
     h = _h(_admin(client))
     _def(client, h, "part", key="note", field_type="text")
-    r = client.post(
-        "/api/v1/parts", headers=h, json={"name": "P", "custom_values": {"note": "x"}}
-    )
+    r = client.post("/api/v1/parts", headers=h, json={"name": "P", "custom_values": {"note": "x"}})
     assert r.status_code == 201, r.text
     pid = r.json()["id"]
     assert r.json()["custom_values"] == {"note": "x"}
@@ -216,9 +212,7 @@ def test_part_custom_values_roundtrip(client):
 
 def test_part_unknown_key_422(client):
     h = _h(_admin(client))
-    r = client.post(
-        "/api/v1/parts", headers=h, json={"name": "P", "custom_values": {"ghost": 1}}
-    )
+    r = client.post("/api/v1/parts", headers=h, json={"name": "P", "custom_values": {"ghost": 1}})
     assert r.status_code == 422
 
 
