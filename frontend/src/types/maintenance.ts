@@ -72,6 +72,8 @@ export interface PMRead {
   start_date: string
   frequency_unit: PMFrequencyUnit
   frequency_value: number
+  due_date_delay: number
+  ends_on: string | null
   next_due_date: string
   is_enabled: boolean
   last_generated_at: string | null
@@ -90,6 +92,8 @@ export interface PMCreate {
   start_date: string
   frequency_unit: PMFrequencyUnit
   frequency_value: number
+  due_date_delay?: number
+  ends_on?: string | null
   assignee_ids?: string[]
   team_ids?: string[]
 }
