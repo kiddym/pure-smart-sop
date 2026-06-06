@@ -23,6 +23,8 @@ class WorkOrderCreate(BaseModel):
     category_id: str | None = None
     # 建单时可选立即挂接已发布 SOP
     procedure_id: str | None = None
+    # 完成是否强制签名
+    required_signature: bool = False
 
 
 class WorkOrderUpdate(BaseModel):
@@ -34,11 +36,14 @@ class WorkOrderUpdate(BaseModel):
     location_id: str | None = None
     primary_user_id: str | None = None
     category_id: str | None = None
+    required_signature: bool | None = None
 
 
 class WorkOrderTransition(BaseModel):
     to_status: WorkOrderStatus
     note: str = ""
+    # 完成转移时可携带签名存档；其他转移忽略
+    signature_url: str | None = Field(default=None, max_length=512)
 
 
 class AssigneesSet(BaseModel):
@@ -74,6 +79,8 @@ class WorkOrderRead(BaseModel):
     first_responded_at: datetime | None = None
     archived: bool = False
     is_compliant: bool | None = None
+    signature_url: str | None = None
+    required_signature: bool = False
     assignee_ids: list[str] = []
     team_ids: list[str] = []
     can_be_edited: bool = False

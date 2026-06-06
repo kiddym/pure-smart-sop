@@ -62,7 +62,22 @@ onMounted(load)
 
 // ── transition ─────────────────────────────────────────────
 async function doTransition(t: { to: WorkOrderStatus; label: string }) {
-  if (t.to === 'COMPLETE' || t.to === 'CANCELED') {
+  let signatureUrl: string | null = null
+  // 完成且要求签名且尚无签名：弹出签名输入（url/文本，签名画布超范围）。
+  if (t.to === 'COMPLETE' && wo.value?.required_signature && !wo.value?.signature_url) {
+    const prompt = await ElMessageBox.prompt(
+      '该工单完成前需要签名，请输入签名链接或标识',
+      '完成签名',
+      {
+        confirmButtonText: '确认完成',
+        cancelButtonText: '取消',
+        inputPattern: /\S/,
+        inputErrorMessage: '签名不能为空',
+      },
+    ).catch(() => null)
+    if (!prompt) return
+    signatureUrl = (prompt as { value: string }).value.trim()
+  } else if (t.to === 'COMPLETE' || t.to === 'CANCELED') {
     const msg =
       t.to === 'COMPLETE' ? '确认标记完成？若有未完成步骤将被后端拒绝' : '确认取消该工单？'
     const result = await ElMessageBox.confirm(msg, '提示', { type: 'warning' }).catch(
@@ -71,7 +86,11 @@ async function doTransition(t: { to: WorkOrderStatus; label: string }) {
     if (result === '__cancel__') return
   }
   try {
-    wo.value = await transitionWorkOrder(woId, { to_status: t.to, note: '' })
+    wo.value = await transitionWorkOrder(woId, {
+      to_status: t.to,
+      note: '',
+      ...(signatureUrl ? { signature_url: signatureUrl } : {}),
+    })
     ElMessage.success('操作成功')
   } catch {
     ElMessage.error('操作失败，请重试')

@@ -52,6 +52,11 @@ class MeterReadingCreate(BaseModel):
     reading_at: datetime | None = None
 
 
+class MeterReadingUpdate(BaseModel):
+    value: Decimal | None = None
+    reading_at: datetime | None = None
+
+
 class MeterReadingRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: str

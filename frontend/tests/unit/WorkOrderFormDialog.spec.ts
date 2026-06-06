@@ -78,6 +78,8 @@ describe('WorkOrderFormDialog', () => {
       completed_at: null,
       category_id: null,
       created_by_user_id: null,
+      signature_url: null,
+      required_signature: false,
       assignee_ids: [],
       team_ids: [],
     }

@@ -12,7 +12,7 @@ from datetime import date
 from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session
 
-from app.errors import bad_request, conflict, not_found
+from app.errors import bad_request, conflict, not_found, unprocessable
 from app.models.base import utcnow
 from app.models.part_consumption import PartConsumption
 from app.models.role import Role
@@ -100,6 +100,8 @@ def to_read(db: Session, wo: WorkOrder, viewer: User | None = None) -> dict[str,
         "first_responded_at": wo.first_responded_at,
         "archived": wo.archived,
         "is_compliant": wo.is_compliant,
+        "signature_url": wo.signature_url,
+        "required_signature": wo.required_signature,
         "assignee_ids": assignee_ids(db, wo.id),
         "team_ids": team_ids(db, wo.id),
         "can_be_edited": can_edit_work_order(db, viewer, wo) if viewer is not None else False,
@@ -195,6 +197,7 @@ def create_work_order(
         location_id=payload.location_id,
         primary_user_id=payload.primary_user_id,
         category_id=payload.category_id,
+        required_signature=payload.required_signature,
         created_by_user_id=actor_user_id,
         company_id=company_id,
     )
@@ -367,6 +370,12 @@ def transition(
         from app.services import work_order_execution_service as exe
 
         exe.assert_completable(db, wo)
+        # 完成签名：transition payload 可携带 signature_url 存档；
+        # required_signature=True 且最终无签名则拒绝完成。
+        if payload.signature_url is not None:
+            wo.signature_url = payload.signature_url
+        if wo.required_signature and not wo.signature_url:
+            raise unprocessable("SIGNATURE_REQUIRED", "完成该工单需要签名")
         wo.completed_at = utcnow()
         wo.completed_by_user_id = actor_user_id
         # 合规快照：无截止日视为合规；否则按完成日 <= 截止日

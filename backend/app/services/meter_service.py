@@ -6,17 +6,24 @@ FIRE 生单、REARM 武装→commit。触发器评估委托 meter_trigger_servic
 
 from __future__ import annotations
 
+from datetime import datetime, timedelta
+
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
-from app.errors import not_found
+from app.errors import not_found, unprocessable
 from app.models.base import utcnow
 from app.models.meter import Meter, MeterUser
 from app.models.meter_reading import MeterReading
 from app.models.meter_trigger import MeterTrigger
 from app.models.user import User, UserStatus
 from app.models.work_order import WorkOrder
-from app.schemas.meter import MeterCreate, MeterReadingCreate, MeterUpdate
+from app.schemas.meter import (
+    MeterCreate,
+    MeterReadingCreate,
+    MeterReadingUpdate,
+    MeterUpdate,
+)
 from app.services import meter_trigger_service as ts
 from app.services import sequence_service
 
@@ -140,6 +147,60 @@ def list_readings(db: Session, meter_id: str) -> list[MeterReading]:
     )
 
 
+def get_reading(db: Session, reading_id: str) -> MeterReading | None:
+    return db.get(MeterReading, reading_id)
+
+
+def _latest_reading(
+    db: Session, meter_id: str, *, exclude_id: str | None = None
+) -> MeterReading | None:
+    stmt = select(MeterReading).where(MeterReading.meter_id == meter_id)
+    if exclude_id is not None:
+        stmt = stmt.where(MeterReading.id != exclude_id)
+    stmt = stmt.order_by(MeterReading.reading_at.desc(), MeterReading.id.desc())
+    return db.execute(stmt).scalars().first()
+
+
+def _assert_frequency_respected(
+    db: Session, m: Meter, reading_at: datetime, *, exclude_id: str | None = None
+) -> None:
+    """软频率校验：仅当 update_frequency_days 为正才生效。
+
+    若已有读数且本次读数时刻距最近一条读数不足 update_frequency_days 天，拒绝。
+    update_frequency_days 为 None/0 时直接返回（不校验）。
+    """
+    freq = m.update_frequency_days
+    if not freq or freq <= 0:
+        return
+    last = _latest_reading(db, m.id, exclude_id=exclude_id)
+    if last is None:
+        return
+    if abs(reading_at - last.reading_at) < timedelta(days=freq):
+        raise unprocessable(
+            "READING_FREQUENCY_NOT_RESPECTED",
+            f"读数过于频繁：该计量要求每 {freq} 天最多一条读数",
+        )
+
+
+def update_reading(
+    db: Session, reading: MeterReading, m: Meter, payload: MeterReadingUpdate
+) -> MeterReading:
+    data = payload.model_dump(exclude_unset=True)
+    new_at = data.get("reading_at", reading.reading_at)
+    if "reading_at" in data:
+        _assert_frequency_respected(db, m, new_at, exclude_id=reading.id)
+    for k, v in data.items():
+        setattr(reading, k, v)
+    db.commit()
+    db.refresh(reading)
+    return reading
+
+
+def delete_reading(db: Session, reading: MeterReading) -> None:
+    db.delete(reading)
+    db.commit()
+
+
 def submit_reading(
     db: Session, m: Meter, payload: MeterReadingCreate, company_id: str, actor_user_id: str | None
 ) -> tuple[MeterReading, list[WorkOrder]]:
@@ -147,11 +208,17 @@ def submit_reading(
 
     返回 (reading, generated_work_orders)。FIRE 复用 generate_from_trigger 生单
     （内部 commit 工单）；trigger 状态与读数末尾统一 commit。
+
+    频率校验（软）：仅当 meter.update_frequency_days 为正时生效——若本次读数时刻
+    距上一条读数不足该天数，拒绝（422 READING_FREQUENCY_NOT_RESPECTED）。
+    update_frequency_days 为 None/0 时不校验，既有读数测试不受影响。
     """
+    reading_at = payload.reading_at or utcnow()
+    _assert_frequency_respected(db, m, reading_at)
     reading = MeterReading(
         meter_id=m.id,
         value=payload.value,
-        reading_at=payload.reading_at or utcnow(),
+        reading_at=reading_at,
         recorded_by_user_id=actor_user_id,
         company_id=company_id,
     )

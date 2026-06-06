@@ -107,6 +107,7 @@ interface FormState {
   team_ids: string[]
   category_id: string | null
   procedure_id: string | null
+  required_signature: boolean
 }
 
 const form = reactive<FormState>({
@@ -121,6 +122,7 @@ const form = reactive<FormState>({
   team_ids: [],
   category_id: null,
   procedure_id: null,
+  required_signature: false,
 })
 
 // ── helpers ────────────────────────────────────────────────
@@ -148,6 +150,7 @@ function resetOrFill() {
     form.team_ids = []
     form.category_id = null
     form.procedure_id = null
+    form.required_signature = false
   } else {
     const e = props.editing
     form.title = e.title
@@ -161,6 +164,7 @@ function resetOrFill() {
     form.assignee_ids = []
     form.team_ids = []
     form.procedure_id = null
+    form.required_signature = e.required_signature
   }
 }
 
@@ -181,7 +185,11 @@ function validateRequiredFields(): string | null {
   if (!form.title.trim()) return '标题'
   if (fieldVisible.description && fieldRequired.description && !form.description.trim())
     return '描述'
-  if (fieldVisible.priority && fieldRequired.priority && (!form.priority || form.priority === 'NONE'))
+  if (
+    fieldVisible.priority &&
+    fieldRequired.priority &&
+    (!form.priority || form.priority === 'NONE')
+  )
     return '优先级'
   if (fieldVisible.due_date && fieldRequired.due_date && !form.due_date) return '截止日期'
   if (fieldVisible.asset && fieldRequired.asset && !form.asset_id) return '资产'
@@ -221,6 +229,7 @@ async function submitForm() {
         assignee_ids: form.assignee_ids,
         team_ids: form.team_ids,
         procedure_id: form.procedure_id || null,
+        required_signature: form.required_signature,
       }
       result = await createWorkOrder(payload)
     } else {
@@ -233,6 +242,7 @@ async function submitForm() {
         location_id: form.location_id || null,
         primary_user_id: form.primary_user_id || null,
         category_id: form.category_id || null,
+        required_signature: form.required_signature,
       }
       result = await updateWorkOrder(props.editing!.id, payload)
     }
@@ -261,7 +271,11 @@ defineExpose({ form, submitForm, fieldVisible, fieldRequired })
       <el-form-item label="标题" required>
         <el-input v-model="form.title" placeholder="请输入标题" />
       </el-form-item>
-      <el-form-item v-if="fieldVisible.description" label="描述" :required="fieldRequired.description">
+      <el-form-item
+        v-if="fieldVisible.description"
+        label="描述"
+        :required="fieldRequired.description"
+      >
         <el-input v-model="form.description" type="textarea" placeholder="请输入描述" />
       </el-form-item>
       <el-form-item v-if="fieldVisible.priority" label="优先级" :required="fieldRequired.priority">
@@ -326,6 +340,9 @@ defineExpose({ form, submitForm, fieldVisible, fieldRequired })
           <el-option v-for="u in users" :key="u.id" :label="u.name" :value="u.id" />
         </el-select>
       </el-form-item>
+      <el-form-item label="完成需签名">
+        <el-switch v-model="form.required_signature" />
+      </el-form-item>
       <!-- 仅 create 模式额外字段 -->
       <template v-if="mode === 'create'">
         <el-form-item label="指派用户">
@@ -339,11 +356,7 @@ defineExpose({ form, submitForm, fieldVisible, fieldRequired })
             <el-option v-for="u in users" :key="u.id" :label="u.name" :value="u.id" />
           </el-select>
         </el-form-item>
-        <el-form-item
-          v-if="fieldVisible.team"
-          label="指派团队"
-          :required="fieldRequired.team"
-        >
+        <el-form-item v-if="fieldVisible.team" label="指派团队" :required="fieldRequired.team">
           <el-select
             v-model="form.team_ids"
             placeholder="请选择指派团队"
