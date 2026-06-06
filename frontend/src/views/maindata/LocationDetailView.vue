@@ -434,11 +434,11 @@ defineExpose({
 .page-title {
   font-size: 20px;
   font-weight: 600;
-  color: var(--text-primary, #1a1a1a);
+  color: var(--text-primary);
 }
 .header-sub {
   font-size: 14px;
-  color: var(--text-secondary, #888);
+  color: var(--text-secondary);
 }
 .detail-body {
   display: flex;

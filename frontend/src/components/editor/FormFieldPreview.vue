@@ -112,22 +112,22 @@ const meterRange = computed(() => {
 
 <style scoped>
 .field-preview {
-  border: 1px solid var(--el-border-color, #dcdfe6);
+  border: 1px solid var(--el-border-color);
   border-radius: 4px;
   overflow: hidden;
 }
 .fp-header {
   padding: 6px 10px;
-  background: var(--el-fill-color-light, #f5f7fa);
+  background: var(--el-fill-color-light);
   font-size: 12px;
-  color: var(--el-text-color-secondary, #909399);
+  color: var(--el-text-color-secondary);
 }
 .fp-body {
   padding: 10px;
 }
 .fp-hint {
   font-size: 12px;
-  color: var(--el-text-color-secondary, #909399);
+  color: var(--el-text-color-secondary);
   margin-top: 6px;
 }
 .fp-input {
@@ -148,14 +148,14 @@ const meterRange = computed(() => {
   margin-bottom: 4px;
 }
 .fp-meter-range {
-  color: var(--el-color-warning, #e6a23c);
+  color: var(--el-color-warning);
 }
 .fp-ph-box {
-  border: 1px dashed var(--el-border-color, #dcdfe6);
+  border: 1px dashed var(--el-border-color);
   border-radius: 4px;
   padding: 16px;
   text-align: center;
-  color: var(--el-text-color-secondary, #909399);
+  color: var(--el-text-color-secondary);
   font-size: 13px;
 }
 </style>

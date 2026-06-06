@@ -150,7 +150,7 @@ async function handleDelete(row: Currency) {
   font-size: 20px;
   font-weight: 600;
   margin: 0 0 20px;
-  color: var(--text-primary, #1a1a1a);
+  color: var(--text-primary);
 }
 .toolbar {
   display: flex;

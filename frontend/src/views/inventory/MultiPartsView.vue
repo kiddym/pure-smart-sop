@@ -241,7 +241,7 @@ defineExpose({ memberLabel, form })
   font-size: 20px;
   font-weight: 600;
   margin: 0 0 20px;
-  color: var(--text-primary, #1a1a1a);
+  color: var(--text-primary);
 }
 .toolbar {
   display: flex;
@@ -256,7 +256,7 @@ defineExpose({ memberLabel, form })
   padding: 8px 16px;
 }
 .member-empty {
-  color: var(--text-tertiary, #909399);
+  color: var(--text-tertiary);
   font-size: 13px;
 }
 </style>

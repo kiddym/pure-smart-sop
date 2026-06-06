@@ -56,8 +56,8 @@ const collapseArrow = computed(() => (props.side === 'left' ? '«' : '»'))
   flex-direction: column;
   min-height: 0;
 }
-.panel-col-left { border-right: 1px solid var(--el-border-color-lighter, #ebeef5); }
-.panel-col-right { border-left: 1px solid var(--el-border-color-lighter, #ebeef5); }
+.panel-col-left { border-right: 1px solid var(--el-border-color-lighter); }
+.panel-col-right { border-left: 1px solid var(--el-border-color-lighter); }
 .panel-body {
   flex: 1;
   min-height: 0;
@@ -86,7 +86,7 @@ const collapseArrow = computed(() => (props.side === 'left' ? '«' : '»'))
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--el-border-color, #dcdfe6);
+  border: 1px solid var(--el-border-color);
   border-radius: 4px;
   background: var(--bg-elevated);
   color: var(--text-tertiary);
@@ -96,5 +96,5 @@ const collapseArrow = computed(() => (props.side === 'left' ? '«' : '»'))
   transition: opacity 0.15s, color 0.15s, border-color 0.15s;
 }
 .panel-splitter:hover .collapse-btn { opacity: 1; }
-.collapse-btn:hover { color: var(--el-color-primary, #d97757); border-color: var(--el-color-primary, #d97757); }
+.collapse-btn:hover { color: var(--el-color-primary); border-color: var(--el-color-primary); }
 </style>

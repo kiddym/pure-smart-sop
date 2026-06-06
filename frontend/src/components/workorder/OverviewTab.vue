@@ -260,7 +260,7 @@ defineExpose({ assigneeIds, teamIds, selectedProcedure, saveAssignment, doAttach
   font-size: 15px;
   font-weight: 600;
   margin: 0 0 12px;
-  color: var(--text-primary, #1a1a1a);
+  color: var(--text-primary);
 }
 .assign-row {
   display: flex;

@@ -60,5 +60,5 @@ async function submit(): Promise<void> {
 
 <style scoped>
 .auth-title { margin: 0 0 24px; text-align: center; }
-.auth-foot { margin-top: 16px; text-align: center; font-size: 13px; color: #888; }
+.auth-foot { margin-top: 16px; text-align: center; font-size: 13px; color: var(--text-tertiary); }
 </style>

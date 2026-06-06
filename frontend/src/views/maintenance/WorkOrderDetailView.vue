@@ -186,7 +186,7 @@ defineExpose({ doTransition, load, wo, downloadReport })
 .page-title {
   font-size: 20px;
   font-weight: 600;
-  color: var(--text-primary, #1a1a1a);
+  color: var(--text-primary);
 }
 .header-actions {
   display: flex;

@@ -66,6 +66,6 @@ onMounted(async () => {
   margin-top: 16px;
   text-align: center;
   font-size: 13px;
-  color: #888;
+  color: var(--text-tertiary);
 }
 </style>

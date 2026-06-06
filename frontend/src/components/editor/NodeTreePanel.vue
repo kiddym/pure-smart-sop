@@ -210,9 +210,9 @@ function hintFor(row: TreeRow): '' | 'before' | 'after' {
 
 <style scoped>
 .node-tree { display: flex; flex-direction: column; height: 100%; min-height: 0; }
-.np-toolbar { display: flex; align-items: center; gap: 8px; padding: 8px; flex-wrap: wrap; border-bottom: 1px solid var(--el-border-color-lighter, #ebeef5); }
+.np-toolbar { display: flex; align-items: center; gap: 8px; padding: 8px; flex-wrap: wrap; border-bottom: 1px solid var(--el-border-color-lighter); }
 .np-search { width: 180px; }
-.np-review-count { font-size: 12px; color: #b88230; }
-.np-bar { display: flex; align-items: center; gap: 6px; padding: 6px 8px; background: var(--el-color-primary-light-9, #fbf1ee); flex-wrap: wrap; }
+.np-review-count { font-size: 12px; color: var(--el-color-warning); }
+.np-bar { display: flex; align-items: center; gap: 6px; padding: 6px 8px; background: var(--el-color-primary-light-9); flex-wrap: wrap; }
 .np-rows { flex: 1; overflow-y: auto; min-height: 0; }
 </style>

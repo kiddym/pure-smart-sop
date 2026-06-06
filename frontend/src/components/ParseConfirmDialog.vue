@@ -32,7 +32,7 @@ const count = computed(() => props.warnings.length)
 </template>
 
 <style scoped>
-.lead { color: #606266; font-size: 13px; margin: 0 0 8px; }
-.warn-list { margin: 0; padding-left: 18px; color: var(--el-color-danger, #f56c6c); font-size: 13px; }
+.lead { color: var(--text-secondary); font-size: 13px; margin: 0 0 8px; }
+.warn-list { margin: 0; padding-left: 18px; color: var(--el-color-danger); font-size: 13px; }
 .warn-list li { margin: 2px 0; }
 </style>

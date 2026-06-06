@@ -25,13 +25,13 @@ const arrow = computed(() => (props.side === 'left' ? '»' : '«'))
   gap: 8px;
   padding-top: 8px;
   cursor: pointer;
-  background: var(--el-fill-color-light, #f5f7fa);
+  background: var(--el-fill-color-light);
   user-select: none;
   color: var(--text-secondary);
 }
-.rail-left { border-right: 1px solid var(--el-border-color-lighter, #ebeef5); }
-.rail-right { border-left: 1px solid var(--el-border-color-lighter, #ebeef5); }
-.rail:hover { background: var(--el-fill-color, #f0f2f5); color: var(--el-color-primary, #d97757); }
+.rail-left { border-right: 1px solid var(--el-border-color-lighter); }
+.rail-right { border-left: 1px solid var(--el-border-color-lighter); }
+.rail:hover { background: var(--el-fill-color); color: var(--el-color-primary); }
 .rail-expand { font-size: 14px; line-height: 1; }
 .rail-label {
   writing-mode: vertical-rl;

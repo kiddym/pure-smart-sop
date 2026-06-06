@@ -139,7 +139,7 @@ async function handleSave() {
   font-size: 20px;
   font-weight: 600;
   margin: 0 0 20px;
-  color: var(--text-primary, #1a1a1a);
+  color: var(--text-primary);
 }
 .settings-form {
   margin-top: 8px;

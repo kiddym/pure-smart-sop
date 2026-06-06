@@ -194,10 +194,10 @@ const alertClass = computed(() => (isAlertType(schema.value.type) ? `alert-${sch
 .config-preview { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
 .cp-config, .cp-preview { flex: 1 1 280px; min-width: 0; }
 .rt-wrap { padding-left: 8px; border-left: 3px solid transparent; }
-.alert-note { border-left-color: var(--el-color-primary, #d97757); }
-.alert-caution { border-left-color: #e6a23c; }
-.alert-warning { border-left-color: #f56c6c; }
-.rt-hint { font-size: 12px; color: #909399; }
+.alert-note { border-left-color: var(--el-color-primary); }
+.alert-caution { border-left-color: var(--el-color-warning); }
+.alert-warning { border-left-color: var(--st-deprecated); }
+.rt-hint { font-size: 12px; color: var(--text-tertiary); }
 .mark-row { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
 .mark-kind { width: 120px; flex: none; }
 .review-bar { display: flex; align-items: center; gap: 8px; margin-top: 12px; }

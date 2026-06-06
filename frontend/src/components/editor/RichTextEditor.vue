@@ -147,19 +147,19 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .rte {
-  border: 1px solid var(--border-subtle, #dcdfe6);
+  border: 1px solid var(--border-subtle);
   border-radius: 4px;
   overflow: hidden;
   background: var(--bg-elevated); /* 纸底（.paper 下为浅白） */
 }
 .rte-toolbar {
-  border-bottom: 1px solid var(--el-border-color-lighter, #ebeef5);
+  border-bottom: 1px solid var(--el-border-color-lighter);
 }
 .rte-specials {
   display: flex;
   gap: 4px;
   padding: 4px 8px;
-  border-bottom: 1px solid var(--el-border-color-lighter, #ebeef5);
+  border-bottom: 1px solid var(--el-border-color-lighter);
   background: var(--bg-hover);
 }
 .rte-body {

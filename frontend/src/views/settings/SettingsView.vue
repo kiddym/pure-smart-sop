@@ -108,7 +108,7 @@ onMounted(loadSettings)
   font-size: 20px;
   font-weight: 600;
   margin: 0 0 20px;
-  color: var(--text-primary, #303133);
+  color: var(--text-primary);
 }
 .readonly-value {
   color: var(--el-text-color-secondary);

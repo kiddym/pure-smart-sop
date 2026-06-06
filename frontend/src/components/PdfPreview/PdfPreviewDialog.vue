@@ -403,7 +403,7 @@ function onPreviewClick(e: MouseEvent): void {
 .pv-pageinput {
   width: 34px;
   text-align: center;
-  border: 1px solid var(--el-border-color, #dcdfe6);
+  border: 1px solid var(--el-border-color);
   border-radius: 4px;
   font-size: 12px;
   padding: 1px 2px;
@@ -447,7 +447,7 @@ function onPreviewClick(e: MouseEvent): void {
   background: rgba(255, 255, 255, 0.08);
 }
 .pv-rail-item.is-active {
-  background: var(--el-color-primary, #d97757);
+  background: var(--el-color-primary);
   color: #fff;
 }
 .pv-rail-num {

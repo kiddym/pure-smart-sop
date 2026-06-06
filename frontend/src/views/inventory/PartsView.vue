@@ -475,7 +475,7 @@ async function handleDelete(row: PartRead) {
   font-size: 20px;
   font-weight: 600;
   margin: 0 0 20px;
-  color: var(--text-primary, #1a1a1a);
+  color: var(--text-primary);
 }
 .toolbar {
   display: flex;
@@ -485,7 +485,7 @@ async function handleDelete(row: PartRead) {
 }
 .switch-label {
   margin-left: 8px;
-  color: var(--text-secondary, #606266);
+  color: var(--text-secondary);
   font-size: 14px;
 }
 </style>

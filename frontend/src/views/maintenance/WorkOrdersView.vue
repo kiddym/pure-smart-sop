@@ -431,7 +431,7 @@ defineExpose({
   font-size: 20px;
   font-weight: 600;
   margin: 0;
-  color: var(--text-primary, #1a1a1a);
+  color: var(--text-primary);
 }
 .toolbar {
   display: flex;

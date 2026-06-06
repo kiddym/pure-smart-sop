@@ -162,10 +162,10 @@ function toggleNotes(id: string): void {
 }
 .vrow {
   padding: 8px 4px;
-  border-bottom: 1px solid var(--el-border-color-lighter, #f0f0f0);
+  border-bottom: 1px solid var(--el-border-color-lighter);
 }
 .vrow.viewing {
-  background: var(--el-color-primary-light-9, #fbf1ee);
+  background: var(--el-color-primary-light-9);
   border-radius: 4px;
 }
 .line {
@@ -209,7 +209,7 @@ function toggleNotes(id: string): void {
   padding: 6px 8px;
   margin-bottom: 6px;
   font-size: 13px;
-  background: var(--el-color-primary-light-9, #fbf1ee);
+  background: var(--el-color-primary-light-9);
   border-radius: 4px;
 }
 .vrow-check {

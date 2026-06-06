@@ -211,17 +211,17 @@ function customValLabels(key: string, opts: { value: string; label: string }[]):
 
 <style scoped>
 .details {
-  border-bottom: 1px solid var(--el-border-color-lighter, #ebeef5);
+  border-bottom: 1px solid var(--el-border-color-lighter);
 }
 .row2 {
   display: flex;
   gap: 16px;
 }
 .custom-readonly {
-  color: var(--el-text-color-regular, #606266);
+  color: var(--el-text-color-regular);
   word-break: break-word;
 }
 .deprecated-title {
-  color: var(--el-text-color-secondary, #909399);
+  color: var(--el-text-color-secondary);
 }
 </style>

@@ -77,15 +77,15 @@ watchEffect(async () => {
 </template>
 
 <style scoped>
-.word-preview { display: flex; flex-direction: column; height: 100%; border-right: 1px solid var(--el-border-color-lighter, #ebeef5); }
+.word-preview { display: flex; flex-direction: column; height: 100%; border-right: 1px solid var(--el-border-color-lighter); }
 .head {
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
   padding: 6px 12px; font-size: 13px; font-weight: 600;
-  border-bottom: 1px solid var(--el-border-color-lighter, #ebeef5);
+  border-bottom: 1px solid var(--el-border-color-lighter);
 }
 .controls { display: flex; align-items: center; gap: 2px; }
-.zoom { font-size: 12px; color: #606266; min-width: 36px; text-align: center; cursor: pointer; }
-.zoom:hover { color: var(--el-color-primary, #d97757); }
+.zoom { font-size: 12px; color: var(--text-secondary); min-width: 36px; text-align: center; cursor: pointer; }
+.zoom:hover { color: var(--el-color-primary); }
 .empty { flex: 1; display: flex; align-items: center; justify-content: center; }
 .scroll { flex: 1; overflow: auto; padding: 0 8px 8px; }
 .scroll.pan-mode { cursor: grab; }

@@ -159,6 +159,6 @@ function onCancelImport(): void {
 
 <style scoped>
 .full { width: 100%; }
-.phase { color: #606266; font-size: 13px; padding-left: 96px; }
-.err { color: var(--el-color-danger, #f56c6c); font-size: 13px; padding-left: 96px; }
+.phase { color: var(--text-secondary); font-size: 13px; padding-left: 96px; }
+.err { color: var(--el-color-danger); font-size: 13px; padding-left: 96px; }
 </style>

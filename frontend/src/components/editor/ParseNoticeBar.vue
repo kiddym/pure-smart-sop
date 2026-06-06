@@ -32,6 +32,6 @@ const info = computed(() => props.notes.filter((n) => n.severity !== 'blocking')
 .pn-toggle { margin-left: auto; color: var(--text-tertiary); }
 .pn-list { margin: 0; padding: 0 12px 8px 28px; font-size: 12px; }
 .pn-list li { margin: 2px 0; }
-.pn-blocking { color: var(--el-color-danger, #f56c6c); }
+.pn-blocking { color: var(--el-color-danger); }
 .pn-info { color: var(--text-secondary); }
 </style>

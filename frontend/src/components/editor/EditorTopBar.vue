@@ -83,8 +83,8 @@ node.$onAction(({ name, after, onError }) => {
   align-items: center;
   gap: 12px;
   padding: 8px 14px;
-  border-bottom: 1px solid var(--el-border-color-lighter, #ebeef5);
-  background: var(--el-bg-color, #fff);
+  border-bottom: 1px solid var(--el-border-color-lighter);
+  background: var(--el-bg-color);
 }
 .left {
   display: flex;
@@ -93,10 +93,10 @@ node.$onAction(({ name, after, onError }) => {
   min-width: 0;
   overflow: hidden;
 }
-.code { font-weight: 600; color: #606266; }
+.code { font-weight: 600; color: var(--text-secondary); }
 .name { font-weight: 600; }
-.path { color: #909399; font-size: 12px; }
+.path { color: var(--text-tertiary); font-size: 12px; }
 .right { display: flex; align-items: center; gap: 8px; flex: none; }
-.etb-save { font-size: 12px; color: #67c23a; }
-.etb-save.is-saving { color: #909399; }
+.etb-save { font-size: 12px; color: var(--st-published); }
+.etb-save.is-saving { color: var(--text-tertiary); }
 </style>

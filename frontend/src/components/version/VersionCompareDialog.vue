@@ -135,12 +135,12 @@ function charSegs(r: DiffRow) {
 .vc-toolbar { display: flex; align-items: center; gap: 12px; width: 100%; }
 .vc-title { font-weight: 600; }
 .vc-summary { display: inline-flex; gap: 8px; font-size: 13px; }
-.vc-summary .add { color: var(--el-color-success, #67c23a); }
-.vc-summary .del { color: var(--el-color-danger, #f56c6c); }
-.vc-summary .mod { color: var(--el-color-warning, #e6a23c); }
+.vc-summary .add { color: var(--el-color-success); }
+.vc-summary .del { color: var(--el-color-danger); }
+.vc-summary .mod { color: var(--el-color-warning); }
 .vc-spacer { flex: 1; }
 .vc-body { height: calc(100vh - 90px); overflow: auto; }
-.vc-row { border-bottom: 1px solid var(--el-border-color-lighter, #f0f0f0); }
+.vc-row { border-bottom: 1px solid var(--el-border-color-lighter); }
 .vc-line { display: flex; align-items: center; gap: 10px; padding: 6px 8px; }
 .vc-line.clickable { cursor: pointer; }
 .vc-glyph { width: 16px; text-align: center; font-weight: bold; }
@@ -151,14 +151,14 @@ function charSegs(r: DiffRow) {
 .is-modified { background: var(--diff-mod-bg); }
 .vc-bodies { display: flex; gap: 16px; padding: 8px 8px 12px 42px; }
 .vc-col { flex: 1; min-width: 0; }
-.vc-coltag { font-size: 12px; color: #909399; margin-bottom: 4px; }
-.vc-html { border: 1px solid var(--el-border-color-lighter, #ebeef5); border-radius: 4px; padding: 8px; background: var(--bg-elevated); overflow-x: auto; }
+.vc-coltag { font-size: 12px; color: var(--text-tertiary); margin-bottom: 4px; }
+.vc-html { border: 1px solid var(--el-border-color-lighter); border-radius: 4px; padding: 8px; background: var(--bg-elevated); overflow-x: auto; }
 .vc-chardiff {
   flex: 1;
   min-width: 0;
   padding: 8px;
   background: var(--bg-elevated);
-  border: 1px solid var(--el-border-color-lighter, #ebeef5);
+  border: 1px solid var(--el-border-color-lighter);
   border-radius: 4px;
   white-space: pre-wrap;
   word-break: break-word;
@@ -166,11 +166,11 @@ function charSegs(r: DiffRow) {
 }
 .vc-del {
   background: var(--diff-del-bg);
-  color: var(--el-color-danger, #c0392b);
+  color: var(--el-color-danger);
   text-decoration: line-through;
 }
 .vc-ins {
   background: var(--diff-add-bg);
-  color: var(--el-color-success, #2e7d32);
+  color: var(--el-color-success);
 }
 </style>

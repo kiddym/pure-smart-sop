@@ -333,8 +333,8 @@ onMounted(() => {
 
 <style scoped>
 .heading-rules-page { max-width: 980px; padding: 20px 24px; }
-.page-title { font-size: 20px; font-weight: 600; margin: 0 0 8px; color: var(--text-primary, #303133); }
-.section-title { font-size: 16px; font-weight: 600; margin: 28px 0 8px; color: var(--text-primary, #303133); }
+.page-title { font-size: 20px; font-weight: 600; margin: 0 0 8px; color: var(--text-primary); }
+.section-title { font-size: 16px; font-weight: 600; margin: 28px 0 8px; color: var(--text-primary); }
 .hint { font-size: 13px; color: var(--el-text-color-secondary); margin: 0 0 16px; line-height: 1.6; }
 .add-card { margin-bottom: 16px; }
 .add-row { display: flex; gap: 12px; }

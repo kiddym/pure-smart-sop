@@ -79,13 +79,13 @@ function close(): void {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--el-color-success, #67c23a);
+  color: var(--el-color-success);
 }
 .checks li.fail {
-  color: var(--el-color-danger, #f56c6c);
+  color: var(--el-color-danger);
 }
 .checks li.warn {
-  color: var(--el-color-warning, #e6a23c);
+  color: var(--el-color-warning);
 }
 .mark {
   width: 16px;

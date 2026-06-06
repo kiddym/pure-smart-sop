@@ -116,10 +116,10 @@ function onKeydown(ev: KeyboardEvent): void {
 
 <style scoped>
 .ntr { display: flex; align-items: center; gap: 4px; height: 30px; font-size: 13px; cursor: pointer; padding-right: 6px; white-space: nowrap; border-bottom: 1px solid transparent; }
-.ntr:hover { background: var(--el-fill-color-light, #f5f7fa); }
+.ntr:hover { background: var(--el-fill-color-light); }
 .ntr--selected { background: var(--accent-bg); }
-.ntr--drop-before { box-shadow: inset 0 2px 0 var(--el-color-primary, #d97757); }
-.ntr--drop-after { box-shadow: inset 0 -2px 0 var(--el-color-primary, #d97757); }
+.ntr--drop-before { box-shadow: inset 0 2px 0 var(--el-color-primary); }
+.ntr--drop-after { box-shadow: inset 0 -2px 0 var(--el-color-primary); }
 .ntr-caret { width: 14px; text-align: center; color: var(--text-tertiary); flex: none; }
 .ntr-caret--hidden { visibility: hidden; }
 .ntr-check { flex: none; }

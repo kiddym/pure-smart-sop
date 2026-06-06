@@ -237,7 +237,7 @@ async function handleDelete(row: RoleRead) {
   font-size: 20px;
   font-weight: 600;
   margin: 0 0 20px;
-  color: var(--text-primary, #1a1a1a);
+  color: var(--text-primary);
 }
 .toolbar {
   display: flex;
@@ -246,7 +246,7 @@ async function handleDelete(row: RoleRead) {
   flex-wrap: wrap;
 }
 .readonly-code {
-  color: var(--text-secondary, #606266);
+  color: var(--text-secondary);
 }
 .perm-picker {
   width: 100%;
@@ -257,6 +257,6 @@ async function handleDelete(row: RoleRead) {
 .perm-group-title {
   font-weight: 600;
   margin-bottom: 6px;
-  color: var(--text-primary, #1a1a1a);
+  color: var(--text-primary);
 }
 </style>
