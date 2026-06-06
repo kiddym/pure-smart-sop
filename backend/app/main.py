@@ -41,6 +41,7 @@ from app.routers import (
     floor_plans,
     folders,
     heading_rules,
+    imports,
     locations,
     meter_categories,
     meters,
@@ -156,6 +157,7 @@ app.include_router(purchase_order_categories.router)
 app.include_router(purchase_orders.router)
 app.include_router(analytics.router)
 app.include_router(exports.router)
+app.include_router(imports.router)
 app.include_router(notifications.router)
 app.include_router(notification_preferences.router)
 app.include_router(asset_categories.router)

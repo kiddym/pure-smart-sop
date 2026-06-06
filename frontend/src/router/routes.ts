@@ -142,6 +142,12 @@ export const routes: RouteRecordRaw[] = [
   },
   { path: '/settings/heading-rules', redirect: '/admin/heading-rules' },
   {
+    path: '/admin/imports',
+    name: 'admin-imports',
+    component: () => import('@/views/admin/ImportView.vue'),
+    meta: { title: '数据导入', requiresAuth: true, requiredPermission: 'asset.create' },
+  },
+  {
     path: '/admin/users',
     name: 'platform-users',
     component: () => import('@/views/platform/UsersView.vue'),
