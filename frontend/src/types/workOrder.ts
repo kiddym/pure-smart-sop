@@ -202,6 +202,13 @@ export interface ExecutionView {
   steps: StepResultRead[]
 }
 
+/** PATCH /work-orders/{id}/steps/{result_id} 入参；字段全可选（部分更新）。 */
+export interface StepResultUpdate {
+  response?: Record<string, unknown>
+  is_done?: boolean
+  notes?: string
+}
+
 export interface WorkOrderCategoryRead {
   id: string
   name: string

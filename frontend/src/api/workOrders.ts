@@ -11,6 +11,7 @@ import type {
   WorkOrderActivityRead,
   WorkOrderCommentCreate,
   ExecutionView,
+  StepResultUpdate,
   LaborRead,
   LaborCreate,
   LaborTimerStart,
@@ -59,6 +60,9 @@ export const addWorkOrderComment = (id: string, p: WorkOrderCommentCreate) =>
   http.post<WorkOrderActivityRead>(`/work-orders/${id}/activities`, p).then((r) => r.data)
 export const getExecution = (id: string) =>
   http.get<ExecutionView>(`/work-orders/${id}/execution`).then((r) => r.data)
+/** 写入单个执行步骤（response/is_done/notes），返回刷新后的整张执行视图。 */
+export const patchStepResult = (id: string, resultId: string, p: StepResultUpdate) =>
+  http.patch<ExecutionView>(`/work-orders/${id}/steps/${resultId}`, p).then((r) => r.data)
 
 export const listLabor = (id: string) =>
   http.get<LaborRead[]>(`/work-orders/${id}/labor`).then((r) => r.data)
