@@ -2,14 +2,19 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app import permissions
 from app.deps import get_current_user, get_db, require_permission
 from app.models.custom_field_def import CustomFieldDef
 from app.models.user import User
-from app.schemas.custom_field import CustomFieldCreate, CustomFieldOut, CustomFieldUpdate
+from app.schemas.custom_field import (
+    CustomFieldCreate,
+    CustomFieldOut,
+    CustomFieldReorderIn,
+    CustomFieldUpdate,
+)
 from app.services import custom_field_service as svc
 
 router = APIRouter(prefix="/api/v1/custom-fields", tags=["custom-fields"])
@@ -82,11 +87,11 @@ def delete_field(
 
 @router.post("/reorder", response_model=list[CustomFieldOut])
 def reorder_fields(
-    entity_type: str,
-    ordered_ids: list[str],
+    payload: CustomFieldReorderIn,
+    entity_type: str = Query(...),
     db: Session = Depends(get_db),
     user: User = Depends(require_permission(permissions.COMPANY_SETTINGS)),
 ) -> list[CustomFieldDef]:
-    rows = svc.reorder(db, entity_type, ordered_ids)
+    rows = svc.reorder(db, entity_type, payload.ordered_ids)
     db.commit()
     return rows

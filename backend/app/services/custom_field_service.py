@@ -133,7 +133,9 @@ def reorder(db: Session, entity_type: str, ordered_ids: list[str]) -> list[Custo
     return list_defs(db, entity_type, include_archived=False)
 
 
-def validate_values(db: Session, entity_type: str, custom_values: dict[str, Any]) -> None:
+def validate_values(
+    db: Session, entity_type: str, custom_values: dict[str, Any], *, require_check: bool = True
+) -> None:
     """写宿主前调用：按 entity_type 的 active 定义校验；未知 key（无任何定义）拒绝 422。"""
     assert_entity(entity_type)
     all_defs = _defs(db, entity_type, only_active_status=False)  # active + archived
@@ -142,4 +144,4 @@ def validate_values(db: Session, entity_type: str, custom_values: dict[str, Any]
     if unknown:
         raise unprocessable("UNKNOWN_CUSTOM_FIELD", f"未知自定义字段: {', '.join(unknown)}")
     active = [d for d in all_defs if d.status == "active"]
-    fv.validate_against_definitions(active, custom_values, require_check=True)
+    fv.validate_against_definitions(active, custom_values, require_check=require_check)

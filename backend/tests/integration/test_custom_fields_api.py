@@ -32,6 +32,7 @@ def test_create_and_list(client):
     assert [x["key"] for x in rows] == ["severity"]
 
 
+# key 不可改的机制是 CustomFieldUpdate schema 根本不含 key 字段（无法传入），故改名成功而 key 不变。
 def test_key_immutable_via_no_field(client):
     h = _h(_admin(client))
     fid = _create(client, h).json()["id"]
@@ -116,3 +117,15 @@ def test_tenant_isolation(client):
     hB = _h(_admin(client, "CoB", "b@b.com"))
     _create(client, hA, field_type="text", options=[])
     assert client.get("/api/v1/custom-fields?entity_type=work_order", headers=hB).json() == []
+
+
+def test_reorder_changes_sort_order(client):
+    h = _h(_admin(client))
+    a = _create(client, h, key="a", field_type="text", options=[]).json()["id"]
+    b = _create(client, h, key="b", field_type="text", options=[]).json()["id"]
+    rows = client.post(
+        "/api/v1/custom-fields/reorder?entity_type=work_order",
+        headers=h,
+        json={"ordered_ids": [b, a]},
+    ).json()
+    assert [r["key"] for r in rows] == ["b", "a"]
