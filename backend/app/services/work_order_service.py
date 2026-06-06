@@ -7,7 +7,7 @@ transition 时按需 import）。
 
 from __future__ import annotations
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session
 
 from app.errors import bad_request, conflict, not_found
@@ -245,6 +245,23 @@ def list_work_orders(
         )
         stmt = stmt.where(WorkOrder.id.in_(sub))
     return list(db.execute(stmt.order_by(WorkOrder.custom_id)).scalars().all())
+
+
+_OPEN_WO_STATUSES = (
+    WorkOrderStatus.OPEN,
+    WorkOrderStatus.IN_PROGRESS,
+    WorkOrderStatus.ON_HOLD,
+)
+
+
+def urgent_count(db: Session) -> int:
+    """当前租户下 urgent=True 且处于未完成/未取消（OPEN/IN_PROGRESS/ON_HOLD）的工单数。"""
+    stmt = select(func.count()).select_from(WorkOrder).where(
+        WorkOrder.is_active.is_(True),
+        WorkOrder.urgent.is_(True),
+        WorkOrder.status.in_(_OPEN_WO_STATUSES),
+    )
+    return int(db.execute(stmt).scalar_one())
 
 
 def get_work_order(db: Session, work_order_id: str) -> WorkOrder | None:

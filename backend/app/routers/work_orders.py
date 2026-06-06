@@ -72,6 +72,15 @@ def list_work_orders(
     return [svc.to_read(db, w, viewer=current_user) for w in rows]
 
 
+# 注：/urgent-count 须注册在 /{work_order_id} 之前，否则会被路径参数吞掉
+@router.get("/urgent-count")
+def urgent_count(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_permission(permissions.WORK_ORDER_VIEW)),
+) -> dict[str, int]:
+    return {"count": svc.urgent_count(db)}
+
+
 @router.post("", response_model=WorkOrderRead, status_code=201)
 def create_work_order(
     payload: WorkOrderCreate,

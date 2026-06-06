@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 
 from app import permissions
 from app.deps import get_db, require_permission
-from app.errors import not_found
-from app.models.user import User
+from app.errors import bad_request, not_found
+from app.models.user import User, UserStatus
 from app.schemas.platform import InviteResult, InviteUserRequest
 from app.schemas.user import UserCreate, UserRead, UserUpdate
 from app.services import invitation_service, user_service
@@ -77,6 +77,29 @@ def update_user(
 ) -> User | None:
     _ensure_same_tenant(user_service.get_user(db, user_id), current_user.company_id)
     return user_service.update_user(db, user_id, payload)
+
+
+@router.patch("/{user_id}/disable", response_model=UserRead)
+def disable_user(
+    user_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_permission(permissions.USER_EDIT)),
+) -> User:
+    # 防自锁：不允许禁用自己（否则可能把唯一管理员锁在门外）
+    if user_id == current_user.id:
+        raise bad_request("USER_CANNOT_DISABLE_SELF", "不能禁用自己")
+    user = _ensure_same_tenant(user_service.get_user(db, user_id), current_user.company_id)
+    return user_service.set_status(db, user, UserStatus.disabled)
+
+
+@router.patch("/{user_id}/enable", response_model=UserRead)
+def enable_user(
+    user_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_permission(permissions.USER_EDIT)),
+) -> User:
+    user = _ensure_same_tenant(user_service.get_user(db, user_id), current_user.company_id)
+    return user_service.set_status(db, user, UserStatus.active)
 
 
 @router.delete("/{user_id}", status_code=204, response_model=None)

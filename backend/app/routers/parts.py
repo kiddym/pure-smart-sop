@@ -11,7 +11,9 @@ from app.errors import not_found
 from app.models.part import Part
 from app.models.user import User
 from app.schemas.part import PartCreate, PartMini, PartRead, PartUpdate
+from app.schemas.work_order import WorkOrderRead
 from app.services import part_service as svc
+from app.services import work_order_service as wo_svc
 
 router = APIRouter(prefix="/api/v1/parts", tags=["parts"])
 
@@ -75,6 +77,18 @@ def get_part(
 ) -> PartRead:
     p = _ensure_part(svc.get_part(db, part_id), current_user.company_id)
     return _read_part(db, p)
+
+
+@router.get("/{part_id}/work-orders", response_model=list[WorkOrderRead])
+def list_part_work_orders(
+    part_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_permission(permissions.WORK_ORDER_VIEW)),
+) -> list[dict[str, object]]:
+    """反查：消耗过该备件的工单（经 PartConsumption 去重，当前租户隔离）。"""
+    _ensure_part(svc.get_part(db, part_id), current_user.company_id)
+    rows = wo_svc.list_work_orders(db, part_id=part_id)
+    return [wo_svc.to_read(db, w, viewer=current_user) for w in rows]
 
 
 @router.patch("/{part_id}", response_model=PartRead)

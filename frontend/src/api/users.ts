@@ -14,3 +14,9 @@ export const updateUser = (id: string, payload: UserUpdate) =>
   http.patch<UserRead>(`/users/${id}`, payload).then((r) => r.data)
 
 export const deleteUser = (id: string) => http.delete(`/users/${id}`).then(() => undefined)
+
+export const disableUser = (id: string) =>
+  http.patch<UserRead>(`/users/${id}/disable`).then((r) => r.data)
+
+export const enableUser = (id: string) =>
+  http.patch<UserRead>(`/users/${id}/enable`).then((r) => r.data)

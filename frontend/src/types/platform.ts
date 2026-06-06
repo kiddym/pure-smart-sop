@@ -1,6 +1,6 @@
 // 平台管理类型（与后端 app/schemas 平台相关 schema 对齐）。
 
-export type UserStatus = 'active' | 'inactive'
+export type UserStatus = 'active' | 'disabled'
 
 export interface UserRead {
   id: string
