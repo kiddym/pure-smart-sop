@@ -79,10 +79,10 @@ const categoryPieOption = computed<EChartsOption>(() => {
     series: [
       {
         type: 'pie',
-        data: d.inventory_value_by_category.map((r) => ({
-          name: r.name ?? '未分类',
-          value: Number(r.value),
-        })),
+        // 过滤 0 值切片：避免 0 值分类标签堆叠重叠、不可读。
+        data: d.inventory_value_by_category
+          .map((r) => ({ name: r.name ?? '未分类', value: Number(r.value) }))
+          .filter((p) => p.value > 0),
       },
     ],
   }
