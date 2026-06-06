@@ -100,6 +100,32 @@ const topConsumedOption = computed<EChartsOption>(() => {
   }
 })
 
+const woCategoryOption = computed<EChartsOption>(() => {
+  const d = data.value
+  if (!d) return { series: [] }
+  const rows = d.consumption_by_wo_category
+  return {
+    tooltip: { trigger: 'axis' },
+    xAxis: { type: 'category', data: rows.map((r) => r.name ?? '未分类') },
+    yAxis: { type: 'value', name: '消耗成本' },
+    series: [{ name: '消耗成本', type: 'bar', data: rows.map((r) => Number(r.cost)) }],
+  }
+})
+
+const monthlyTrendOption = computed<EChartsOption>(() => {
+  const d = data.value
+  if (!d) return { series: [] }
+  const rows = d.consumption_monthly_trend
+  return {
+    tooltip: { trigger: 'axis' },
+    xAxis: { type: 'category', data: rows.map((r) => r.month) },
+    yAxis: { type: 'value', name: '消耗成本' },
+    series: [
+      { name: '消耗成本', type: 'line', smooth: true, data: rows.map((r) => Number(r.cost)) },
+    ],
+  }
+})
+
 async function onExport() {
   try {
     await exportAnalytics('inventory', buildParams())
@@ -151,6 +177,26 @@ defineExpose({ categoryId, fetch })
         <BaseChart :option="topConsumedOption" />
       </el-col>
     </el-row>
+
+    <el-row :gutter="12" class="chart-row">
+      <el-col :span="12">
+        <div class="chart-title">按工单分类消耗成本</div>
+        <BaseChart :option="woCategoryOption" />
+      </el-col>
+      <el-col :span="12">
+        <div class="chart-title">按月消耗趋势</div>
+        <BaseChart :option="monthlyTrendOption" />
+      </el-col>
+    </el-row>
+
+    <div class="chart-title">按工单分类消耗明细</div>
+    <el-table :data="data?.consumption_by_wo_category ?? []" border size="small">
+      <el-table-column label="工单分类">
+        <template #default="{ row }">{{ row.name ?? '未分类' }}</template>
+      </el-table-column>
+      <el-table-column prop="cost" label="消耗成本" />
+      <el-table-column prop="qty" label="消耗量" />
+    </el-table>
 
     <div class="chart-title">低库存明细</div>
     <el-table :data="data?.low_stock_items ?? []" border size="small">
