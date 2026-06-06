@@ -178,6 +178,14 @@ export const routes: RouteRecordRaw[] = [
   },
   { path: '/maindata/locations', redirect: '/assets/locations' },
   {
+    // 位置详情：路径含 locations 静态段，比 /assets/:id 更具体，
+    // vue-router 静态段优先，不遮蔽 /assets/locations 列表，也不被 /assets/:id 捕获。
+    path: '/assets/locations/:id',
+    name: 'maindata-location-detail',
+    component: () => import('@/views/maindata/LocationDetailView.vue'),
+    meta: { title: '位置详情', requiresAuth: true, requiredPermission: 'location.view' },
+  },
+  {
     path: '/assets',
     name: 'maindata-assets',
     component: () => import('@/views/maindata/AssetsView.vue'),

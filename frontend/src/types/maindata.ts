@@ -42,6 +42,20 @@ export interface LocationMini {
   custom_id: string
 }
 
+export interface FloorPlanRead {
+  id: string
+  location_id: string
+  name: string
+  image_url: string | null
+  area: string | number | null
+}
+export interface FloorPlanCreate {
+  name: string
+  image_url?: string | null
+  area?: string | number | null
+}
+export type FloorPlanUpdate = Partial<FloorPlanCreate>
+
 export interface AssetRead {
   id: string
   custom_id: string

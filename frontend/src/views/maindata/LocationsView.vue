@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { listLocations, createLocation, updateLocation, deleteLocation } from '@/api/locations'
 import { listUsers } from '@/api/users'
@@ -13,6 +14,11 @@ import { useAuthStore } from '@/store/auth'
 import { buildTree, collectDescendantIds } from '@/utils/tree'
 
 const auth = useAuthStore()
+const router = useRouter()
+
+function openDetail(row: LocationRead) {
+  router.push(`/assets/locations/${row.id}`)
+}
 
 // ── state ──────────────────────────────────────────────────
 const loading = ref(false)
@@ -230,8 +236,9 @@ async function handleDelete(row: LocationRead) {
       <el-table-column prop="name" label="名称" min-width="200" />
       <el-table-column prop="custom_id" label="编号" min-width="120" />
       <el-table-column prop="address" label="地址" min-width="160" />
-      <el-table-column label="操作" width="160" align="center" fixed="right">
+      <el-table-column label="操作" width="220" align="center" fixed="right">
         <template #default="{ row }">
+          <el-button link type="primary" @click="openDetail(row)"> 详情 </el-button>
           <el-button
             v-if="auth.hasPermission('location.edit')"
             link
