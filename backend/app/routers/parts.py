@@ -29,6 +29,8 @@ def _read_part(db: Session, p: Part) -> PartRead:
     data.asset_ids = svc.asset_ids(db, p.id)
     data.location_ids = svc.location_ids(db, p.id)
     data.pm_ids = svc.pm_ids(db, p.id)
+    data.vendor_ids = svc.vendor_ids(db, p.id)
+    data.customer_ids = svc.customer_ids(db, p.id)
     return data
 
 

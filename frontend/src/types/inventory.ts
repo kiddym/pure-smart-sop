@@ -12,11 +12,15 @@ export interface PartRead {
   non_stock: boolean
   is_low_stock: boolean
   category_id: string | null
+  area: string | null
+  additional_infos: string | null
   assignee_ids: string[]
   team_ids: string[]
   asset_ids: string[]
   location_ids: string[]
   pm_ids: string[]
+  vendor_ids: string[]
+  customer_ids: string[]
 }
 export interface PartCreate {
   name: string
@@ -28,11 +32,15 @@ export interface PartCreate {
   barcode?: string | null
   non_stock?: boolean
   category_id?: string | null
+  area?: string | null
+  additional_infos?: string | null
   assignee_ids?: string[]
   team_ids?: string[]
   asset_ids?: string[]
   location_ids?: string[]
   pm_ids?: string[]
+  vendor_ids?: string[]
+  customer_ids?: string[]
 }
 export type PartUpdate = Partial<PartCreate>
 export interface PartMini {
