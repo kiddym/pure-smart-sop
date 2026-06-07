@@ -39,7 +39,12 @@ def list_step_results(db: Session, work_order_id: str) -> list[WorkOrderStepResu
 
 
 def get_step_result(db: Session, result_id: str) -> WorkOrderStepResult | None:
-    return db.get(WorkOrderStepResult, result_id)
+    return db.execute(
+        select(WorkOrderStepResult).where(
+            WorkOrderStepResult.id == result_id,
+            WorkOrderStepResult.is_active.is_(True),
+        )
+    ).scalar_one_or_none()
 
 
 def _pinned_nodes(db: Session, procedure_id: str) -> list[ProcedureNode]:
@@ -89,6 +94,13 @@ def attach_procedure(
 def detach_procedure(db: Session, wo: WorkOrder, company_id: str) -> WorkOrder:
     if wo.status == WorkOrderStatus.COMPLETE:
         raise bad_request("WORKORDER_COMPLETE_LOCKED", "已完成工单不可解绑 SOP")
+    # 先软删 step_result 的附件，避免孤儿附件残留至定时清理。
+    rows = list(
+        db.execute(
+            select(WorkOrderStepResult).where(WorkOrderStepResult.work_order_id == wo.id)
+        ).scalars()
+    )
+    attachment_service.soft_delete_for_entities(db, "work_order_step_result", [r.id for r in rows])
     db.execute(delete(WorkOrderStepResult).where(WorkOrderStepResult.work_order_id == wo.id))
     wo.procedure_id = None
     wo.procedure_group_id = None

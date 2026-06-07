@@ -116,10 +116,10 @@ async function applyView(view: ExecutionView): Promise<void> {
   exec.value = view
   for (const s of view.steps) {
     seedDraft(s)
-    if (isAttachmentType(s)) {
-      await loadStepAttachments(s.id)
-    }
   }
+  await Promise.all(
+    view.steps.filter(isAttachmentType).map((s) => loadStepAttachments(s.id)),
+  )
 }
 
 onMounted(async () => {

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
 
 const emit = defineEmits<{ (e: 'confirm', file: File): void }>()
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 let drawing = false
+let dirty = false
 let ctx: CanvasRenderingContext2D | null = null
 
 onMounted(() => {
@@ -24,6 +26,7 @@ function pos(e: MouseEvent): [number, number] {
 function start(e: MouseEvent): void {
   if (!ctx) return
   drawing = true
+  dirty = true
   const [x, y] = pos(e)
   ctx.beginPath()
   ctx.moveTo(x, y)
@@ -40,8 +43,13 @@ function stop(): void {
 function clear(): void {
   const c = canvasRef.value
   if (c && ctx) ctx.clearRect(0, 0, c.width, c.height)
+  dirty = false
 }
 function confirm(): void {
+  if (!dirty) {
+    ElMessage.warning('请先签名')
+    return
+  }
   const c = canvasRef.value
   if (!c) return
   c.toBlob((blob) => {
