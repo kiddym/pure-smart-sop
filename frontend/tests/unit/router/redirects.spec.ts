@@ -22,8 +22,9 @@ const REDIRECTS: Array<[string, string]> = [
   ['/platform/currencies', '/admin/currencies'],
   ['/settings', '/admin/config/organization'],
   ['/admin/settings', '/admin/config/organization'],
-  ['/settings/fields', '/admin/fields'],
-  ['/settings/heading-rules', '/admin/heading-rules'],
+  // 字段路由已迁至配置中心聚合页，双跳后最终落到对应聚合页。
+  ['/settings/fields', '/admin/config/sop'],
+  ['/settings/heading-rules', '/admin/config/sop'],
   ['/audit-logs', '/admin/audit-logs'],
 ]
 

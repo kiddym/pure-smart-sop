@@ -45,3 +45,29 @@ describe('组织设置路由', () => {
     expect(r.currentRoute.value.name).toBe('partners-vendors')
   })
 })
+
+describe('配置中心路由', () => {
+  it('新增 Hub 与 4 个聚合页路由可解析', async () => {
+    const r = makeRouter()
+    for (const p of ['/admin/config', '/admin/config/sop', '/admin/config/work-order', '/admin/config/request', '/admin/config/custom-fields']) {
+      await r.push(p)
+      expect(r.currentRoute.value.matched.length).toBeGreaterThan(0)
+    }
+  })
+
+  it('旧字段路由 redirect 到聚合页对应 tab', async () => {
+    const cases: [string, string, string | undefined][] = [
+      ['/admin/fields', '/admin/config/sop', 'fields'],
+      ['/admin/heading-rules', '/admin/config/sop', 'heading-rules'],
+      ['/admin/work-order-fields', '/admin/config/work-order', 'form-fields'],
+      ['/admin/request-fields', '/admin/config/request', 'form-fields'],
+      ['/admin/custom-fields', '/admin/config/custom-fields', undefined],
+    ]
+    const r = makeRouter()
+    for (const [from, path, tab] of cases) {
+      await r.push(from)
+      expect(r.currentRoute.value.path).toBe(path)
+      if (tab) expect(r.currentRoute.value.query.tab).toBe(tab)
+    }
+  })
+})
