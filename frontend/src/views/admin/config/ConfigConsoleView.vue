@@ -1,11 +1,17 @@
 <script setup lang="ts">
-interface Entry { label: string; to: string }
+import { computed } from 'vue'
+import { useAuthStore } from '@/store/auth'
+
+interface Entry { label: string; to: string; superAdmin?: boolean }
 interface Stage { no: string; title: string; desc: string; entries: Entry[] }
+
+const auth = useAuthStore()
 
 const stages: Stage[] = [
   { no: '①', title: '组织基础', desc: '先决定启用哪些业务模块,再配组织与货币', entries: [
     { label: '公司设置 · 模块开关', to: '/admin/config/organization?tab=company' },
-    { label: '货币', to: '/admin/currencies' },
+    // 货币仅 super_admin 可管(与旧侧栏「组织配置」门控一致)。
+    { label: '货币', to: '/admin/currencies', superAdmin: true },
   ]},
   { no: '②', title: '人员权限', desc: '角色 → 团队 → 用户,先有角色再分配', entries: [
     { label: '角色', to: '/admin/roles' },
@@ -30,6 +36,14 @@ const stages: Stage[] = [
     { label: '审计日志', to: '/admin/audit-logs' },
   ]},
 ]
+
+// 按角色过滤 superAdmin 专属入口(货币)。
+const visibleStages = computed<Stage[]>(() =>
+  stages.map((s) => ({
+    ...s,
+    entries: s.entries.filter((e) => !e.superAdmin || auth.user?.role_code === 'super_admin'),
+  })),
+)
 </script>
 
 <template>
@@ -37,7 +51,7 @@ const stages: Stage[] = [
     <h2 class="page-title">配置中心</h2>
     <p class="console-hint">初次部署建议从上往下依次配置;日常维护可直接点入对应模块。</p>
     <div class="stage-grid">
-      <section v-for="s in stages" :key="s.no" class="stage-card">
+      <section v-for="s in visibleStages" :key="s.no" class="stage-card">
         <header class="stage-head"><span class="stage-no">{{ s.no }}</span>{{ s.title }}</header>
         <p class="stage-desc">{{ s.desc }}</p>
         <ul class="stage-entries">
