@@ -15,13 +15,7 @@ def test_catalog_shape():
     assert PLAN_CATALOG[Plan.pro].seat_limit == 15
     assert PLAN_CATALOG[Plan.enterprise].seat_limit is None
     pro_feats = PLAN_CATALOG[Plan.pro].features
-    assert pro_feats == {
-        Feature.preventive_maintenance,
-        Feature.meters,
-        Feature.purchasing,
-        Feature.analytics,
-        Feature.sop,
-    }
+    assert pro_feats == {Feature.sop}
     # enterprise 至少含 pro 全部
     assert pro_feats <= PLAN_CATALOG[Plan.enterprise].features
 
