@@ -19,7 +19,7 @@ from app.config import settings
 from app.db import SessionLocal
 from app.logging_config import configure_logging
 from app.models.base import utcnow
-from app.services import asset_service
+from app.services import procedure_asset_service
 
 logger = logging.getLogger(__name__)
 TASK_NAME = "asset_gc"
@@ -35,12 +35,12 @@ def run(
     """执行一次 GC（逐项提交）。返回 ``{scanned, deleted, errors}`` 摘要。"""
     started = now or utcnow()
     grace = grace_hours if grace_hours is not None else settings.asset_gc_grace_hours
-    candidates = asset_service.gc_candidates(db, grace_hours=grace, now=started)
+    candidates = procedure_asset_service.gc_candidates(db, grace_hours=grace, now=started)
     deleted = 0
     errors = 0
     for asset_id in candidates:
         try:
-            if asset_service.delete_asset_locked(db, asset_id, grace_hours=grace, now=started):
+            if procedure_asset_service.delete_asset_locked(db, asset_id, grace_hours=grace, now=started):
                 if commit:
                     db.commit()
                 deleted += 1

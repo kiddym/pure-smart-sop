@@ -18,7 +18,7 @@ from sqlalchemy.orm import Session
 
 from app import storage, tenant
 from app.errors import bad_request, not_found, payload_too_large
-from app.models.asset import ProcedureAsset, ProcedureAssetReference
+from app.models.procedure_asset import ProcedureAsset, ProcedureAssetReference
 from app.models.base import new_uuid, utcnow
 from app.models.node import ProcedureNode
 from app.models.procedure import Procedure

@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from app.models.asset import ProcedureAsset, ProcedureAssetReference
+from app.models.procedure_asset import ProcedureAsset, ProcedureAssetReference
 from app.models.asset_category import AssetCategory
 from app.models.asset_downtime import AssetDowntime
 from app.models.attachment import Attachment
