@@ -34,7 +34,7 @@ describe('AppTopBar', () => {
 
   it('渲染品牌文字（i18n app.name）', () => {
     const w = mountTopBar()
-    expect(w.text()).toContain('Smart CMMS')
+    expect(w.text()).toContain('Smart SOP')
   })
 
   it('collapsed=false 折叠按钮 aria-label 为「折叠侧栏」', () => {

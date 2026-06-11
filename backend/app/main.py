@@ -57,16 +57,16 @@ def _probe_soffice() -> None:
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     configure_logging()
-    logger.info("Smart CMMS API starting env=%s", settings.app_env)
+    logger.info("Smart SOP API starting env=%s", settings.app_env)
     # SOP 系统种子数据改为每公司在 register() 时按 tenant 上下文播种（见 app/seed.py
     # seed_tenant_sop），不再启动时建 NULL-company 的全局死行。
     _probe_soffice()
     yield
-    logger.info("Smart CMMS API shutting down")
+    logger.info("Smart SOP API shutting down")
 
 
 app = FastAPI(
-    title="Smart CMMS API",
+    title="Smart SOP API",
     version="0.1.0",
     description="独立的结构化 SOP 管理系统 API。",
     docs_url="/docs",

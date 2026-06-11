@@ -85,7 +85,7 @@ class Settings(BaseSettings):
     trusted_proxies: list[str] = Field(default_factory=list)
 
     # 品牌
-    app_name: str = "Smart CMMS"
+    app_name: str = "Smart SOP"
 
     # 认证 / JWT
     secret_key: str = "dev-insecure-change-me"

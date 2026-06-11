@@ -24,7 +24,8 @@ class Feature(enum.StrEnum):
 ACTIVE_STATUSES = frozenset({"active", "trialing"})
 ALL_STATUSES = frozenset({"active", "trialing", "past_due", "canceled", "suspended"})
 
-_PRO_FEATURES = frozenset({Feature.sop})
+# 纯 SOP 产品：SOP 为各档位基础能力，所有套餐（含 free）均包含。
+_BASE_FEATURES = frozenset({Feature.sop})
 
 
 @dataclass(frozen=True)
@@ -34,9 +35,9 @@ class PlanSpec:
 
 
 PLAN_CATALOG: dict[Plan, PlanSpec] = {
-    Plan.free: PlanSpec(seat_limit=3, features=frozenset()),
-    Plan.pro: PlanSpec(seat_limit=15, features=_PRO_FEATURES),
-    Plan.enterprise: PlanSpec(seat_limit=None, features=_PRO_FEATURES),
+    Plan.free: PlanSpec(seat_limit=3, features=_BASE_FEATURES),
+    Plan.pro: PlanSpec(seat_limit=15, features=_BASE_FEATURES),
+    Plan.enterprise: PlanSpec(seat_limit=None, features=_BASE_FEATURES),
 }
 
 

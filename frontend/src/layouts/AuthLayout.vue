@@ -22,7 +22,7 @@ const { t } = useI18n()
         </span>
         <span class="auth-wordmark">{{ t('app.name') }}</span>
       </div>
-      <p class="auth-tagline u-fade-in">设备维护 · SOP · 工单管理平台</p>
+      <p class="auth-tagline u-fade-in">结构化 SOP 程序管理平台</p>
 
       <div class="auth-card u-fade-in">
         <slot />

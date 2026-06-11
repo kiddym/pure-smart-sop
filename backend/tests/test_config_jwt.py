@@ -14,4 +14,4 @@ def test_locale_settings():
 
 
 def test_app_name_rebranded():
-    assert settings.app_name == "Smart CMMS"
+    assert settings.app_name == "Smart SOP"
