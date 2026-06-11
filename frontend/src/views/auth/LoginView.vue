@@ -13,7 +13,7 @@ const router = useRouter()
 const auth = useAuthStore()
 
 const formRef = ref<FormInstance>()
-const form = ref({ email: '', password: '' })
+const form = ref({ email: '', password: '', companySlug: '' })
 const submitting = ref(false)
 
 const rules: FormRules = {
@@ -35,7 +35,11 @@ async function submit(): Promise<void> {
   }
   submitting.value = true
   try {
-    await auth.login({ email: form.value.email, password: form.value.password })
+    await auth.login({
+      email: form.value.email,
+      password: form.value.password,
+      company_slug: form.value.companySlug || undefined,
+    })
     const redirect = (route.query.redirect as string) || '/'
     await router.push(redirect)
   } catch (err) {
@@ -55,6 +59,9 @@ async function submit(): Promise<void> {
       </el-form-item>
       <el-form-item :label="t('auth.password')" prop="password">
         <el-input v-model="form.password" data-test="password" type="password" show-password autocomplete="current-password" @keyup.enter="submit" />
+      </el-form-item>
+      <el-form-item :label="t('auth.companySlugOptional')" prop="companySlug">
+        <el-input v-model="form.companySlug" data-test="company-slug" autocomplete="organization" />
       </el-form-item>
       <el-button type="primary" :loading="submitting" data-test="submit" style="width: 100%" @click="submit">
         {{ t('auth.login') }}
