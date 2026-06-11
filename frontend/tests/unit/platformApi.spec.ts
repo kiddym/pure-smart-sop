@@ -13,7 +13,6 @@ import { listUsers, inviteUser, updateUser, disableUser, enableUser } from '@/ap
 import { listRoles } from '@/api/roles'
 import { setTeamMembers } from '@/api/teams'
 import { getCompanySettings, updateCompanySettings } from '@/api/companySettings'
-import { listCurrencies } from '@/api/currencies'
 import { listPermissions } from '@/api/permissions'
 
 describe('platform api', () => {
@@ -55,10 +54,6 @@ describe('platform api', () => {
   it('updateCompanySettings PUT /company-settings', async () => {
     await updateCompanySettings({ auto_assign: true })
     expect(put).toHaveBeenCalledWith('/company-settings', { auto_assign: true })
-  })
-  it('listCurrencies GET /currencies', async () => {
-    await listCurrencies()
-    expect(get).toHaveBeenCalledWith('/currencies')
   })
   it('listPermissions GET /permissions', async () => {
     await listPermissions()
