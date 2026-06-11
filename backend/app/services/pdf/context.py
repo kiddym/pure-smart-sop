@@ -19,7 +19,7 @@ from app.models.attachment import Attachment
 from app.models.field import ProcedureField
 from app.models.folder import Folder
 from app.models.procedure import Procedure
-from app.services import asset_service, node_service
+from app.services import procedure_asset_service, node_service
 
 
 @dataclass
@@ -142,7 +142,7 @@ def _collect_asset_ids(*htmls: str) -> set[str]:
     ids: set[str] = set()
     for html in htmls:
         if html:
-            ids |= asset_service.extract_asset_ids(html)
+            ids |= procedure_asset_service.extract_asset_ids(html)
     return ids
 
 
@@ -250,7 +250,7 @@ def load_render_data(db: Session, proc_id: str) -> RenderData:
     assets: dict[str, tuple[bytes, str]] = {}
     for aid in _collect_asset_ids(*htmls):
         try:
-            assets[aid] = asset_service.get_asset(db, aid)
+            assets[aid] = procedure_asset_service.get_asset(db, aid)
         except Exception:  # 取不到的图渲染期降级为占位
             continue
 

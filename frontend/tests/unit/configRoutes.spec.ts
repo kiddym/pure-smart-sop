@@ -37,19 +37,12 @@ describe('组织设置路由', () => {
     expect(r.currentRoute.value.query.tab).toBe('global')
   })
 
-  it('客户/供应商 route name 已对齐 partners-*', async () => {
-    const r = makeRouter()
-    await r.push('/maintenance/customers')
-    expect(r.currentRoute.value.name).toBe('partners-customers')
-    await r.push('/inventory/vendors')
-    expect(r.currentRoute.value.name).toBe('partners-vendors')
-  })
 })
 
 describe('配置中心路由', () => {
-  it('新增 Hub 与 4 个聚合页路由可解析', async () => {
+  it('Hub 与 SOP 聚合页路由可解析', async () => {
     const r = makeRouter()
-    for (const p of ['/admin/config', '/admin/config/sop', '/admin/config/work-order', '/admin/config/request', '/admin/config/custom-fields']) {
+    for (const p of ['/admin/config', '/admin/config/sop']) {
       await r.push(p)
       expect(r.currentRoute.value.matched.length).toBeGreaterThan(0)
     }
@@ -59,9 +52,6 @@ describe('配置中心路由', () => {
     const cases: [string, string, string | undefined][] = [
       ['/admin/fields', '/admin/config/sop', 'fields'],
       ['/admin/heading-rules', '/admin/config/sop', 'heading-rules'],
-      ['/admin/work-order-fields', '/admin/config/work-order', 'form-fields'],
-      ['/admin/request-fields', '/admin/config/request', 'form-fields'],
-      ['/admin/custom-fields', '/admin/config/custom-fields', undefined],
     ]
     const r = makeRouter()
     for (const [from, path, tab] of cases) {

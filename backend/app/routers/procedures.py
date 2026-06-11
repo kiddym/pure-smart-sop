@@ -37,7 +37,7 @@ from app.schemas.procedure import (
     TransitionIn,
 )
 from app.services import (
-    asset_service,
+    procedure_asset_service,
     import_service,
     pdf,
     procedure_service,
@@ -160,11 +160,11 @@ async def upload_asset(
 ) -> AssetUploadResult:
     """编辑器图片直传（Q214）：sha256 去重入库，返回 asset URL。"""
     data = await file.read()
-    asset = asset_service.store_from_upload(db, procedure_id, data, file.filename or "")
+    asset = procedure_asset_service.store_from_upload(db, procedure_id, data, file.filename or "")
     db.commit()
     return AssetUploadResult(
         asset_id=asset.id,
-        url=asset_service.asset_url(procedure_id, asset.id),
+        url=procedure_asset_service.asset_url(procedure_id, asset.id),
         width=asset.width,
         height=asset.height,
     )
@@ -173,7 +173,7 @@ async def upload_asset(
 @router.get("/{procedure_id}/assets/{asset_id}")
 def serve_asset(procedure_id: str, asset_id: str, db: Session = Depends(get_db)) -> Response:
     """图片资源服务（§25.2）：流式返回 asset 原始字节。"""
-    data, mime = asset_service.get_asset(db, asset_id)
+    data, mime = procedure_asset_service.get_asset(db, asset_id)
     return Response(content=data, media_type=mime)
 
 

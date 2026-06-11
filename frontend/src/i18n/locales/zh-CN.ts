@@ -67,13 +67,4 @@ export default {
     verificationFailed: '发送失败，请重试',
   },
   common: { save: '保存', cancel: '取消', delete: '删除' },
-  billing: {
-    settings: '订阅设置',
-    plans: '订阅套餐',
-    currentPlan: '当前套餐',
-    seatUsage: '席位用量',
-    unlockedFeatures: '已解锁功能',
-    upgradeHint: '请联系管理员升级',
-    locked: '需升级订阅解锁',
-  },
 }

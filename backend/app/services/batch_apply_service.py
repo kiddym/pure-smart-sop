@@ -1,7 +1,7 @@
 """批量落库 worker（apply-stage）：从暂存 blob 重建节点树并落定稿程序。
 
 复用 procedure_service.create_procedure / node_numbering.recompute /
-asset_service。图片从批次 media 提升为永久 asset。created_procedure_id 幂等。
+procedure_asset_service。图片从批次 media 提升为永久 asset。created_procedure_id 幂等。
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ from app.models.batch import BatchImportItem, BatchImportJob
 from app.models.node import ProcedureNode
 from app.schemas.procedure import ProcedureCreate
 from app.services import (
-    asset_service,
+    procedure_asset_service,
     batch_parse_service,
     node_numbering,
     procedure_service,
@@ -62,13 +62,13 @@ def _promote_media(db: Session, procedure_id: str, body: str, *, job_id: str, it
             return m.group(0)
         if not path.exists():
             return m.group(0)
-        asset = asset_service.find_or_create_asset(
+        asset = procedure_asset_service.find_or_create_asset(
             db,
             path.read_bytes(),
             ext=Path(filename).suffix,
             source_meta={"source": "batch_import", "job_id": job_id},
         )
-        return asset_service.asset_url(procedure_id, asset.id)
+        return procedure_asset_service.asset_url(procedure_id, asset.id)
 
     return _MEDIA_RE.sub(repl, body)
 
@@ -161,7 +161,7 @@ def apply_item(db: Session, item: BatchImportItem) -> None:
         )
         _build_nodes(db, proc.id, blob.get("chapters", []), job_id=item.job_id, item_id=item.id)
         node_numbering.recompute(db, proc.id)
-        asset_service.rebuild_references(db, proc.id)
+        procedure_asset_service.rebuild_references(db, proc.id)
 
         docx_path = storage.storage_root() / item.docx_ref
         if docx_path.exists():

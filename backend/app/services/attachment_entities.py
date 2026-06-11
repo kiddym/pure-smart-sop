@@ -9,17 +9,11 @@ from typing import Any, Literal
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app import permissions, tenant
+from app import tenant
 from app.deps import user_permission_codes
 from app.errors import bad_request, forbidden, not_found
-from app.models.location import Location
-from app.models.maintenance_asset import Asset
-from app.models.part import Part
 from app.models.procedure import Procedure
-from app.models.request import Request
 from app.models.user import User
-from app.models.work_order import WorkOrder
-from app.models.work_order_step_result import WorkOrderStepResult
 from app.services import attachment_hooks as hooks
 
 
@@ -35,30 +29,6 @@ class EntitySpec:
 ENTITY_REGISTRY: dict[str, EntitySpec] = {
     "procedure": EntitySpec(
         Procedure, None, None, scoped=False, write_guard=hooks.procedure_write_guard
-    ),
-    "work_order": EntitySpec(
-        WorkOrder, permissions.WORK_ORDER_VIEW, permissions.WORK_ORDER_EDIT, scoped=True
-    ),
-    "asset": EntitySpec(Asset, permissions.ASSET_VIEW, permissions.ASSET_EDIT, scoped=True),
-    "location": EntitySpec(
-        Location, permissions.LOCATION_VIEW, permissions.LOCATION_EDIT, scoped=True
-    ),
-    "part": EntitySpec(Part, permissions.PART_VIEW, permissions.PART_EDIT, scoped=True),
-    "request": EntitySpec(
-        # request 无专属 .edit 权码（permissions.py 的 request 仅 view/create/cancel/delete/approve）；
-        # 附件写权限沿用 REQUEST_CREATE 系既定决策，勿误改为不存在的 REQUEST_EDIT。
-        Request,
-        permissions.REQUEST_VIEW,
-        permissions.REQUEST_CREATE,
-        scoped=True,
-    ),
-    "work_order_step_result": EntitySpec(
-        # 步骤附件 = 执行动作：读=work_order.view，写=work_order.execute（与步骤完成同权，
-        # 避免有执行权无编辑权的执行人被挡）。
-        WorkOrderStepResult,
-        permissions.WORK_ORDER_VIEW,
-        permissions.WORK_ORDER_EXECUTE,
-        scoped=True,
     ),
 }
 

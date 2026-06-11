@@ -15,7 +15,7 @@ from sqlalchemy.orm import Session
 
 from app.deps import RequestMeta
 from app.errors import bad_request, conflict, not_found
-from app.models.asset import ProcedureAssetReference
+from app.models.procedure_asset import ProcedureAssetReference
 from app.models.attachment import Attachment
 from app.models.base import new_uuid, utcnow
 from app.models.folder import Folder

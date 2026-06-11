@@ -18,7 +18,7 @@ from reportlab.lib.colors import black
 from reportlab.lib.utils import ImageReader
 from reportlab.platypus import Flowable, Image, Paragraph, Table, TableStyle
 
-from app.services import asset_service
+from app.services import procedure_asset_service
 from app.services.pdf.constants import BLOCK_CLASS_TO_ALERT, CONTENT_WIDTH
 from app.services.pdf.flowables import alert_box, hold_point, signature_bar
 from app.services.pdf.styles import s
@@ -225,7 +225,7 @@ class _HtmlRenderer(HTMLParser):
     def _handle_img(self, ad: dict[str, str]) -> None:
         self._cur.flush(self._para_style())
         src = ad.get("src", "")
-        ids = asset_service.extract_asset_ids(src)
+        ids = procedure_asset_service.extract_asset_ids(src)
         if not ids:
             self._cur.flowables.append(Paragraph("[图片缺失]", s("body")))
             return

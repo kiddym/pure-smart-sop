@@ -20,7 +20,7 @@ from app.parser.ir import ImageRef
 from app.parser.utils import images
 from app.parser.utils.opc import is_docx_bytes
 from app.schemas.parse import ParsedAssetOut, UploadResult
-from app.services import asset_service
+from app.services import procedure_asset_service
 
 _SOURCE = "source.docx"
 _META = "meta.json"
@@ -111,7 +111,7 @@ def write_temp_media(
             data, ext = png, ".png"
         filename = f"{_safe_name(ref.rid)}{ext}"
         (media / filename).write_bytes(data)
-        url = asset_service.temp_url(token, filename)
+        url = procedure_asset_service.temp_url(token, filename)
         mapping[ref.placeholder] = url
         width, height = images.dimensions(data)
         assets.append(

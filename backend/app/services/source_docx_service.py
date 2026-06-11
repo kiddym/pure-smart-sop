@@ -1,7 +1,7 @@
 """原始 Word 源文件存取（P1：导入可追溯）。
 
 导入时把临时区 source.docx 永久落库（按 procedure_group 一份）；编辑器预览栏按
-procedure_id 取回渲染；删除纯草稿时连带清理。与图片中心的 asset_service 平行、解耦。
+procedure_id 取回渲染；删除纯草稿时连带清理。与图片中心的 procedure_asset_service 平行、解耦。
 不在顶层 import procedure_service（避免循环）：直接查 Procedure。
 """
 

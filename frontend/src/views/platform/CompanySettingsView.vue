@@ -2,8 +2,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getCompanySettings, updateCompanySettings } from '@/api/companySettings'
-import { listCurrencies } from '@/api/currencies'
-import type { CompanySettings, Currency } from '@/types/platform'
+import type { CompanySettingsUpdate } from '@/types/platform'
 import { useAuthStore } from '@/store/auth'
 import { useCompanySettingsStore } from '@/store/companySettings'
 
@@ -13,17 +12,11 @@ const companySettingsStore = useCompanySettingsStore()
 // ── state ──────────────────────────────────────────────────
 const loading = ref(false)
 const saving = ref(false)
-const currencies = ref<Currency[]>([])
 
-const form = reactive<CompanySettings>({
+const form = reactive<CompanySettingsUpdate>({
   date_format: '',
   timezone: '',
-  default_currency_code: '',
   auto_assign: false,
-  show_requests: true,
-  show_locations: true,
-  show_meters: true,
-  show_vendors_customers: true,
 })
 
 const canEdit = computed(() => auth.hasPermission('company.settings'))
@@ -40,12 +33,8 @@ async function fetchSettings() {
   }
 }
 
-async function fetchCurrencies() {
-  currencies.value = await listCurrencies()
-}
-
 onMounted(async () => {
-  await Promise.all([fetchSettings(), fetchCurrencies()])
+  await fetchSettings()
 })
 
 // ── save ───────────────────────────────────────────────────
@@ -54,7 +43,7 @@ async function handleSave() {
     saving.value = true
     const updated = await updateCompanySettings({ ...form })
     Object.assign(form, updated)
-    // 同步轻量缓存，使侧栏导航显隐即时生效。
+    // 同步轻量缓存。
     companySettingsStore.settings = updated
     ElMessage.success('保存成功')
   } catch {
@@ -85,42 +74,8 @@ async function handleSave() {
         <el-input v-model="form.timezone" :disabled="!canEdit" placeholder="如 Asia/Shanghai" />
       </el-form-item>
 
-      <el-form-item label="默认币种">
-        <el-select
-          v-model="form.default_currency_code"
-          :disabled="!canEdit"
-          placeholder="请选择默认币种"
-          style="width: 100%"
-        >
-          <el-option
-            v-for="c in currencies"
-            :key="c.id"
-            :label="`${c.code}（${c.name}）`"
-            :value="c.code"
-          />
-        </el-select>
-      </el-form-item>
-
       <el-form-item label="自动派单">
         <el-switch v-model="form.auto_assign" :disabled="!canEdit" />
-      </el-form-item>
-
-      <el-divider content-position="left">导航模块显隐</el-divider>
-
-      <el-form-item label="显示请求模块">
-        <el-switch v-model="form.show_requests" :disabled="!canEdit" />
-      </el-form-item>
-
-      <el-form-item label="显示位置模块">
-        <el-switch v-model="form.show_locations" :disabled="!canEdit" />
-      </el-form-item>
-
-      <el-form-item label="显示计量模块">
-        <el-switch v-model="form.show_meters" :disabled="!canEdit" />
-      </el-form-item>
-
-      <el-form-item label="显示供应商与客户模块">
-        <el-switch v-model="form.show_vendors_customers" :disabled="!canEdit" />
       </el-form-item>
 
       <el-form-item v-if="canEdit">

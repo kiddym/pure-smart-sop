@@ -17,10 +17,6 @@ class Plan(enum.StrEnum):
 
 
 class Feature(enum.StrEnum):
-    preventive_maintenance = "preventive_maintenance"
-    meters = "meters"
-    purchasing = "purchasing"
-    analytics = "analytics"
     sop = "sop"
 
 
@@ -28,15 +24,7 @@ class Feature(enum.StrEnum):
 ACTIVE_STATUSES = frozenset({"active", "trialing"})
 ALL_STATUSES = frozenset({"active", "trialing", "past_due", "canceled", "suspended"})
 
-_PRO_FEATURES = frozenset(
-    {
-        Feature.preventive_maintenance,
-        Feature.meters,
-        Feature.purchasing,
-        Feature.analytics,
-        Feature.sop,
-    }
-)
+_PRO_FEATURES = frozenset({Feature.sop})
 
 
 @dataclass(frozen=True)

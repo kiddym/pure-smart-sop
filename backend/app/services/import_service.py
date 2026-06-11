@@ -19,7 +19,7 @@ from app.models.node import ProcedureNode
 from app.models.procedure import Procedure
 from app.schemas.parse import ImportNodeIn, ParseWarningOut
 from app.schemas.procedure import LevelOfUse, ProcedureCreate
-from app.services import asset_service, node_numbering, procedure_service, source_docx_service
+from app.services import procedure_asset_service, node_numbering, procedure_service, source_docx_service
 
 _DEFAULT_LEVEL_OF_USE: LevelOfUse = "reference"
 _TEMP_SRC_RE = re.compile(r'src="/api/v1/uploads/([^/"]+)/media/([^"]+)"')
@@ -99,7 +99,7 @@ def import_procedure(
     walk(chapters, 1)
     db.flush()
     node_numbering.recompute(db, proc.id)
-    asset_service.rebuild_references(db, proc.id)
+    procedure_asset_service.rebuild_references(db, proc.id)
     source_docx_service.store_from_token(
         db, procedure_group_id=proc.procedure_group_id, upload_token=upload_token
     )
@@ -112,9 +112,9 @@ def _promote_temp_urls(db: Session, procedure_id: str, html_text: str) -> str:
 
     def repl(match: re.Match[str]) -> str:
         token, filename = match.group(1), match.group(2)
-        asset = asset_service.promote_temp(db, token, filename, source_meta={"docx_token": token})
+        asset = procedure_asset_service.promote_temp(db, token, filename, source_meta={"docx_token": token})
         if asset is None:  # 临时图已过期/丢失：原样保留，降级不阻断导入
             return match.group(0)
-        return f'src="{asset_service.asset_url(procedure_id, asset.id)}"'
+        return f'src="{procedure_asset_service.asset_url(procedure_id, asset.id)}"'
 
     return _TEMP_SRC_RE.sub(repl, html_text)
