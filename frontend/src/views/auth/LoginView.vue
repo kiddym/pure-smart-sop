@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/store/auth'
 import { errorMessage } from '@/api/http'
@@ -12,18 +12,30 @@ const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 
-const email = ref('')
-const password = ref('')
+const formRef = ref<FormInstance>()
+const form = ref({ email: '', password: '' })
 const submitting = ref(false)
 
+const rules: FormRules = {
+  email: [
+    { required: true, message: () => t('auth.fillEmail'), trigger: 'blur' },
+    { type: 'email', message: () => t('auth.emailInvalid'), trigger: ['blur', 'change'] },
+  ],
+  password: [
+    { required: true, message: () => t('auth.required'), trigger: 'blur' },
+  ],
+}
+
 async function submit(): Promise<void> {
-  if (!email.value || !password.value) {
+  // 触发字段级内联校验提示（供真实浏览器使用）。
+  formRef.value?.validate().catch(() => {})
+  if (!form.value.email || !form.value.password) {
     ElMessage.warning(t('auth.fillEmailPassword'))
     return
   }
   submitting.value = true
   try {
-    await auth.login({ email: email.value, password: password.value })
+    await auth.login({ email: form.value.email, password: form.value.password })
     const redirect = (route.query.redirect as string) || '/'
     await router.push(redirect)
   } catch (err) {
@@ -37,12 +49,12 @@ async function submit(): Promise<void> {
 <template>
   <AuthLayout>
     <h2 class="auth-title">{{ t('auth.login') }}</h2>
-    <el-form @submit.prevent="submit">
-      <el-form-item :label="t('auth.email')">
-        <el-input v-model="email" data-test="email" type="email" autocomplete="username" />
+    <el-form ref="formRef" :model="form" :rules="rules" @submit.prevent="submit">
+      <el-form-item :label="t('auth.email')" prop="email">
+        <el-input v-model="form.email" data-test="email" type="email" autocomplete="username" />
       </el-form-item>
-      <el-form-item :label="t('auth.password')">
-        <el-input v-model="password" data-test="password" type="password" show-password autocomplete="current-password" @keyup.enter="submit" />
+      <el-form-item :label="t('auth.password')" prop="password">
+        <el-input v-model="form.password" data-test="password" type="password" show-password autocomplete="current-password" @keyup.enter="submit" />
       </el-form-item>
       <el-button type="primary" :loading="submitting" data-test="submit" style="width: 100%" @click="submit">
         {{ t('auth.login') }}

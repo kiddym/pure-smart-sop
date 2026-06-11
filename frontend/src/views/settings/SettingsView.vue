@@ -66,7 +66,7 @@ onMounted(loadSettings)
 
 <template>
   <div class="settings-page">
-    <h2 class="page-title">系统设置</h2>
+    <!-- 标题由所在聚合页(组织设置)的 tab 提供,此处不再重复页级 h2 -->
     <el-card v-loading="loading">
       <el-form :model="form" label-width="180px">
         <el-form-item label="启用审批流程">

@@ -1,15 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
-import {
-  ElDropdown,
-  ElDropdownItem,
-  ElDropdownMenu,
-  ElIcon,
-} from 'element-plus'
-import { Expand, Fold, Moon, Setting, Sunny } from '@element-plus/icons-vue'
+import { ElIcon } from 'element-plus'
+import { Expand, Fold, Moon, Sunny } from '@element-plus/icons-vue'
 import UserMenu from '@/components/UserMenu.vue'
-import NotificationBell from '@/components/NotificationBell.vue'
 import { useThemeStore } from '@/store/theme'
 
 const theme = useThemeStore()
@@ -22,37 +14,13 @@ defineEmits<{
   (e: 'toggle-sidebar'): void
 }>()
 
-interface MenuCommand {
-  group: '配置' | '历史'
-  label: string
-  path: string
-}
-
-// 暴露给测试做契约断言（避开 el-dropdown 在 jsdom 不渲染 menu 的坑）。
-// 顺序 / label / path 任何修改请同步 AppTopBar.spec.ts。
-const MENU_COMMANDS: readonly MenuCommand[] = [
-  { group: '配置', label: '文件夹配置', path: '/procedures/folders' },
-  { group: '配置', label: '组织设置', path: '/admin/config/organization' },
-  { group: '配置', label: '字段管理', path: '/admin/config/sop?tab=fields' },
-  { group: '配置', label: '标题字典', path: '/admin/config/sop?tab=heading-rules' },
-  { group: '历史', label: '审计日志', path: '/admin/audit-logs' },
-]
-
-const configCommands = computed(() => MENU_COMMANDS.filter((c) => c.group === '配置'))
-const historyCommands = computed(() => MENU_COMMANDS.filter((c) => c.group === '历史'))
-
-const router = useRouter()
-function onCommand(path: string): void {
-  void router.push(path)
-}
-
-defineExpose({ MENU_COMMANDS, onCommand })
+// 注：顶栏不再保留 ⚙ 设置下拉与通知铃铛，配置入口统一在左侧栏「配置中心」。
 </script>
 
 <template>
   <header class="app-topbar">
     <button
-      class="topbar-toggle"
+      class="icon-btn topbar-toggle"
       :aria-label="collapsed ? '展开侧栏' : '折叠侧栏'"
       @click="$emit('toggle-sidebar')"
     >
@@ -62,40 +30,14 @@ defineExpose({ MENU_COMMANDS, onCommand })
     <!-- 全库搜索为路线图功能，未上线前不在顶栏占位（避免常驻的禁用控件传递半成品感）。
          上线时在此处恢复一个可用的搜索入口。 -->
     <span class="topbar-spacer" />
-    <NotificationBell />
     <button
-      class="topbar-theme"
+      class="icon-btn topbar-theme"
       :aria-label="theme.isDark ? '切换到浅色' : '切换到暗色'"
       :title="theme.isDark ? '切换到浅色' : '切换到暗色'"
       @click="theme.toggle()"
     >
       <el-icon><Sunny v-if="theme.isDark" /><Moon v-else /></el-icon>
     </button>
-    <el-dropdown trigger="click" popper-class="app-topbar-cog-popper" @command="onCommand">
-      <button class="topbar-cog" aria-label="设置菜单">
-        <el-icon><Setting /></el-icon><span class="caret">▾</span>
-      </button>
-      <template #dropdown>
-        <el-dropdown-menu>
-          <el-dropdown-item disabled class="group-label">配置</el-dropdown-item>
-          <el-dropdown-item
-            v-for="cmd in configCommands"
-            :key="cmd.path"
-            :command="cmd.path"
-          >
-            {{ cmd.label }}
-          </el-dropdown-item>
-          <el-dropdown-item disabled divided class="group-label">历史</el-dropdown-item>
-          <el-dropdown-item
-            v-for="cmd in historyCommands"
-            :key="cmd.path"
-            :command="cmd.path"
-          >
-            {{ cmd.label }}
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </template>
-    </el-dropdown>
     <UserMenu />
   </header>
 </template>
@@ -111,21 +53,6 @@ defineExpose({ MENU_COMMANDS, onCommand })
   border-bottom: 1px solid var(--border-subtle);
   flex-shrink: 0;
 }
-.topbar-toggle {
-  width: 28px;
-  height: 28px;
-  border: none;
-  background: transparent;
-  border-radius: 4px;
-  cursor: pointer;
-  color: var(--text-regular);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.topbar-toggle:hover {
-  background: var(--bg-hover);
-}
 .app-brand {
   font-weight: 700;
   font-size: 14px;
@@ -134,56 +61,5 @@ defineExpose({ MENU_COMMANDS, onCommand })
 }
 .topbar-spacer {
   flex: 1;
-}
-.topbar-cog {
-  width: 28px;
-  height: 28px;
-  border: none;
-  background: transparent;
-  border-radius: 4px;
-  cursor: pointer;
-  color: var(--text-regular);
-  display: inline-flex;
-  align-items: center;
-  gap: 1px;
-}
-.topbar-cog .caret {
-  font-size: 9px;
-  color: var(--text-tertiary);
-}
-.topbar-cog:hover {
-  background: var(--bg-hover);
-}
-.topbar-theme {
-  width: 28px;
-  height: 28px;
-  border: none;
-  background: transparent;
-  border-radius: 4px;
-  cursor: pointer;
-  color: var(--text-regular);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.topbar-theme:hover {
-  background: var(--bg-hover);
-}
-
-/* ⚙ 下拉菜单中作为分组标题的 disabled item。
-   通过 popper-class 命名空间隔离，避免污染其它 el-dropdown。 */
-:global(.app-topbar-cog-popper .el-dropdown-menu__item.group-label.is-disabled) {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-tertiary);
-  padding: 6px 14px 2px;
-  cursor: default;
-  background: transparent;
-  /* 抑制 EP 默认的 disabled hover 视觉 */
-  pointer-events: none;
-}
-:global(.app-topbar-cog-popper .el-dropdown-menu__item.group-label.is-disabled:hover) {
-  background: transparent;
 }
 </style>

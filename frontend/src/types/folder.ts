@@ -7,6 +7,7 @@ export interface Folder {
   parent_id: string | null
   system: boolean
   full_path: string
+  sequence_digits: number
   created_at: string
   updated_at: string
 }

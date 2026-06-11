@@ -2,6 +2,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { ArrowDown } from '@element-plus/icons-vue'
 import StatusTag from '@/components/StatusTag.vue'
 import VersionListPanel from '@/components/version/VersionListPanel.vue'
 import VersionActionDialog, {
@@ -9,6 +10,9 @@ import VersionActionDialog, {
 } from '@/components/version/VersionActionDialog.vue'
 import PdfPreviewDialog from '@/components/PdfPreview/PdfPreviewDialog.vue'
 import VersionCompareDialog from '@/components/version/VersionCompareDialog.vue'
+import PublishChecklistDialog from '@/components/editor/PublishChecklistDialog.vue'
+import { useProcedureEditorStore } from '@/store/procedureEditor'
+import { useNodeEditorStore } from '@/store/nodeEditor'
 import {
   archiveGroup,
   copyProcedure,
@@ -36,6 +40,41 @@ const loading = ref(false)
 const editVisible = ref(false)
 const busy = ref(false)
 const panelRef = ref<InstanceType<typeof VersionListPanel> | null>(null)
+// 发布走与编辑器一致的校验清单（PublishChecklistDialog）。该组件从 editor / node store 取
+// 结构与字段，故打开前需把这两个 store 装载到当前程序。
+const editorStore = useProcedureEditorStore()
+const nodeStore = useNodeEditorStore()
+const publishVisible = ref(false)
+const publishing = ref(false)
+
+async function openPublish(): Promise<void> {
+  if (!meta.value) return
+  busy.value = true
+  try {
+    await Promise.all([editorStore.load(meta.value.id), nodeStore.load(meta.value.id)])
+    publishVisible.value = true
+  } catch {
+    /* 拦截器已提示 */
+  } finally {
+    busy.value = false
+  }
+}
+
+async function onPublishConfirm(): Promise<void> {
+  const m = meta.value
+  if (!m || publishing.value) return
+  publishing.value = true
+  try {
+    await transitionProcedure(m.id, { status: 'PUBLISHED' }, m.revision)
+    publishVisible.value = false
+    ElMessage.success(`已发布 v${m.version}`)
+    await load()
+  } catch {
+    /* 拦截器已提示；对话框保持打开以便重试 */
+  } finally {
+    publishing.value = false
+  }
+}
 // PDF 预览 / 下载（任意 is_current=true 程序可用，editor-behavior §10）
 const previewVisible = ref(false)
 const compareVisible = ref(false)
@@ -76,6 +115,8 @@ const canDelete = computed(() => {
   if (!m.is_current) return true
   return m.status === 'DRAFT'
 })
+// 当前版且为 DRAFT → 走「丢弃草稿」语义；非当前版 → 软删（删除）。
+const isDraftDiscard = computed(() => !!meta.value && meta.value.is_current && meta.value.status === 'DRAFT')
 
 // ---- 头部「本次版本更新说明」（DRAFT 可改，其余只读，Q356） ---- //
 const notesDraft = ref('')
@@ -165,10 +206,11 @@ async function saveEdit(): Promise<void> {
   }
 }
 
+// 单版本状态流转（仅「归档此版本」走这里：把当前版本本身移入归档，区别于「归档整族」）。
 async function doTransition(status: 'PUBLISHED' | 'ARCHIVED', label: string): Promise<void> {
   if (!meta.value) return
   try {
-    await ElMessageBox.confirm(`确定${label}此程序？`, `${label}确认`, { type: 'warning' })
+    await ElMessageBox.confirm(`确定${label}？`, label, { type: 'warning' })
   } catch {
     return // 用户取消
   }
@@ -187,10 +229,14 @@ async function doTransition(status: 'PUBLISHED' | 'ARCHIVED', label: string): Pr
 async function remove(): Promise<void> {
   const m = meta.value
   if (!m) return
+  // 当前 DRAFT → 「丢弃草稿」语义；非当前版 → 「删除」语义（软删）。
+  const discard = isDraftDiscard.value
+  const title = discard ? '丢弃草稿' : '删除确认'
+  const promptText = discard ? '请输入丢弃原因' : '请输入删除原因'
   let reason: string
   try {
-    const r = await ElMessageBox.prompt('请输入删除原因', '删除确认', {
-      inputValidator: (v) => (v && v.trim() ? true : '删除原因必填'),
+    const r = await ElMessageBox.prompt(promptText, title, {
+      inputValidator: (v) => (v && v.trim() ? true : '原因必填'),
       type: 'warning',
     })
     reason = r.value
@@ -202,7 +248,7 @@ async function remove(): Promise<void> {
     // v1 草稿当前版 → 整组硬删（§22.13）；其余走 deleteProcedure（丢弃草稿 / 软删非当前版）。
     if (m.is_current && m.status === 'DRAFT' && m.version === 1) {
       await deleteGroup(m.procedure_group_id, reason)
-      ElMessage.success('已删除')
+      ElMessage.success('已丢弃草稿')
       void router.push('/procedures/library')
       return
     }
@@ -251,10 +297,10 @@ const pending = ref<PendingAction | null>(null)
 const dialogConfig = computed(() => {
   const p = pending.value
   if (p?.kind === 'deprecate') {
-    return { title: '废弃整个版本族', needReason: true, needFolder: false, needName: false, reasonHint: '废弃原因（整组所有版本将移入「废止」）' }
+    return { title: '废弃', needReason: true, needFolder: false, needName: false, reasonHint: '废弃原因（整组所有版本将移入「废止」）' }
   }
   if (p?.kind === 'archive') {
-    return { title: '归档整个版本族', needReason: true, needFolder: false, needName: false, reasonHint: '归档原因（整组所有版本将移入「归档」，保留备查）' }
+    return { title: '归档整族', needReason: true, needFolder: false, needName: false, reasonHint: '归档原因（整组所有版本将移入「归档」，保留备查）' }
   }
   if (p?.kind === 'restore') {
     return { title: '从废止恢复', needReason: true, needFolder: p.needFolder, needName: false, reasonHint: '恢复原因' }
@@ -306,13 +352,13 @@ async function onDialogConfirm(payload: VersionActionResult): Promise<void> {
     if (p.kind === 'deprecate') {
       await deprecateGroup(meta.value.id, payload.reason)
       dialogVisible.value = false
-      ElMessage.success('已废弃整个版本族')
+      ElMessage.success('已废弃')
       await load()
       panelRef.value?.reload()
     } else if (p.kind === 'archive') {
       await archiveGroup(meta.value.id, payload.reason)
       dialogVisible.value = false
-      ElMessage.success('已归档整版本族')
+      ElMessage.success('已归档整族')
       await load()
       panelRef.value?.reload()
     } else if (p.kind === 'restore') {
@@ -362,6 +408,7 @@ async function onDialogConfirm(payload: VersionActionResult): Promise<void> {
           </div>
         </div>
         <div class="actions">
+          <!-- 主操作：进入编辑器 / 查看内容；可编辑时额外露出「发布」。其余收进「更多」。 -->
           <el-button
             type="primary"
             plain
@@ -369,31 +416,34 @@ async function onDialogConfirm(payload: VersionActionResult): Promise<void> {
           >
             {{ editable ? '进入编辑器' : '查看内容' }}
           </el-button>
-          <el-button v-if="editable" @click="openEdit">快速编辑</el-button>
-          <el-button v-if="editable" type="primary" @click="doTransition('PUBLISHED', '发布')">
+          <el-button v-if="editable" type="primary" :disabled="busy" @click="openPublish">
             发布
           </el-button>
-          <el-button v-if="canPdf" @click="previewVisible = true">PDF 预览</el-button>
-          <el-button v-if="canPdf" :loading="pdfBusy" @click="onDownloadPdf">PDF 下载</el-button>
-          <el-button v-if="canUpgrade" type="primary" plain :disabled="busy" @click="onUpgrade">
-            升级版本
-          </el-button>
-          <el-button v-if="canUpgrade" type="warning" @click="doTransition('ARCHIVED', '归档')">
-            归档
-          </el-button>
-          <el-button :disabled="busy" @click="openCopy">复制为新程序</el-button>
-          <el-button v-if="!deprecated" type="warning" plain :disabled="busy" @click="openDeprecate">
-            废弃
-          </el-button>
-          <el-button v-if="canArchive" type="warning" link :disabled="busy" @click="openArchive">
-            归档整版本族
-          </el-button>
-          <el-button v-if="deprecated" type="success" plain :disabled="busy" @click="openRestore">
-            恢复
-          </el-button>
-          <el-button v-if="canDelete" type="danger" plain :disabled="busy" @click="remove">
-            删除
-          </el-button>
+
+          <el-dropdown trigger="click" :disabled="busy">
+            <el-button :disabled="busy">更多<el-icon class="more-arrow"><ArrowDown /></el-icon></el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item v-if="editable" @click="openEdit">快速编辑</el-dropdown-item>
+                <el-dropdown-item v-if="canPdf" @click="previewVisible = true">PDF 预览</el-dropdown-item>
+                <el-dropdown-item v-if="canPdf" @click="onDownloadPdf">PDF 下载</el-dropdown-item>
+                <el-dropdown-item v-if="canUpgrade" divided @click="onUpgrade">升级版本</el-dropdown-item>
+                <el-dropdown-item @click="openCopy">复制为新程序</el-dropdown-item>
+                <!-- 单版本状态流转：把此版本本身移入归档（区别于「归档整族」）。 -->
+                <el-dropdown-item v-if="canUpgrade" @click="doTransition('ARCHIVED', '归档此版本')">
+                  归档此版本
+                </el-dropdown-item>
+                <!-- 整组所有版本一起移入归档 / 废止（不可逆性更强，放后段）。 -->
+                <el-dropdown-item v-if="canArchive" @click="openArchive">归档整族</el-dropdown-item>
+                <el-dropdown-item v-if="!deprecated" divided @click="openDeprecate">废弃</el-dropdown-item>
+                <el-dropdown-item v-if="deprecated" @click="openRestore">恢复</el-dropdown-item>
+                <!-- 当前 DRAFT → 丢弃草稿（文案全簇统一）；非当前版 → 软删（删除）。 -->
+                <el-dropdown-item v-if="canDelete" divided @click="remove">
+                  {{ isDraftDiscard ? '丢弃草稿' : '删除' }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
       </div>
 
@@ -517,6 +567,12 @@ async function onDialogConfirm(payload: VersionActionResult): Promise<void> {
         @confirm="onDialogConfirm"
       />
 
+      <PublishChecklistDialog
+        v-model="publishVisible"
+        :loading="publishing"
+        @confirm="onPublishConfirm"
+      />
+
       <PdfPreviewDialog v-model="previewVisible" :procedure-id="id" />
 
       <VersionCompareDialog
@@ -579,5 +635,8 @@ async function onDialogConfirm(payload: VersionActionResult): Promise<void> {
 }
 .full {
   width: 100%;
+}
+.more-arrow {
+  margin-left: 4px;
 }
 </style>

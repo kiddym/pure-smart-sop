@@ -94,7 +94,7 @@ async function onDiscard(): Promise<void> {
   if (!p) return
   let reason: string
   try {
-    const r = await ElMessageBox.prompt('请输入丢弃原因', '丢弃此草稿', {
+    const r = await ElMessageBox.prompt('请输入丢弃原因', '丢弃草稿', {
       inputValidator: (v) => (v && v.trim() ? true : '原因必填'),
       type: 'warning',
     })
@@ -240,7 +240,7 @@ function goBack(): void {
                     {{ entry.change_type }} — {{ entry.description || '' }}
                   </el-timeline-item>
                 </el-timeline>
-                <el-empty v-else description="暂无版本记录（回退 / 升级见 Phase 7）" />
+                <el-empty v-else description="暂无版本记录（回退 / 升级后会在此显示）" />
               </el-tab-pane>
             </el-tabs>
           </div>

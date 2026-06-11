@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import FolderTreePane from '@/components/library/FolderTreePane.vue'
 import ProcedureTable from '@/components/ProcedureTable.vue'
 import CreateProcedureDialog from '@/components/CreateProcedureDialog.vue'
 import CreateFromWordDialog from '@/components/CreateFromWordDialog.vue'
+import BatchImportDialog from '@/components/batch/BatchImportDialog.vue'
 import { useProcedureStore } from '@/store/procedures'
 import type { ProcedureMeta, ProcedureStatus } from '@/types/procedure'
 import type { FolderTreeNode } from '@/types/folder'
@@ -13,6 +15,21 @@ const router = useRouter()
 const store = useProcedureStore()
 const createVisible = ref(false)
 const wordVisible = ref(false)
+const batchVisible = ref(false)
+
+function onCreateCommand(c: string): void {
+  if (c === 'word') {
+    wordVisible.value = true
+  } else if (c === 'batch') {
+    if (!selectedFolder.value) {
+      ElMessage.warning('请先在左侧选择一个文件夹，再进行批量导入')
+      return
+    }
+    batchVisible.value = true
+  } else {
+    createVisible.value = true
+  }
+}
 
 const selectedFolder = ref<FolderTreeNode | null>(null)
 
@@ -89,13 +106,14 @@ function onImported(id: string): void {
             v-if="!selectedFolder?.system"
             data-test="create-btn"
             trigger="click"
-            @command="(c: string) => (c === 'word' ? (wordVisible = true) : (createVisible = true))"
+            @command="onCreateCommand"
           >
             <el-button type="primary">新建</el-button>
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item command="blank">空白程序</el-dropdown-item>
                 <el-dropdown-item command="word">从 Word 导入</el-dropdown-item>
+                <el-dropdown-item command="batch" divided>批量导入（多个 Word）</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -141,6 +159,7 @@ function onImported(id: string): void {
 
       <CreateProcedureDialog v-model="createVisible" @created="onCreated" />
       <CreateFromWordDialog v-model="wordVisible" @imported="onImported" />
+      <BatchImportDialog v-model="batchVisible" :folder-id="selectedFolder?.id ?? ''" />
     </div>
   </div>
 </template>

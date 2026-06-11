@@ -36,6 +36,7 @@ class FolderOut(BaseModel):
     parent_id: str | None
     system: bool
     full_path: str
+    sequence_digits: int  # 编号位数,供前端编辑文件夹时回填真实值
     created_at: datetime
     updated_at: datetime
 

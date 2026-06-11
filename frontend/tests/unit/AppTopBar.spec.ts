@@ -1,9 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { createRouter, createMemoryHistory } from 'vue-router'
 import AppTopBar from '@/components/AppTopBar.vue'
-import NotificationBell from '@/components/NotificationBell.vue'
 import i18n from '@/i18n'
 import { useThemeStore } from '@/store/theme'
 
@@ -15,7 +14,6 @@ function makeRouter() {
       { path: '/procedures/folders', component: { template: '<div/>' } },
       { path: '/admin/config/organization', component: { template: '<div/>' } },
       { path: '/admin/config/sop', component: { template: '<div/>' } },
-      { path: '/admin/audit-logs', component: { template: '<div/>' } },
       { path: '/', component: { template: '<div/>' } },
     ],
   })
@@ -24,7 +22,7 @@ function makeRouter() {
 function mountTopBar(props: Record<string, unknown> = {}) {
   return mount(AppTopBar, {
     props: { collapsed: false, ...props },
-    global: { plugins: [makeRouter(), i18n], stubs: { NotificationBell: true } },
+    global: { plugins: [makeRouter(), i18n] },
   })
 }
 
@@ -68,31 +66,8 @@ describe('AppTopBar', () => {
     expect(theme.isDark).toBe(!before)
   })
 
-  it('顶栏含通知铃铛', () => {
+  it('不再渲染 ⚙ 设置下拉（配置入口已统一收归左侧栏）', () => {
     const w = mountTopBar()
-    expect(w.findComponent(NotificationBell).exists()).toBe(true)
-  })
-
-  it('exposes MENU_COMMANDS 命令契约：5 项，路径与现行路由一致', () => {
-    const w = mountTopBar()
-    const commands = (w.vm as unknown as { MENU_COMMANDS: ReadonlyArray<{ group: string; label: string; path: string }> }).MENU_COMMANDS
-    expect(commands).toHaveLength(5)
-    expect(commands[0]).toEqual({ group: '配置', label: '文件夹配置', path: '/procedures/folders' })
-    expect(commands[1]).toEqual({ group: '配置', label: '组织设置', path: '/admin/config/organization' })
-    expect(commands[2]).toEqual({ group: '配置', label: '字段管理', path: '/admin/config/sop?tab=fields' })
-    expect(commands[3]).toEqual({ group: '配置', label: '标题字典', path: '/admin/config/sop?tab=heading-rules' })
-    expect(commands[4]).toEqual({ group: '历史', label: '审计日志', path: '/admin/audit-logs' })
-  })
-
-  it('onCommand 派发 router.push（mock router 验证路径）', async () => {
-    const router = makeRouter()
-    const push = vi.spyOn(router, 'push')
-    const w = mount(AppTopBar, {
-      props: { collapsed: false },
-      global: { plugins: [router, i18n], stubs: { NotificationBell: true } },
-    })
-    const onCommand = (w.vm as unknown as { onCommand: (p: string) => void }).onCommand
-    onCommand('/procedures/folders')
-    expect(push).toHaveBeenCalledWith('/procedures/folders')
+    expect(w.find('.topbar-cog').exists()).toBe(false)
   })
 })

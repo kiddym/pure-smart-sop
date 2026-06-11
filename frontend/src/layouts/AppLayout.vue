@@ -1,22 +1,13 @@
 <script setup lang="ts">
-import { watch, onMounted, onUnmounted } from 'vue'
+import { watch } from 'vue'
 import { useRoute } from 'vue-router'
 import AppTopBar from '@/components/AppTopBar.vue'
 import AppSidebar from '@/components/AppSidebar.vue'
 import { useSidebar } from '@/composables/useSidebar'
 import { decideAutoCollapse } from '@/utils/sidebarAutoCollapse'
-import { useNotificationStore } from '@/store/notifications'
-import { useAuthStore } from '@/store/auth'
 
 const { collapsed, toggle } = useSidebar()
 const route = useRoute()
-
-const notif = useNotificationStore()
-const auth = useAuthStore()
-// 仅在已登录时轮询：导航未决（route.name 暂为 undefined）时 AppLayout 可能被瞬时挂载，
-// 未登录就轮询会触发 401 → redirectToLogin 死循环，故在此加鉴权闸门。
-onMounted(() => { if (auth.isAuthenticated) notif.startPolling() })
-onUnmounted(() => notif.stopPolling())
 
 // 自动折叠 / 用户接管追踪：
 // - preEnterCollapsed 记入 library 之前的折叠态，用于离开时恢复

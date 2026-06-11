@@ -61,8 +61,9 @@ watch(visible, (open) => {
     void loadLeaves()
   }
 })
-function onFile(e: Event): void {
-  const f = (e.target as HTMLInputElement).files?.[0] ?? null
+// el-upload（手动上传）：选文件即记录 raw File；用文件名（去 .docx）兜底填名称。
+function onFileChange(uploadFile: { raw?: File }): void {
+  const f = uploadFile.raw ?? null
   file.value = f
   if (f && !form.name.trim()) form.name = f.name.replace(/\.docx$/i, '')
 }
@@ -131,7 +132,19 @@ function onCancelImport(): void {
   <el-dialog v-model="visible" title="从 Word 导入" width="520px">
     <el-form label-width="96px">
       <el-form-item label="Word 文件" required>
-        <input type="file" accept=".docx" @change="onFile" />
+        <el-upload
+          class="uploader"
+          accept=".docx"
+          :auto-upload="false"
+          :show-file-list="false"
+          :limit="1"
+          :on-change="onFileChange"
+        >
+          <el-button>选择 .docx 文件</el-button>
+          <template v-if="file" #tip>
+            <div class="file-tip">已选：{{ file.name }}</div>
+          </template>
+        </el-upload>
       </el-form-item>
       <el-form-item label="目标文件夹" required>
         <el-select v-model="form.folder_id" filterable placeholder="仅可存程序的叶子文件夹" class="full">
@@ -159,6 +172,7 @@ function onCancelImport(): void {
 
 <style scoped>
 .full { width: 100%; }
+.file-tip { color: var(--text-secondary); font-size: 12px; margin-top: 4px; }
 .phase { color: var(--text-secondary); font-size: 13px; padding-left: 96px; }
 .err { color: var(--el-color-danger); font-size: 13px; padding-left: 96px; }
 </style>

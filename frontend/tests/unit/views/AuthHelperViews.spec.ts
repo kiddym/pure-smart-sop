@@ -57,6 +57,40 @@ describe('Auth helper views', () => {
     expect(push).toHaveBeenCalledWith({ name: 'login' })
   })
 
+  it('ResetPasswordView URL 带 token 时隐藏 token 输入框', async () => {
+    const router = makeRouter()
+    await router.push('/reset-password?token=tok123')
+    await router.isReady()
+    const w = mount(ResetPasswordView, { global: { plugins: [ElementPlus, router, i18n] } })
+    await flushPromises()
+    // token 来自 URL，不应暴露为可编辑输入。
+    expect(w.find('[data-test="token"]').exists()).toBe(false)
+  })
+
+  it('ResetPasswordView 缺 token 时降级显示 token 输入框', async () => {
+    const router = makeRouter()
+    await router.push('/reset-password')
+    await router.isReady()
+    const w = mount(ResetPasswordView, { global: { plugins: [ElementPlus, router, i18n] } })
+    await flushPromises()
+    expect(w.find('[data-test="token"]').exists()).toBe(true)
+  })
+
+  it('ResetPasswordView 新密码不足 8 位不提交', async () => {
+    const router = makeRouter()
+    await router.push('/reset-password?token=tok123')
+    await router.isReady()
+    const spy = vi.spyOn(authApi, 'resetPassword').mockResolvedValue()
+    const w = mount(ResetPasswordView, { global: { plugins: [ElementPlus, router, i18n] } })
+    await flushPromises()
+    const pwds = w.findAll('input[type="password"]')
+    await pwds[0].setValue('short')
+    await pwds[1].setValue('short')
+    await w.find('[data-test="submit"]').trigger('click')
+    await flushPromises()
+    expect(spy).not.toHaveBeenCalled()
+  })
+
   it('ResetPasswordView 密码不一致不提交', async () => {
     const router = makeRouter()
     await router.push('/reset-password?token=tok123')

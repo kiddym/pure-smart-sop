@@ -78,20 +78,27 @@ h3,
   outline: none;
 }
 
-/* ---- 角标脉冲（通知/未读） ---- */
-@keyframes u-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+/* ---- 顶栏图标按钮（统一 28×28 透明圆角，AppTopBar 共用） ---- */
+.icon-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--text-regular);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
-.u-pulse {
-  animation: u-pulse 2s var(--ease-standard) infinite;
+.icon-btn:hover {
+  background: var(--bg-hover);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .fade-enter-active,
   .fade-leave-active,
-  .u-fade-in,
-  .u-pulse {
+  .u-fade-in {
     transition: none !important;
     animation: none !important;
   }

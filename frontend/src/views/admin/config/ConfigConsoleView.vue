@@ -3,23 +3,12 @@ interface Entry { label: string; to: string }
 interface Stage { no: string; title: string; desc: string; entries: Entry[] }
 
 const stages: Stage[] = [
-  { no: '①', title: '组织基础', desc: '先配组织信息与模块开关', entries: [
-    { label: '公司设置 · 模块开关', to: '/admin/config/organization?tab=company' },
+  { no: '①', title: '全局参数', desc: '审批流、版本控制等全局开关,影响各模块行为', entries: [
+    { label: '系统设置', to: '/admin/config/organization' },
   ]},
-  { no: '②', title: '人员权限', desc: '角色 → 团队 → 用户,先有角色再分配', entries: [
-    { label: '角色', to: '/admin/roles' },
-    { label: '团队', to: '/admin/teams' },
-    { label: '用户', to: '/admin/users' },
-  ]},
-  { no: '③', title: '全局参数', desc: '审批流、版本控制等全局开关,影响各模块行为', entries: [
-    { label: '系统设置', to: '/admin/config/organization?tab=global' },
-  ]},
-  { no: '④', title: '业务模块', desc: '为已启用的模块配置字段、表单与分类', entries: [
+  { no: '②', title: '业务模块', desc: '为已启用的模块配置字段、表单与分类', entries: [
     { label: 'SOP 配置', to: '/admin/config/sop' },
-  ]},
-  { no: '⑤', title: '运维', desc: '文件与审计', entries: [
-    { label: '文件库', to: '/admin/files' },
-    { label: '审计日志', to: '/admin/audit-logs' },
+    { label: '文件夹配置', to: '/procedures/folders' },
   ]},
 ]
 </script>
@@ -27,7 +16,7 @@ const stages: Stage[] = [
 <template>
   <div class="config-console">
     <h2 class="page-title">配置中心</h2>
-    <p class="console-hint">初次部署建议从上往下依次配置;日常维护可直接点入对应模块。</p>
+    <p class="console-hint">初次部署建议依次配置全局参数、业务模块;日常维护可直接点入对应模块。</p>
     <div class="stage-grid">
       <section v-for="s in stages" :key="s.no" class="stage-card">
         <header class="stage-head"><span class="stage-no">{{ s.no }}</span>{{ s.title }}</header>

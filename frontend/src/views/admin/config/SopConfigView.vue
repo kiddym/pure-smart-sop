@@ -15,8 +15,9 @@ function onTabChange(t: string | number): void {
 
 <template>
   <div class="config-aggregate">
+    <h2 class="page-title">SOP 配置</h2>
     <el-tabs :model-value="activeTab" @update:model-value="onTabChange">
-      <el-tab-pane label="程序字段" name="fields" lazy><FieldManageView /></el-tab-pane>
+      <el-tab-pane label="字段管理" name="fields" lazy><FieldManageView /></el-tab-pane>
       <el-tab-pane label="标题字典" name="heading-rules" lazy><HeadingRulesView /></el-tab-pane>
     </el-tabs>
   </div>
@@ -25,5 +26,11 @@ function onTabChange(t: string | number): void {
 <style scoped>
 .config-aggregate {
   padding: 20px 24px;
+}
+.page-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 12px;
+  color: var(--text-primary);
 }
 </style>

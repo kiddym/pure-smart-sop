@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { ArrowLeft, RefreshLeft, RefreshRight, MoreFilled } from '@element-plus/icons-vue'
 import StatusTag from '@/components/StatusTag.vue'
 import { useProcedureEditorStore } from '@/store/procedureEditor'
 import { useNodeEditorStore } from '@/store/nodeEditor'
@@ -48,7 +49,7 @@ node.$onAction(({ name, after, onError }) => {
 <template>
   <div class="topbar">
     <div class="left">
-      <el-button text size="small" @click="emit('back')">← 返回</el-button>
+      <el-button text size="small" :icon="ArrowLeft" @click="emit('back')">返回</el-button>
       <span class="code">{{ p?.code }}</span>
       <span class="name">{{ p?.name }}</span>
       <span class="path">{{ p?.folder_full_path }}</span>
@@ -57,17 +58,17 @@ node.$onAction(({ name, after, onError }) => {
     </div>
 
     <div v-if="store.editable" class="right">
-      <el-button class="etb-undo" size="small" :disabled="!node.canUndo" title="撤销 (节点编辑)" @click="node.undo()">↶ 撤销</el-button>
-      <el-button class="etb-redo" size="small" :disabled="!node.canRedo" title="重做 (节点编辑)" @click="node.redo()">↷ 重做</el-button>
+      <el-button class="etb-undo" size="small" :icon="RefreshLeft" :disabled="!node.canUndo" title="撤销 (节点编辑)" @click="node.undo()">撤销</el-button>
+      <el-button class="etb-redo" size="small" :icon="RefreshRight" :disabled="!node.canRedo" title="重做 (节点编辑)" @click="node.redo()">重做</el-button>
       <span class="etb-save" :class="{ 'is-saving': saving }">{{ saving ? '保存中…' : '✓ 已保存' }}</span>
       <el-button size="small" @click="emit('preview-pdf')">PDF 预览</el-button>
       <el-button v-if="showPublish" size="small" type="primary" @click="emit('publish')">发布</el-button>
       <el-button v-if="showUpgrade" size="small" @click="emit('upgrade')">升级版本</el-button>
       <el-dropdown trigger="click">
-        <el-button size="small" text>⋮</el-button>
+        <el-button size="small" text :icon="MoreFilled" title="更多操作" />
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item v-if="showDiscard" @click="emit('discard')">丢弃此 DRAFT</el-dropdown-item>
+            <el-dropdown-item v-if="showDiscard" @click="emit('discard')">丢弃草稿</el-dropdown-item>
             <el-dropdown-item @click="emit('copy')">复制为新程序</el-dropdown-item>
           </el-dropdown-menu>
         </template>

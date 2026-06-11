@@ -14,27 +14,22 @@ describe('组织设置路由', () => {
     expect(r.currentRoute.value.name).toBe('config-organization')
   })
 
-  it('旧设置路由 redirect 到聚合页对应 tab', async () => {
-    const cases: [string, string][] = [
-      ['/admin/company', 'company'],
-      ['/admin/settings', 'global'],
-    ]
+  it('旧设置路由 redirect 到组织设置页（无 tab）', async () => {
+    const cases: string[] = ['/admin/company', '/admin/settings']
     const r = makeRouter()
-    for (const [from, tab] of cases) {
+    for (const from of cases) {
       await r.push(from)
       expect(r.currentRoute.value.path).toBe('/admin/config/organization')
-      expect(r.currentRoute.value.query.tab).toBe(tab)
+      expect(r.currentRoute.value.query.tab).toBeUndefined()
     }
   })
 
   it('既有别名 redirect 双跳仍达组织设置', async () => {
     const r = makeRouter()
-    await r.push('/platform/settings') // → /admin/company → ?tab=company
+    await r.push('/platform/settings') // → /admin/company → /admin/config/organization
     expect(r.currentRoute.value.path).toBe('/admin/config/organization')
-    expect(r.currentRoute.value.query.tab).toBe('company')
-    await r.push('/settings') // → /admin/settings → ?tab=global
+    await r.push('/settings') // → /admin/settings → /admin/config/organization
     expect(r.currentRoute.value.path).toBe('/admin/config/organization')
-    expect(r.currentRoute.value.query.tab).toBe('global')
   })
 
 })
