@@ -3,16 +3,36 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel, field_validator
 from sqlalchemy.orm import Session
 
+from app.billing.catalog import ALL_STATUSES, Plan
 from app.db import get_db
 from app.deps import require_platform_admin
 from app.errors import not_found
 from app.models.company import Company
 from app.models.user import User
-from app.schemas.billing import SubscriptionUpdate
 
 router = APIRouter(prefix="/api/v1/platform", tags=["platform"])
+
+
+class SubscriptionUpdate(BaseModel):
+    plan: str
+    subscription_status: str
+
+    @field_validator("plan")
+    @classmethod
+    def _valid_plan(cls, v: str) -> str:
+        if v not in {p.value for p in Plan}:
+            raise ValueError("无效的套餐档位")
+        return v
+
+    @field_validator("subscription_status")
+    @classmethod
+    def _valid_status(cls, v: str) -> str:
+        if v not in ALL_STATUSES:
+            raise ValueError("无效的订阅状态")
+        return v
 
 
 @router.patch("/companies/{company_id}/subscription")
