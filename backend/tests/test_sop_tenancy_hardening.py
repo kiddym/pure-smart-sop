@@ -11,7 +11,7 @@ import pytest
 from sqlalchemy.orm import Session
 
 from app import tenant
-from app.models.asset import ProcedureAsset
+from app.models.procedure_asset import ProcedureAsset
 from app.models.company import Company
 from app.models.field import ProcedureField
 from app.models.folder import Folder
