@@ -2,8 +2,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getCompanySettings, updateCompanySettings } from '@/api/companySettings'
-import { listCurrencies } from '@/api/currencies'
-import type { CompanySettings, Currency } from '@/types/platform'
+import type { CompanySettings } from '@/types/platform'
 import { useAuthStore } from '@/store/auth'
 import { useCompanySettingsStore } from '@/store/companySettings'
 
@@ -13,7 +12,6 @@ const companySettingsStore = useCompanySettingsStore()
 // ── state ──────────────────────────────────────────────────
 const loading = ref(false)
 const saving = ref(false)
-const currencies = ref<Currency[]>([])
 
 const form = reactive<CompanySettings>({
   date_format: '',
@@ -40,12 +38,8 @@ async function fetchSettings() {
   }
 }
 
-async function fetchCurrencies() {
-  currencies.value = await listCurrencies()
-}
-
 onMounted(async () => {
-  await Promise.all([fetchSettings(), fetchCurrencies()])
+  await fetchSettings()
 })
 
 // ── save ───────────────────────────────────────────────────
@@ -83,22 +77,6 @@ async function handleSave() {
 
       <el-form-item label="时区">
         <el-input v-model="form.timezone" :disabled="!canEdit" placeholder="如 Asia/Shanghai" />
-      </el-form-item>
-
-      <el-form-item label="默认币种">
-        <el-select
-          v-model="form.default_currency_code"
-          :disabled="!canEdit"
-          placeholder="请选择默认币种"
-          style="width: 100%"
-        >
-          <el-option
-            v-for="c in currencies"
-            :key="c.id"
-            :label="`${c.code}（${c.name}）`"
-            :value="c.code"
-          />
-        </el-select>
       </el-form-item>
 
       <el-form-item label="自动派单">
