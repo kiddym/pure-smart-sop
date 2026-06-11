@@ -8,7 +8,6 @@ from sqlalchemy.orm import Session
 from app import security, tenant
 from app.deps import get_current_user, get_db, user_permission_codes
 from app.errors import conflict, unauthorized
-from app.models.role import Role
 from app.models.user import User, UserStatus
 from app.schemas.auth import (
     ChangePasswordRequest,
@@ -34,11 +33,12 @@ from app.services import (
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 
 
-def _role_code(db: Session, user: User) -> str | None:
-    if user.role_id is None:
-        return None
-    role = db.get(Role, user.role_id)
-    return role.code if role else None
+def _role_code(_db: Session, _user: User) -> str:
+    # 单角色模式：人员/角色管理界面已下线，所有登录用户在前端按 super_admin 看待，
+    # 使前端保留的 hasPermission（role_code==='super_admin' 即放行）对其恒为 true。
+    # 后端真实权限守卫 require_permission 另查 DB role（deps.user_permission_codes），
+    # 不读此处或 token 的 role_code，故不构成后端越权。保留签名以兼容调用方。
+    return "super_admin"
 
 
 def _tokens(db: Session, user: User) -> TokenPair:

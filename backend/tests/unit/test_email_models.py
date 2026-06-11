@@ -1,4 +1,4 @@
-"""Phase 5B 邮件模型：偏好 + 投递 outbox。"""
+"""Phase 5B 邮件模型：投递 outbox。"""
 
 from __future__ import annotations
 
@@ -6,16 +6,6 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.email_outbox import EmailOutbox
-from app.models.notification_preference import NotificationPreference
-
-
-def test_preference_defaults(db: Session):
-    p = NotificationPreference(company_id="co-1", user_id="u-1")
-    db.add(p)
-    db.commit()
-    db.refresh(p)
-    assert p.email_enabled is True
-    assert p.disabled_types == "[]"
 
 
 def test_outbox_defaults(db: Session):

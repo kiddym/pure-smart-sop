@@ -18,12 +18,9 @@ from app.models.folder import Folder, FolderSequence
 from app.models.heading_learning_event import HeadingLearningEvent
 from app.models.heading_rule import HeadingStyleRule
 from app.models.node import ProcedureNode
-from app.models.notification import Notification, NotificationArm
-from app.models.notification_preference import NotificationPreference
 from app.models.numbering_profile import NumberingProfile
 from app.models.password_reset_token import PasswordResetToken
 from app.models.procedure import Procedure
-from app.models.push_token import PushToken
 from app.models.role import Role
 from app.models.sequence import Sequence
 from app.models.settings import ProcedureSettings
@@ -47,9 +44,6 @@ __all__ = [
     "FolderSequence",
     "HeadingLearningEvent",
     "HeadingStyleRule",
-    "Notification",
-    "NotificationArm",
-    "NotificationPreference",
     "NumberingProfile",
     "PasswordResetToken",
     "Procedure",
@@ -60,7 +54,6 @@ __all__ = [
     "ProcedureNode",
     "ProcedureSettings",
     "ProcedureSourceDocx",
-    "PushToken",
     "Role",
     "Sequence",
     "SuperAccountRelation",

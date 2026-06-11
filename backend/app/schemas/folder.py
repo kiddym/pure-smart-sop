@@ -36,7 +36,10 @@ class FolderOut(BaseModel):
     parent_id: str | None
     system: bool
     full_path: str
-    sequence_digits: int  # 编号位数,供前端编辑文件夹时回填真实值
+    # 编号位数：真实值在叶子的 tb_folder_sequence(1:1) 表，Folder 主对象无此列。
+    # 给默认值止血——避免 model_validate(Folder) 因缺字段而 500（创建/读取文件夹接口）。
+    # 如需回填叶子真实位数，应在 get/list/tree 等读取路径注入，属独立增强。
+    sequence_digits: int = 5
     created_at: datetime
     updated_at: datetime
 

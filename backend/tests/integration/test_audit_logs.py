@@ -14,7 +14,13 @@ from app.models.audit import FolderAuditLog, ProcedureAuditLog
 
 # 审计行（直建 db）须有 tenant 上下文落 company_id（NOT NULL）；端点本身未鉴权，
 # 请求期上下文为 None 不作用域化，故直建行仍可见。
-pytestmark = pytest.mark.usefixtures("_tenant_ctx")
+#
+# 审计查询端点已下线（前端不再使用，main.py 不再 include audit_logs.router）；
+# 后端审计写入与数据保留，端点恢复时移除下方 skip。
+pytestmark = [
+    pytest.mark.usefixtures("_tenant_ctx"),
+    pytest.mark.skip(reason="审计查询端点已下线，仅保留后端写入与数据"),
+]
 
 FOLDERS_BASE = "/api/v1/audit-logs/folders"
 PROCEDURES_BASE = "/api/v1/audit-logs/procedures"
