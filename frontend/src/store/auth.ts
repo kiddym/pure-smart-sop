@@ -76,7 +76,12 @@ export const useAuthStore = defineStore('auth', {
       this.user = await authApi.fetchMe()
     },
 
-    logout(): void {
+    async logout(): Promise<void> {
+      try {
+        await authApi.logout()
+      } catch {
+        // best-effort: still clear client state below even if the server call fails
+      }
       authStorage.clearTokens()
       this.user = null
       this._bootstrapPromise = null
