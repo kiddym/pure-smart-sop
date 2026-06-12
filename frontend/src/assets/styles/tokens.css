@@ -24,8 +24,8 @@
   --text-secondary: #6b635a; /* 次要文字 / 标签 */
   --text-tertiary: #9a8e80; /* 占位 / 分组标题 / 计数 */
   --text-disabled: #bbbbbb; /* 禁用（即将上线 / 锁标 / 空态图标） */
-  --bg-hover: #f0ece6; /* 行 / 按钮 hover */
   --border-strong: #d4cfc6; /* 需存在感的分隔 */
+  /* 注：--bg-hover 的浅色值统一定义在下方“交互杂项”组（中性 rgba），此处不再重复定义。 */
 
   /* diff / 评审高亮（浅/暗两套，§43 审计 diff 表）。组件禁止再散落浅色高亮 hex。 */
   --diff-add-bg: #e9f4e4; /* 新增行底 */
@@ -54,8 +54,12 @@
   --dur-enter: 0.28s;
 
   /* 交互杂项 */
-  --bg-hover: rgba(0, 0, 0, 0.04);      /* 表格/菜单 hover 底色（中性，不引入新彩色） */
+  --bg-hover: rgba(0, 0, 0, 0.04);      /* 行/按钮/表格/菜单 hover 底色（中性，不引入新彩色） */
   --ring-focus: 0 0 0 3px rgba(217, 119, 87, 0.18);  /* 焦点光环 = 赤陶 accent 18% */
+
+  /* 圆角令牌（design-system.md §2.3）。组件禁止再散落 4px/8px 魔法值。 */
+  --radius-sm: 4px;   /* 图标按钮 / 小控件 / 菜单项 */
+  --radius-md: 8px;   /* 卡片 / 弹窗 / 面板 */
 
   /* 阴影：纸面孤岛（PDF 预览、文档画布）"桌上一张文件"的投影。
      与 design-system.md §3.8「亮纸孤岛」 + §2.4 阴影规范 保持一致；

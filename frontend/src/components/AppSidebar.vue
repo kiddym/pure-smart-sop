@@ -1,16 +1,12 @@
 <script setup lang="ts">
 import { computed, type Component } from 'vue'
 import { useRoute } from 'vue-router'
-import { ElIcon, ElMenu, ElMenuItem, ElSubMenu } from 'element-plus'
+import { ElIcon, ElMenu, ElMenuItem } from 'element-plus'
 import {
   // SOP
   Document,
   EditPen,
   Folder,
-  // 管理：人员与权限
-  User,
-  UserFilled,
-  Connection,
   // 管理：配置中心
   Setting,
 } from '@element-plus/icons-vue'
@@ -25,19 +21,9 @@ interface NavItem {
   // 折叠态侧栏只显示图标（el-menu 折叠时隐藏 #title 文字），每项必须配一个。
   icon?: Component
 }
-interface NavSubGroup {
-  label: string
-  icon?: Component
-  items: NavItem[]
-}
-type NavEntry = NavItem | NavSubGroup
 interface NavGroup {
   label: string
-  entries: NavEntry[]
-}
-
-function isSubGroup(e: NavEntry): e is NavSubGroup {
-  return (e as NavSubGroup).items !== undefined
+  entries: NavItem[]
 }
 
 // 导航目标路径；无 path 的占位项落到 soon: 前缀避免空 index。
@@ -57,15 +43,6 @@ const groups = computed<NavGroup[]>(() => [
   {
     label: '管理',
     entries: [
-      {
-        label: '人员与权限',
-        icon: User,
-        items: [
-          { label: '用户', path: '/admin/users', icon: User },
-          { label: '角色', path: '/admin/roles', icon: UserFilled },
-          { label: '团队', path: '/admin/teams', icon: Connection },
-        ],
-      },
       { label: '配置中心', path: '/admin/config', icon: Setting },
     ],
   },
@@ -73,6 +50,8 @@ const groups = computed<NavGroup[]>(() => [
 
 const activeMenu = computed<string>(() => {
   const p = route.path
+  // 配置中心吸附其全部子路径（子页/重定向落点均高亮所属入口）。
+  if (p.startsWith('/admin/config')) return '/admin/config'
   if (p.startsWith('/admin/')) return p
   if (p.startsWith('/procedures/drafts')) return '/procedures/drafts'
   if (p.startsWith('/procedures/folders')) return '/procedures/folders'
@@ -96,27 +75,13 @@ defineExpose({ activeMenu, groups })
     >
       <template v-for="g in groups" :key="g.label">
         <div v-if="!collapsed && g.entries.length" class="menu-group-label">{{ g.label }}</div>
-        <template v-for="entry in g.entries" :key="entry.label">
-          <el-sub-menu v-if="isSubGroup(entry)" :index="`grp:${entry.label}`">
-            <template #title>
-              <el-icon v-if="entry.icon" class="nav-icon"><component :is="entry.icon" /></el-icon>
-              <span>{{ entry.label }}</span>
-            </template>
-            <el-menu-item v-for="it in entry.items" :key="it.label" :index="menuIndex(it)">
-              <el-icon v-if="it.icon" class="nav-icon"><component :is="it.icon" /></el-icon>
-              <template #title>
-                {{ it.label }}
-              </template>
-            </el-menu-item>
-          </el-sub-menu>
-          <el-menu-item v-else :index="menuIndex(entry)">
-            <!-- 默认 slot 的图标在折叠态仍显示（#title 文字此时被 el-menu 隐藏）。 -->
-            <el-icon v-if="entry.icon" class="nav-icon"><component :is="entry.icon" /></el-icon>
-            <template #title>
-              {{ entry.label }}
-            </template>
-          </el-menu-item>
-        </template>
+        <el-menu-item v-for="entry in g.entries" :key="entry.label" :index="menuIndex(entry)">
+          <!-- 默认 slot 的图标在折叠态仍显示（#title 文字此时被 el-menu 隐藏）。 -->
+          <el-icon v-if="entry.icon" class="nav-icon"><component :is="entry.icon" /></el-icon>
+          <template #title>
+            {{ entry.label }}
+          </template>
+        </el-menu-item>
       </template>
     </el-menu>
   </aside>
@@ -152,8 +117,7 @@ defineExpose({ activeMenu, groups })
 }
 
 /* 选中态：左 3px 陶土橙竖条 + accent-bg 底（design-system.md §3.2）。
-   EP 默认仅给激活项换文字色，这里补足竖条与底色，强化层级辨识。
-   :deep 选择器同样覆盖 el-sub-menu 内嵌的激活叶子项。 */
+   EP 默认仅给激活项换文字色，这里补足竖条与底色，强化层级辨识。 */
 .app-aside :deep(.el-menu-item.is-active) {
   position: relative;
   background: var(--accent-bg);

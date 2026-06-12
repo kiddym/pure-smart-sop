@@ -17,6 +17,9 @@ export interface ApiErrorDetail {
 
 export const http: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL ?? '/api/v1',
+  // 携带 cookie：浏览器加载 <img src> 等资源请求无法带 Authorization 头，
+  // 依赖后端 GET 的 access_token cookie 兜底鉴权（审计 #6）。
+  withCredentials: true,
   timeout: 30_000,
   headers: {
     'Content-Type': 'application/json',
@@ -56,7 +59,7 @@ async function performRefresh(): Promise<string> {
 
 function redirectToLogin(): void {
   authStorage.clearTokens()
-  // 已在登录页则不再跳转：否则登录页上的 401（如通知轮询）会把当前含 redirect 的整 URL
+  // 已在登录页则不再跳转：否则登录页上的 401（如后台请求）会把当前含 redirect 的整 URL
   // 再次 encode 拼进新的 redirect，层层自嵌套 + 逐层转义直至 431/页面崩溃（死循环）。
   if (window.location.pathname === '/login') return
   const redirect = encodeURIComponent(window.location.pathname + window.location.search)

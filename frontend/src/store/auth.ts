@@ -65,12 +65,6 @@ export const useAuthStore = defineStore('auth', {
       this.loading = true
       try {
         const pair = await authApi.switchAccount(companyId)
-        // 切换前清理旧公司的轮询/通知状态，避免跨租户残留。
-        void import('./notifications').then(({ useNotificationStore }) => {
-          const n = useNotificationStore()
-          n.stopPolling()
-          n.$reset()
-        })
         this._applyTokens(pair.access_token, pair.refresh_token)
         await this.loadMe()
       } finally {
@@ -80,24 +74,12 @@ export const useAuthStore = defineStore('auth', {
 
     async loadMe(): Promise<void> {
       this.user = await authApi.fetchMe()
-      // 加载公司设置供导航模块显隐（失败不阻塞登录；失败时侧栏降级为全部显示）。
-      try {
-        const { useCompanySettingsStore } = await import('./companySettings')
-        await useCompanySettingsStore().loadSettings()
-      } catch {
-        // 公司设置加载失败不阻断主流程
-      }
     },
 
     logout(): void {
       authStorage.clearTokens()
       this.user = null
       this._bootstrapPromise = null
-      void import('./notifications').then(({ useNotificationStore }) => {
-        const n = useNotificationStore()
-        n.stopPolling()
-        n.$reset()
-      })
     },
 
     bootstrap(): Promise<void> {

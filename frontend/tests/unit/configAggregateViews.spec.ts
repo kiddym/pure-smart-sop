@@ -19,10 +19,10 @@ function mountWith(comp: unknown, query: Record<string, string> = {}) {
 }
 
 describe('SopConfigView', () => {
-  it('渲染程序字段与标题字典两个 tab', async () => {
+  it('渲染字段管理与标题字典两个 tab', async () => {
     const w = await mountWith(SopConfigView)
     const labels = w.findAll('.el-tabs__item').map((n) => n.text())
-    expect(labels).toEqual(expect.arrayContaining(['程序字段', '标题字典']))
+    expect(labels).toEqual(expect.arrayContaining(['字段管理', '标题字典']))
   })
   it('按 query.tab=heading-rules 选中标题字典', async () => {
     const w = await mountWith(SopConfigView, { tab: 'heading-rules' })

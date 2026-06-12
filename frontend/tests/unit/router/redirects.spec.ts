@@ -9,9 +9,6 @@ function makeRouter() {
 
 const REDIRECTS: Array<[string, string]> = [
   ['/folders', '/procedures/folders'],
-  ['/platform/users', '/admin/users'],
-  ['/platform/roles', '/admin/roles'],
-  ['/platform/teams', '/admin/teams'],
   // 公司设置/系统设置已合并为组织设置聚合页,旧别名经二次跳转最终落到 /admin/config/organization。
   ['/platform/settings', '/admin/config/organization'],
   ['/admin/company', '/admin/config/organization'],
@@ -20,7 +17,6 @@ const REDIRECTS: Array<[string, string]> = [
   // 字段路由已迁至配置中心聚合页，双跳后最终落到对应聚合页。
   ['/settings/fields', '/admin/config/sop'],
   ['/settings/heading-rules', '/admin/config/sop'],
-  ['/audit-logs', '/admin/audit-logs'],
 ]
 
 describe('router 旧路径重定向', () => {
@@ -33,8 +29,7 @@ describe('router 旧路径重定向', () => {
 
   const NEW_PATHS = [
     '/procedures/folders',
-    '/admin/users', '/admin/roles', '/admin/teams', '/admin/config/organization',
-    '/admin/audit-logs',
+    '/admin/config/organization',
   ]
   // 注:/admin/fields、/admin/heading-rules 等旧字段路径已转为 redirect(指向配置中心聚合页 tab),
   // 其解析覆盖见 configRoutes.spec.ts「配置中心路由」。

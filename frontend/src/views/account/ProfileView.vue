@@ -129,9 +129,9 @@ onMounted(load)
           <el-input v-model="form.job_title" data-test="job-title" maxlength="128" />
         </el-form-item>
         <el-form-item :label="t('account.locale')">
-          <el-select v-model="form.locale" data-test="locale">
+          <!-- 目前仅提供 zh-CN 一种语言包，移除 en-US 以避免“切了没反应”。 -->
+          <el-select v-model="form.locale" data-test="locale" disabled>
             <el-option label="简体中文" value="zh-CN" />
-            <el-option label="English" value="en-US" />
           </el-select>
         </el-form-item>
         <el-form-item :label="t('account.avatarUrl')">

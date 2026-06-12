@@ -5,7 +5,10 @@ import type { ParsedNode } from '@/types/parse'
 import type { ReviewOp } from '@/types/batchImport'
 import DiffRejudgeCard from './DiffRejudgeCard.vue'
 
-const props = defineProps<{ modelValue: boolean }>()
+// editable=true → 精审（可改判待确认节点）；false → 预览（只读，仅看结构）。
+const props = withDefaults(defineProps<{ modelValue: boolean; editable?: boolean }>(), {
+  editable: true,
+})
 const emit = defineEmits<{ 'update:modelValue': [boolean] }>()
 
 const store = useBatchReviewStore()
@@ -36,7 +39,8 @@ async function onOp(op: ReviewOp): Promise<void> {
 <template>
   <el-drawer v-model="visible" :title="store.currentItem?.filename ?? '速览'" size="640px">
     <div class="drawer-body">
-      <section v-if="reviewNodes.length" class="rejudge">
+      <!-- 仅精审（editable）展示可改判卡片；预览（只读）只看结构。 -->
+      <section v-if="props.editable && reviewNodes.length" class="rejudge">
         <h4>待确认节点（{{ reviewNodes.length }}）</h4>
         <DiffRejudgeCard v-for="n in reviewNodes" :key="n.id" :node="n" @op="onOp" />
       </section>

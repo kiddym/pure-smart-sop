@@ -23,12 +23,12 @@ const { default: ProcedureLibraryView } = await import(
 
 const normalFolder: FolderTreeNode = {
   id: 'f-normal', name: 'QC', prefix: 'QC', parent_id: null, system: false,
-  full_path: 'QC', created_at: '', updated_at: '',
+  full_path: 'QC', sequence_digits: 5, created_at: '', updated_at: '',
   procedure_count: 0, children: [],
 }
 const archiveFolder: FolderTreeNode = {
   id: 'f-archive', name: '归档', prefix: '', parent_id: null, system: true,
-  full_path: '归档', created_at: '', updated_at: '',
+  full_path: '归档', sequence_digits: 5, created_at: '', updated_at: '',
   procedure_count: 0, children: [],
 }
 

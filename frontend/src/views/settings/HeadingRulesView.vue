@@ -209,7 +209,7 @@ onMounted(() => {
 
 <template>
   <div class="heading-rules-page">
-    <h2 class="page-title">标题字典</h2>
+    <!-- 标题由所在聚合页(SOP 配置)的 tab 提供,此处不再重复页级 h2 -->
     <p class="hint">
       动态识别字典：样式名 → 标题层级。「自学习」规则由编辑器中的反复改级/确认自动积累；
       「钉死」为人工确认或管理员修改，自学习不再覆盖。内置中文词典随程序发布、不在此列。

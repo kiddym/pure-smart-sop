@@ -259,8 +259,7 @@ async function moveField(index: number, direction: 'up' | 'down') {
 
 <template>
   <div class="field-manage">
-    <h2 class="page-title">字段管理</h2>
-
+    <!-- 标题由所在聚合页(SOP 配置)的 tab 提供,此处不再重复页级 h2 -->
     <!-- toolbar -->
     <div class="toolbar">
       <el-button type="primary" @click="openCreate">新建字段</el-button>

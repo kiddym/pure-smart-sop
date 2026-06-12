@@ -33,10 +33,10 @@ describe('ConfigConsoleView', () => {
     const targets = wrapper.findAllComponents(RouterLinkStub).map((l) => l.props('to'))
     expect(targets).toContain('/admin/config/sop')
   })
-  it('组织基础/全局参数指向组织设置聚合页对应 tab', () => {
+
+  it('系统设置指向组织设置页（无 tab 参数）', () => {
     const wrapper = mountHub()
     const targets = wrapper.findAllComponents(RouterLinkStub).map((l) => l.props('to'))
-    expect(targets).toContain('/admin/config/organization?tab=company')
-    expect(targets).toContain('/admin/config/organization?tab=global')
+    expect(targets).toContain('/admin/config/organization')
   })
 })

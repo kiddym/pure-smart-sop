@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getSettings, updateSettings } from '@/api/settings'
+import { isVersionConflict } from '@/api/http'
 import type { SettingsOut, SettingsUpdate } from '@/types/settings'
 
 const settings = ref<SettingsOut | null>(null)
@@ -49,8 +50,7 @@ async function handleSave() {
     }
     ElMessage.success('保存成功')
   } catch (err: unknown) {
-    const status = (err as { response?: { status?: number } })?.response?.status
-    if (status === 412) {
+    if (isVersionConflict(err)) {
       ElMessage.error('设置已被他人修改，请刷新后重试')
       await loadSettings() // refresh to get latest revision
     } else {
@@ -66,7 +66,7 @@ onMounted(loadSettings)
 
 <template>
   <div class="settings-page">
-    <h2 class="page-title">系统设置</h2>
+    <!-- 标题由所在聚合页(组织设置)的 tab 提供,此处不再重复页级 h2 -->
     <el-card v-loading="loading">
       <el-form :model="form" label-width="180px">
         <el-form-item label="启用审批流程">
@@ -92,7 +92,7 @@ onMounted(loadSettings)
           <span class="readonly-value">{{ settings?.auto_archive_days ?? '-' }} 天</span>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="saving" :disabled="loading" @click="handleSave">保存</el-button>
+          <el-button type="primary" :loading="saving" :disabled="loading" data-test="save" @click="handleSave">保存</el-button>
         </el-form-item>
       </el-form>
     </el-card>

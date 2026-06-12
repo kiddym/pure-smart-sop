@@ -50,18 +50,15 @@ function openCreate(): void {
 }
 
 function openEdit(): void {
+  // 按钮已对系统文件夹 disabled,这里直接回填该文件夹真实值进表单
   if (!selected.value) return
-  if (selected.value.system) {
-    ElMessage.warning('系统文件夹不可修改')
-    return
-  }
   dialogMode.value = 'edit'
   Object.assign(form, {
     id: selected.value.id,
     name: selected.value.name,
     parent_id: selected.value.parent_id ?? '',
     prefix: selected.value.prefix,
-    sequence_digits: 5,
+    sequence_digits: selected.value.sequence_digits ?? 5,
   })
   dialogVisible.value = true
 }
@@ -92,6 +89,8 @@ async function submit(): Promise<void> {
     }
     dialogVisible.value = false
     await refresh()
+  } catch {
+    ElMessage.error(dialogMode.value === 'create' ? '创建失败,请重试' : '保存失败,请重试')
   } finally {
     submitting.value = false
   }
@@ -99,13 +98,22 @@ async function submit(): Promise<void> {
 
 async function remove(): Promise<void> {
   if (!selected.value) return
-  await ElMessageBox.confirm(`确定删除文件夹「${selected.value.name}」？`, '删除确认', {
-    type: 'warning',
-  })
-  await deleteFolder(selected.value.id)
-  ElMessage.success('已删除')
-  selected.value = null
-  await refresh()
+  // 仅捕获确认框「取消」(reject 无消息),不弹错误;真正的删除失败才提示
+  try {
+    await ElMessageBox.confirm(`确定删除文件夹「${selected.value.name}」？`, '删除确认', {
+      type: 'warning',
+    })
+  } catch {
+    return
+  }
+  try {
+    await deleteFolder(selected.value.id)
+    ElMessage.success('已删除')
+    selected.value = null
+    await refresh()
+  } catch {
+    ElMessage.error('删除失败,请重试')
+  }
 }
 </script>
 

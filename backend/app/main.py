@@ -22,7 +22,6 @@ from app.middleware import RequestIdMiddleware
 from app.parser.utils import images
 from app.routers import (
     attachments,
-    audit_logs,
     auth,
     batch_imports,
     company,
@@ -31,8 +30,6 @@ from app.routers import (
     folders,
     heading_rules,
     nodes,
-    notification_preferences,
-    notifications,
     parse,
     platform,
     procedure_groups,
@@ -108,10 +105,7 @@ async def validation_exception_handler(_: Request, exc: RequestValidationError) 
 
 app.include_router(auth.router)
 app.include_router(teams.router)
-app.include_router(notifications.router)
-app.include_router(notification_preferences.router)
 app.include_router(folders.router)
-app.include_router(audit_logs.router)
 app.include_router(procedures.router)
 app.include_router(procedure_groups.router)
 app.include_router(parse.router)
