@@ -7,9 +7,6 @@ export type MarkStatus = 'unmarked' | 'step' | 'content' | 'review'
 // 执行表单 15 型（大写枚举，Q261/§40.1）。
 export type FormType =
   | 'COMMON'
-  | 'NOTE'
-  | 'CAUTION'
-  | 'WARNING'
   | 'CHECK'
   | 'YESNO'
   | 'NUMBER'
@@ -24,9 +21,6 @@ export type FormType =
 
 export const FORM_TYPES: readonly FormType[] = [
   'COMMON',
-  'NOTE',
-  'CAUTION',
-  'WARNING',
   'CHECK',
   'YESNO',
   'NUMBER',
