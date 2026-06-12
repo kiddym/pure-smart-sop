@@ -15,13 +15,6 @@ import {
   type PreviewModel,
 } from './pdfModel'
 import { stepZoom, fitZoom, activePageIndex, clampPageInput, pageLabel, ZOOM_MIN, ZOOM_MAX } from './pdfChrome'
-import { isAlertType } from '@/utils/editor'
-import type { FormType } from '@/types/node'
-
-function alertBlockClass(t: FormType): string {
-  return `${t.toLowerCase()}-block`
-}
-
 const props = defineProps<{ modelValue: boolean; procedureId: string }>()
 const emit = defineEmits<{ (e: 'update:modelValue', v: boolean): void }>()
 
@@ -312,15 +305,9 @@ function onPreviewClick(e: MouseEvent): void {
               <div class="step-title">
                 <span v-if="b.code" class="st-code">{{ b.code }}</span> {{ b.title || '（步骤）' }}
               </div>
-              <div
-                v-if="isAlertType(b.step.input_schema.type)"
-                class="alert"
-                :class="alertBlockClass(b.step.input_schema.type)"
-                v-html="b.stepContent"
-              />
               <!-- 数据类型步骤的 content 被有意隐藏（与编辑器"已隐藏正文"提示一致） -->
               <div
-                v-else-if="b.step.input_schema.type === 'COMMON' && b.stepContent"
+                v-if="b.step.input_schema.type === 'COMMON' && b.stepContent"
                 class="step-body"
                 v-html="b.stepContent"
               />
@@ -329,7 +316,7 @@ function onPreviewClick(e: MouseEvent): void {
               </p>
               <p v-if="execText(b.step)" class="exec">{{ execText(b.step) }}</p>
               <p
-                v-if="model.signoffEnabled && !isAlertType(b.step.input_schema.type)"
+                v-if="model.signoffEnabled"
                 class="signoff"
               >
                 签字: __________ 日期: __________
@@ -657,8 +644,8 @@ h3.chapter-title {
   text-align: center;
   margin-top: 12px;
 }
-/* 警示三色（ANSI Z535，§7） + 富文本内嵌特殊块 */
-.alert,
+/* 警示三色（ANSI Z535，§7）：富文本内嵌特殊块（note/caution/warning-block）。
+   标题前缀经 ::before 注入，与后端 ALERT_SPECS / 下载版 PDF 对齐（含迁移自旧警示步骤的内联块）。 */
 :deep(.note-block),
 :deep(.caution-block),
 :deep(.warning-block) {
@@ -667,35 +654,32 @@ h3.chapter-title {
   padding: 8px 12px;
   margin: 8px 0;
 }
-.note-block,
 :deep(.note-block) {
   background: rgb(204, 229, 255);
   border-color: rgb(13, 71, 161);
 }
-.caution-block,
 :deep(.caution-block) {
   background: rgb(255, 217, 102);
   border-color: #000;
 }
-.warning-block,
 :deep(.warning-block) {
   background: rgb(255, 205, 210);
   border-color: rgb(220, 38, 38);
 }
-.alert.note-block::before {
+:deep(.note-block)::before {
   content: 'ⓘ 注意 NOTE';
   display: block;
   font-weight: 700;
   color: rgb(13, 71, 161);
   margin-bottom: 2px;
 }
-.alert.caution-block::before {
+:deep(.caution-block)::before {
   content: '⚠ 小心 CAUTION';
   display: block;
   font-weight: 700;
   margin-bottom: 2px;
 }
-.alert.warning-block::before {
+:deep(.warning-block)::before {
   content: '‼ 警告 WARNING';
   display: block;
   font-weight: 700;

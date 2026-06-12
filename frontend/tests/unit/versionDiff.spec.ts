@@ -22,7 +22,7 @@ describe('changedFields', () => {
     expect(changedFields(n({ body: '<p>a</p>' }), n({ body: '<p>b</p>' }))).toEqual(['正文'])
     expect(changedFields(n({ heading_level: 1 }), n({ heading_level: 2 }))).toEqual(['层级'])
     expect(changedFields(n({ kind: 'node' }), n({ kind: 'step' }))).toContain('类型')
-    expect(changedFields(n({ input_schema: { type: 'NOTE' } }), n({ input_schema: { type: 'CHECK' } }))).toContain('执行表单')
+    expect(changedFields(n({ input_schema: { type: 'NUMBER' } }), n({ input_schema: { type: 'CHECK' } }))).toContain('执行表单')
     expect(changedFields(n({ body: '<p>a</p>' }), n({ body: '<p>a</p>' }))).toEqual([])
   })
 })

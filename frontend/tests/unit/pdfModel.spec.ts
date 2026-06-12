@@ -128,11 +128,6 @@ describe('execText', () => {
     expect(execText(stepNode({ input_schema: { type: 'NONE' } }))).toBe('')
     expect(execText(stepNode({ input_schema: { type: 'RADIO', options: ['A', 'B'] } }))).toContain('○ A')
   })
-  it('警示类型（NOTE/CAUTION/WARNING）返回空串', () => {
-    expect(execText(stepNode({ input_schema: { type: 'WARNING' } }))).toBe('')
-    expect(execText(stepNode({ input_schema: { type: 'NOTE' } }))).toBe('')
-    expect(execText(stepNode({ input_schema: { type: 'CAUTION' } }))).toBe('')
-  })
 })
 
 describe('buildRevision', () => {

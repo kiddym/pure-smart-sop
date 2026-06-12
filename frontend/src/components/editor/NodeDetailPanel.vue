@@ -8,7 +8,7 @@ import RichTextEditor from './RichTextEditor.vue'
 import StepFormFields from './StepFormFields.vue'
 import FormFieldPreview from './FormFieldPreview.vue'
 import { useNodeEditorStore } from '@/store/nodeEditor'
-import { FORM_TYPE_META, isAlertType, isRichTextType } from '@/utils/editor'
+import { FORM_TYPE_META, isRichTextType } from '@/utils/editor'
 import { FORM_TYPES } from '@/types/node'
 import type { AttachmentMark, FormType, InputSchema } from '@/types/node'
 
@@ -106,8 +106,6 @@ async function onTypeChange(next: FormType): Promise<void> {
   }
   saveForm({ type: next }, marks.value)
 }
-
-const alertClass = computed(() => (isAlertType(schema.value.type) ? `alert-${schema.value.type.toLowerCase()}` : ''))
 </script>
 
 <template>
@@ -148,7 +146,7 @@ const alertClass = computed(() => (isAlertType(schema.value.type) ? `alert-${sch
               <el-option v-for="t in FORM_TYPES" :key="t" :value="t" :label="FORM_TYPE_META[t].label" />
             </el-select>
           </el-form-item>
-          <div v-if="isRichTextType(schema.type)" class="rt-wrap" :class="alertClass">
+          <div v-if="isRichTextType(schema.type)" class="rt-wrap">
             <span class="rt-hint">富文本类型的提示文本随正文渲染；此处仅配置类型样式。</span>
           </div>
           <template v-else>
@@ -194,9 +192,6 @@ const alertClass = computed(() => (isAlertType(schema.value.type) ? `alert-${sch
 .config-preview { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
 .cp-config, .cp-preview { flex: 1 1 280px; min-width: 0; }
 .rt-wrap { padding-left: 8px; border-left: 3px solid transparent; }
-.alert-note { border-left-color: var(--el-color-primary); }
-.alert-caution { border-left-color: var(--el-color-warning); }
-.alert-warning { border-left-color: var(--st-deprecated); }
 .rt-hint { font-size: 12px; color: var(--text-tertiary); }
 .mark-row { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
 .mark-kind { width: 120px; flex: none; }

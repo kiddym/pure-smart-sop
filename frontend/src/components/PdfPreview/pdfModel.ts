@@ -1,7 +1,6 @@
 // PDF 预览渲染模型（§34/§59）：把 ProcedureDetail + PdfLayout 组装为逐页「纸张」块。
 // 纯函数，便于单测。页号一律取后端 layout（与下载版对齐，Q235）；编号 L1 渲染追加 .0（Q305）。
 
-import { ALERT_TYPES } from '@/utils/editor'
 import type { Node } from '@/types/node'
 import { nodeTitle } from '@/utils/nodeTree'
 import type { ProcedureDetail, ProcedureFieldView } from '@/types/procedure'
@@ -113,7 +112,6 @@ export function changeTypeLabel(entry: Record<string, unknown>): string {
 export function execText(step: Node): string {
   const s = step.input_schema as Record<string, unknown>
   const t = String(s.type ?? 'COMMON').toUpperCase()
-  if ((ALERT_TYPES as readonly string[]).includes(t)) return ''
   const opts = Array.isArray(s.options)
     ? (s.options as unknown[]).map((o) =>
         typeof o === 'object' && o ? String((o as Record<string, unknown>).label ?? '') : String(o),

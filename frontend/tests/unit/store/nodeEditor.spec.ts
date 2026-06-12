@@ -168,11 +168,11 @@ describe('nodeEditor store — content edits + undo', () => {
 
   it('updateForm PATCHes input_schema + attachment_marks', async () => {
     listSpy.mockResolvedValue([n({ id: 'a', kind: 'step', revision: 2 })])
-    patchSpy.mockResolvedValue(n({ id: 'a', kind: 'step', revision: 3, input_schema: { type: 'NOTE' } }))
+    patchSpy.mockResolvedValue(n({ id: 'a', kind: 'step', revision: 3, input_schema: { type: 'CHECK' } }))
     const store = useNodeEditorStore()
     await store.load('p1')
-    await store.updateForm('a', { type: 'NOTE' }, [])
-    expect(patchSpy).toHaveBeenCalledWith('a', { input_schema: { type: 'NOTE' }, attachment_marks: [] }, 2)
+    await store.updateForm('a', { type: 'CHECK' }, [])
+    expect(patchSpy).toHaveBeenCalledWith('a', { input_schema: { type: 'CHECK' }, attachment_marks: [] }, 2)
   })
 
   it('undo of setLevel issues the inverse :batch', async () => {
@@ -331,7 +331,7 @@ describe('nodeEditor store — 409 conflict recovery (E4)', () => {
     await store.load('p1')
     patchSpy.mockRejectedValueOnce(conflict409)
     listSpy.mockResolvedValueOnce([n({ id: 'a', kind: 'step', revision: 7 })]) // refetch
-    await store.updateForm('a', { type: 'NOTE' }, [])
+    await store.updateForm('a', { type: 'CHECK' }, [])
     expect(store.nodeMap.get('a')?.revision).toBe(7)
     expect(warnSpy).toHaveBeenCalled()
   })
