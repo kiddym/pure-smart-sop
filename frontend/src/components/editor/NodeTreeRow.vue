@@ -14,6 +14,8 @@ interface Props {
   indeterminate?: boolean
   dropHint: '' | 'before' | 'after'
   readonly?: boolean
+  /** 多选进行中（已有勾选）→ 全部行的 checkbox 常显，便于继续圈选 */
+  checkVisible?: boolean
 }
 const props = defineProps<Props>()
 const emit = defineEmits<{
@@ -21,6 +23,7 @@ const emit = defineEmits<{
   (e: 'toggle'): void
   (e: 'check', shift: boolean): void
   (e: 'chip', command: string): void
+  (e: 'insert', command: string): void
   (e: 'remove'): void
   (e: 'dragstart', ev: DragEvent): void
   (e: 'dragover', ev: DragEvent): void
@@ -31,10 +34,16 @@ const emit = defineEmits<{
 }>()
 
 const n = computed(() => props.row.node)
-const levelLabel = computed(() => {
+const isChapter = computed(() => n.value.kind !== 'step' && n.value.heading_level !== null)
+// 层级键：标题/徽章按它分材质（h1/h2/h3 章节 · body 正文 · step 步骤）
+const levelKind = computed<'h1' | 'h2' | 'h3' | 'body' | 'step'>(() => {
+  if (n.value.kind === 'step') return 'step'
   const h = n.value.heading_level
-  const base = h === null ? '正文' : `L${h}`
-  return n.value.kind === 'step' ? `${base}·步骤` : base
+  return h === null ? 'body' : (`h${h}` as 'h1' | 'h2' | 'h3')
+})
+const levelLabel = computed(() => {
+  if (n.value.kind === 'step') return '步骤'
+  return n.value.heading_level === null ? '正文' : `L${n.value.heading_level}`
 })
 
 function onCheck(ev: MouseEvent): void {
@@ -86,11 +95,17 @@ function onKeydown(ev: KeyboardEvent): void {
       :model-value="selectedForMark"
       :indeterminate="indeterminate"
       class="ntr-check"
+      :class="{ 'ntr-check--on': selectedForMark || indeterminate || checkVisible }"
       @click.stop="onCheck"
     />
     <span v-if="!readonly" class="ntr-actions" @click.stop>
       <el-dropdown trigger="click" :persistent="false" @command="(c: string) => emit('chip', c)">
-        <el-button size="small" text class="ntr-chip">{{ levelLabel }} ▾</el-button>
+        <el-button
+          size="small"
+          text
+          class="ntr-chip"
+          :class="isChapter ? 'ntr-chip--chapter' : 'ntr-chip--plain'"
+        >{{ levelLabel }} ▾</el-button>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item command="l0">正文</el-dropdown-item>
@@ -102,13 +117,25 @@ function onKeydown(ev: KeyboardEvent): void {
           </el-dropdown-menu>
         </template>
       </el-dropdown>
+      <el-dropdown trigger="click" :persistent="false" @command="(c: string) => emit('insert', c)">
+        <el-button size="small" text class="ntr-add" title="在此行下方新增">＋</el-button>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item command="l0">＋ 正文</el-dropdown-item>
+            <el-dropdown-item command="step">＋ 步骤</el-dropdown-item>
+            <el-dropdown-item command="l1" divided>＋ 一级章节</el-dropdown-item>
+            <el-dropdown-item command="l2">＋ 二级章节</el-dropdown-item>
+            <el-dropdown-item command="l3">＋ 三级章节</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
     </span>
     <span class="ntr-code">{{ n.code }}</span>
     <span v-if="row.contentKind" class="ntr-type" :class="`ntr-type--${row.contentKind}`">
       <el-icon><component :is="TYPE_ICON[row.contentKind]" /></el-icon>
       {{ TYPE_LABEL[row.contentKind] }}
     </span>
-    <span class="ntr-title">{{ row.title }}</span>
+    <span class="ntr-title" :class="`ntr-title--${levelKind}`">{{ row.title }}</span>
     <span v-if="n.mark_status === 'review'" class="ntr-review" title="解析存疑，待确认">待确认</span>
     <el-button v-if="!readonly" class="ntr-del" size="small" text title="删除" @click.stop="emit('remove')">✕</el-button>
   </div>
@@ -122,11 +149,50 @@ function onKeydown(ev: KeyboardEvent): void {
 .ntr--drop-after { box-shadow: inset 0 -2px 0 var(--el-color-primary); }
 .ntr-caret { width: 14px; text-align: center; color: var(--text-tertiary); flex: none; }
 .ntr-caret--hidden { visibility: hidden; }
-.ntr-check { flex: none; }
-.ntr-actions { flex: none; }
-.ntr-chip { font-variant-numeric: tabular-nums; }
+/* opacity（非 visibility）保持键盘可聚焦；hover / 行内聚焦 / 多选进行中显示 */
+.ntr-check { flex: none; opacity: 0; }
+.ntr:hover .ntr-check, .ntr:focus-within .ntr-check, .ntr-check--on { opacity: 1; }
+.ntr-actions { flex: none; display: inline-flex; align-items: center; gap: 4px; }
+/* 层级徽章 = 等宽有界「药丸」：与标题分材质（mono / 小字 / 描边），不再读成一句话。
+   .el-button 限定提高特异性，盖过 Element text-button 的默认 / hover 态。 */
+.ntr-actions .ntr-chip.el-button {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  line-height: 1.45;
+}
+/* 章节家族（L1–L3）= 赤陶 tint；正文 / 步骤 = 中性灰（两档即可，层级深浅交给标题字重） */
+.ntr-actions .ntr-chip--chapter.el-button,
+.ntr-actions .ntr-chip--chapter.el-button:focus {
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-color: var(--accent-bg);
+}
+.ntr-actions .ntr-chip--chapter.el-button:hover { background: var(--accent-bg-hover); color: var(--accent); }
+.ntr-actions .ntr-chip--plain.el-button,
+.ntr-actions .ntr-chip--plain.el-button:hover,
+.ntr-actions .ntr-chip--plain.el-button:focus {
+  color: var(--text-tertiary);
+  background: var(--bg-hover);
+  border-color: var(--border-subtle);
+}
+/* 「＋ 新增」默认隐藏，指向该行（hover / 行内聚焦）时显示，保持静息态整洁 */
+.ntr-add { display: none; padding: 0 4px; font-weight: 600; }
+.ntr:hover .ntr-add, .ntr:focus-within .ntr-add { display: inline-flex; }
 .ntr-code { color: var(--text-tertiary); font-variant-numeric: tabular-nums; flex: none; }
+/* 标题承担「层级深浅」：章节粗深、正文/步骤细浅，一眼可读层次 */
 .ntr-title { overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; }
+.ntr-title--h1 { font-weight: 600; color: var(--text-primary); }
+.ntr-title--h2 { font-weight: 600; color: var(--text-regular); }
+.ntr-title--h3 { font-weight: 500; color: var(--text-regular); }
+.ntr-title--body { font-weight: 400; color: var(--text-secondary); }
+.ntr-title--step { font-weight: 400; color: var(--text-secondary); font-style: italic; }
 .ntr-review { flex: none; font-size: 11px; line-height: 1; padding: 1px 4px; border-radius: 3px; color: var(--accent); background: var(--review-bg); border: 1px solid var(--accent-bg); }
 .ntr-type { flex: none; display: inline-flex; align-items: center; gap: 2px; font-size: 11px; line-height: 1; padding: 1px 4px; border-radius: 3px; color: var(--text-secondary); background: var(--bg-hover); border: 1px solid var(--border-subtle); }
 .ntr-type .el-icon { font-size: 12px; }

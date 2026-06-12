@@ -82,6 +82,19 @@ describe('NodeDetailPanel', () => {
     expect(spy).toHaveBeenCalledWith('a', { type: 'CHECK' }, [{ filename: '', kind: 'document', note: '' }])
   })
 
+  it('collapse defaults to body only; 高级设置 holds level/kind/skip', async () => {
+    const { w, store } = mountPanel()
+    store.nodes = [n({ id: 'a' })]
+    store.selectedId = 'a'
+    await w.vm.$nextTick()
+    const items = w.findAllComponents({ name: 'ElCollapseItem' })
+    expect(items.map((i) => i.props('title'))).toContain('高级设置')
+    // 仅「正文」默认展开
+    const active = w.findAll('.el-collapse-item.is-active')
+    expect(active).toHaveLength(1)
+    expect(active[0].text()).toContain('正文')
+  })
+
   it('review node shows confirm button → confirmReview', async () => {
     const { w, store } = mountPanel()
     store.nodes = [n({ id: 'a', mark_status: 'review' })]

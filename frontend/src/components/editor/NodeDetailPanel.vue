@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useDebounceFn } from '@vueuse/core'
 import { createHeadingRule } from '@/api/headingRules'
@@ -106,27 +106,14 @@ async function onTypeChange(next: FormType): Promise<void> {
   }
   saveForm({ type: next }, marks.value)
 }
+
+// 渐进披露：默认只展开正文；执行表单/附件标记/高级设置按需展开（切换节点时保留用户选择）。
+const openSections = ref<string[]>(['body'])
 </script>
 
 <template>
   <div v-if="node" class="node-detail">
-    <el-form v-if="!props.readonly" label-position="top">
-      <el-form-item label="层级">
-        <el-select :model-value="node.heading_level ?? BODY_LEVEL" @change="onLevel">
-          <el-option v-for="l in LEVELS" :key="l.value" :value="l.value" :label="l.label" />
-        </el-select>
-      </el-form-item>
-      <div class="inline">
-        <el-form-item label="作为步骤（带执行表单）" class="kind-switch">
-          <el-switch :model-value="node.kind === 'step'" @change="onKindSwitch" />
-        </el-form-item>
-        <el-form-item label="跳号">
-          <el-switch :model-value="node.skip_numbering" @change="onSkip" />
-        </el-form-item>
-      </div>
-    </el-form>
-
-    <el-collapse :model-value="['body', 'form', 'attach']">
+    <el-collapse v-model="openSections">
       <el-collapse-item title="正文" name="body">
         <RichTextEditor
           :key="`body-${node.id}`"
@@ -168,6 +155,25 @@ async function onTypeChange(next: FormType): Promise<void> {
           <el-button v-if="!props.readonly" size="small" text @click="removeMark(i)">✕</el-button>
         </div>
         <el-button v-if="!props.readonly" class="add-mark" size="small" @click="addMark">+ 附件标记</el-button>
+      </el-collapse-item>
+
+      <!-- 结构操作主入口在左侧树行 chip；此处折叠收纳，避免同屏三处重复（含树上没有的「跳号」） -->
+      <el-collapse-item v-if="!props.readonly" title="高级设置" name="advanced">
+        <el-form label-position="top">
+          <el-form-item label="层级">
+            <el-select :model-value="node.heading_level ?? BODY_LEVEL" @change="onLevel">
+              <el-option v-for="l in LEVELS" :key="l.value" :value="l.value" :label="l.label" />
+            </el-select>
+          </el-form-item>
+          <div class="inline">
+            <el-form-item label="作为步骤（带执行表单）" class="kind-switch">
+              <el-switch :model-value="node.kind === 'step'" @change="onKindSwitch" />
+            </el-form-item>
+            <el-form-item label="跳号">
+              <el-switch :model-value="node.skip_numbering" @change="onSkip" />
+            </el-form-item>
+          </div>
+        </el-form>
       </el-collapse-item>
     </el-collapse>
 

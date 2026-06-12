@@ -19,7 +19,6 @@ import {
   deleteGroup,
   deleteProcedure,
   deprecateGroup,
-  downloadPdf,
   fetchProcedureDetail,
   restoreGroup,
   restorePreview,
@@ -29,7 +28,7 @@ import {
   upgradeVersion,
 } from '@/api/procedures'
 import { LEVEL_OF_USE_LABELS, formatDateTime } from '@/utils/format'
-import type { LevelOfUse, ProcedureMeta } from '@/types/procedure'
+import type { LevelOfUse, ProcedureMeta, ProcedureUpdate } from '@/types/procedure'
 
 const route = useRoute()
 const router = useRouter()
@@ -75,23 +74,12 @@ async function onPublishConfirm(): Promise<void> {
     publishing.value = false
   }
 }
-// PDF 预览 / 下载（任意 is_current=true 程序可用，editor-behavior §10）
+// PDF 预览（任意 is_current=true 程序可用，editor-behavior §10）。
+// 下载入口只保留在 PDF 预览弹框内（避免菜单重复，§修正）。
 const previewVisible = ref(false)
 const compareVisible = ref(false)
 const comparePair = ref<{ oldId: string; oldVersion: number; newId: string; newVersion: number } | null>(null)
-const pdfBusy = ref(false)
 const canPdf = computed(() => !!meta.value?.is_current)
-
-async function onDownloadPdf(): Promise<void> {
-  pdfBusy.value = true
-  try {
-    await downloadPdf(id.value)
-  } catch {
-    /* 拦截器已提示 */
-  } finally {
-    pdfBusy.value = false
-  }
-}
 
 const editable = computed(
   () => !!meta.value && meta.value.is_current && meta.value.status === 'DRAFT' && !deprecated.value,
@@ -101,6 +89,14 @@ const canUpgrade = computed(
   () => !!meta.value && meta.value.is_current && meta.value.status === 'PUBLISHED' && !deprecated.value,
 )
 const canArchive = computed(
+  () =>
+    !!meta.value &&
+    meta.value.is_current &&
+    meta.value.status === 'PUBLISHED' &&
+    !deprecated.value,
+)
+// 废弃仅针对「已生效」程序（当前版且 PUBLISHED）；草稿 / 已废止不可废弃。
+const canDeprecate = computed(
   () =>
     !!meta.value &&
     meta.value.is_current &&
@@ -122,13 +118,13 @@ const isDraftDiscard = computed(() => !!meta.value && meta.value.is_current && m
 const notesDraft = ref('')
 const notesDirty = computed(() => !!meta.value && notesDraft.value !== meta.value.version_update_notes)
 
+// 「程序属性」弹框只编辑程序属性；版本级的「本次版本更新说明」在主页面 notes-card 单独编辑。
 interface EditForm {
   name: string
   level_of_use: LevelOfUse
   description: string
   risk_level: number
   quality_level: number
-  version_update_notes: string
 }
 const form = reactive<EditForm>({
   name: '',
@@ -136,7 +132,6 @@ const form = reactive<EditForm>({
   description: '',
   risk_level: 1,
   quality_level: 1,
-  version_update_notes: '',
 })
 
 async function load(): Promise<void> {
@@ -151,7 +146,7 @@ async function load(): Promise<void> {
 }
 onMounted(load)
 
-function metaUpdatePayload(overrides: Partial<EditForm> = {}) {
+function metaUpdatePayload(overrides: Partial<ProcedureUpdate> = {}) {
   const m = meta.value!
   return {
     name: m.name,
@@ -186,7 +181,6 @@ function openEdit(): void {
     description: meta.value.description,
     risk_level: meta.value.risk_level,
     quality_level: meta.value.quality_level,
-    version_update_notes: meta.value.version_update_notes,
   })
   editVisible.value = true
 }
@@ -195,7 +189,8 @@ async function saveEdit(): Promise<void> {
   if (!meta.value) return
   busy.value = true
   try {
-    await updateProcedure(id.value, { ...form }, meta.value.revision)
+    // metaUpdatePayload 用 form 覆盖程序属性，version_update_notes 仍取 meta 原值（弹框已不含该字段）。
+    await updateProcedure(id.value, metaUpdatePayload(form), meta.value.revision)
     ElMessage.success('已保存')
     editVisible.value = false
     await load()
@@ -424,9 +419,8 @@ async function onDialogConfirm(payload: VersionActionResult): Promise<void> {
             <el-button :disabled="busy">更多<el-icon class="more-arrow"><ArrowDown /></el-icon></el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item v-if="editable" @click="openEdit">快速编辑</el-dropdown-item>
+                <el-dropdown-item v-if="editable" @click="openEdit">程序属性</el-dropdown-item>
                 <el-dropdown-item v-if="canPdf" @click="previewVisible = true">PDF 预览</el-dropdown-item>
-                <el-dropdown-item v-if="canPdf" @click="onDownloadPdf">PDF 下载</el-dropdown-item>
                 <el-dropdown-item v-if="canUpgrade" divided @click="onUpgrade">升级版本</el-dropdown-item>
                 <el-dropdown-item @click="openCopy">复制为新程序</el-dropdown-item>
                 <!-- 单版本状态流转：把此版本本身移入归档（区别于「归档整族」）。 -->
@@ -435,7 +429,7 @@ async function onDialogConfirm(payload: VersionActionResult): Promise<void> {
                 </el-dropdown-item>
                 <!-- 整组所有版本一起移入归档 / 废止（不可逆性更强，放后段）。 -->
                 <el-dropdown-item v-if="canArchive" @click="openArchive">归档整族</el-dropdown-item>
-                <el-dropdown-item v-if="!deprecated" divided @click="openDeprecate">废弃</el-dropdown-item>
+                <el-dropdown-item v-if="canDeprecate" divided @click="openDeprecate">废弃</el-dropdown-item>
                 <el-dropdown-item v-if="deprecated" @click="openRestore">恢复</el-dropdown-item>
                 <!-- 当前 DRAFT → 丢弃草稿（文案全簇统一）；非当前版 → 软删（删除）。 -->
                 <el-dropdown-item v-if="canDelete" divided @click="remove">
@@ -525,7 +519,7 @@ async function onDialogConfirm(payload: VersionActionResult): Promise<void> {
         <el-empty v-else description="暂无记录" />
       </el-card>
 
-      <el-dialog v-model="editVisible" title="编辑程序" width="520px">
+      <el-dialog v-model="editVisible" title="程序属性" width="520px">
         <el-form label-width="120px">
           <el-form-item label="名称" required>
             <el-input v-model="form.name" maxlength="200" />
@@ -545,9 +539,6 @@ async function onDialogConfirm(payload: VersionActionResult): Promise<void> {
           </el-form-item>
           <el-form-item label="描述">
             <el-input v-model="form.description" type="textarea" :rows="3" maxlength="10000" />
-          </el-form-item>
-          <el-form-item label="本次版本更新说明">
-            <el-input v-model="form.version_update_notes" type="textarea" :rows="2" maxlength="10000" />
           </el-form-item>
         </el-form>
         <template #footer>

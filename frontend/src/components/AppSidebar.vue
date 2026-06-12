@@ -6,7 +6,6 @@ import {
   // SOP
   Document,
   EditPen,
-  Folder,
   // 管理：配置中心
   Setting,
 } from '@element-plus/icons-vue'
@@ -37,7 +36,6 @@ const groups = computed<NavGroup[]>(() => [
     entries: [
       { label: '程序库', path: '/procedures/library', icon: Document },
       { label: '草稿箱', path: '/procedures/drafts', icon: EditPen },
-      { label: '文件夹', path: '/procedures/folders', icon: Folder },
     ],
   },
   {
@@ -54,7 +52,7 @@ const activeMenu = computed<string>(() => {
   if (p.startsWith('/admin/config')) return '/admin/config'
   if (p.startsWith('/admin/')) return p
   if (p.startsWith('/procedures/drafts')) return '/procedures/drafts'
-  if (p.startsWith('/procedures/folders')) return '/procedures/folders'
+  // 文件夹页（/procedures/folders）已从侧栏移至配置中心，归并到「程序库」高亮
   if (p.startsWith('/procedures')) return '/procedures/library'
   return ''
 })

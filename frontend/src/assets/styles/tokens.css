@@ -12,6 +12,7 @@
   --accent-foreground: #ffffff; /* accent 实底上的前景（badge 字） */
   --accent-bg: rgba(217, 119, 87, 0.12); /* 选中行底 / 焦点环底（§2.1 accent-bg） */
   --accent-bg-hover: rgba(217, 119, 87, 0.16); /* 选中项 hover 时的略深底 */
+  --folder-amber: #d9a14e; /* 程序库文件夹引导图标（暖琥珀，亮暗通用；同 diff-mod 暖色源） */
   --bg-base: #faf8f4; /* 主内容区底（亮纸色，§2.1 paper-bg 同值） */
   --bg-surface: #f5f3ef; /* 侧栏 / 顶栏 / 面板 */
   --bg-elevated: #eceae5; /* 卡片 / 下拉 / 弹层 */

@@ -4,6 +4,7 @@ import * as api from '@/api/nodes'
 import { isVersionConflict, errorMessage } from '@/api/http'
 import type { Node } from '@/types/node'
 import { visibleRows, nodeTitle, type TreeRow } from '@/utils/nodeTree'
+import { computeInsertIndex } from '@/utils/nodeTreeInsert'
 
 interface State {
   procedureId: string | null
@@ -208,6 +209,25 @@ export const useNodeEditorStore = defineStore('nodeEditor', {
     async createNode(payload: import('@/types/node').NodeCreate): Promise<void> {
       if (!this.procedureId) return
       const created = await api.createNode(this.procedureId, payload)
+      await this._refetch()
+      this.selectedId = created.id
+      this._pushUndo(() => this.removeNode(created.id))
+    },
+
+    /** 在 targetId 下方插入一个新节点（行级「＋ 新增」）。
+     *  位置由 computeInsertIndex 派生（更深→首子项，同级/更浅→子树之后），
+     *  实现为「create 追加到末尾 + reorder 定位」，复用 gap 重排避免整数 sort_order 碰撞。
+     *  撤销=移除该节点（单条 undo），与 removeNode 的重做机制一致。 */
+    async insertNode(
+      targetId: string,
+      payload: import('@/types/node').NodeCreate,
+    ): Promise<void> {
+      if (!this.procedureId) return
+      const order = this.nodes.map((x) => x.id)
+      const index = computeInsertIndex(this.nodes, targetId, payload.heading_level ?? null)
+      const created = await api.createNode(this.procedureId, payload)
+      order.splice(index, 0, created.id)
+      await api.reorderNodes(this.procedureId, order)
       await this._refetch()
       this.selectedId = created.id
       this._pushUndo(() => this.removeNode(created.id))

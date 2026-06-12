@@ -47,6 +47,17 @@ function onChip(id: string, command: string): void {
   else if (command === 'step') void store.setKind(id, 'step')
   else if (command === 'node') void store.setKind(id, 'node')
 }
+const INSERT_PAYLOAD: Record<string, import('@/types/node').NodeCreate> = {
+  l0: { heading_level: null, kind: 'node' },
+  l1: { heading_level: 1, kind: 'node' },
+  l2: { heading_level: 2, kind: 'node' },
+  l3: { heading_level: 3, kind: 'node' },
+  step: { heading_level: null, kind: 'step' },
+}
+function onInsert(id: string, command: string): void {
+  const payload = INSERT_PAYLOAD[command]
+  if (payload) void store.insertNode(id, payload)
+}
 function onCheck(id: string, shift: boolean): void {
   if (shift && anchor.value) {
     const rows = store.rows.map((r) => ({ id: r.node.id, parent_id: r.node.parent_id, kind: r.node.kind }))
@@ -155,16 +166,19 @@ function hintFor(row: TreeRow): '' | 'before' | 'after' {
     <div class="np-toolbar">
       <el-input v-model="search" class="np-search" size="small" placeholder="搜索标题…" clearable />
       <el-button v-if="!props.readonly" class="np-add" size="small" @click="addNode">＋ 新增节点</el-button>
-      <span class="np-review-count">待确认 {{ store.reviewCount }}</span>
-      <el-button
-        class="np-review-toggle"
-        size="small"
-        :type="store.reviewOnly ? 'primary' : 'default'"
-        @click="store.reviewOnly = !store.reviewOnly"
-      >
-        仅看待确认
-      </el-button>
-      <el-button class="np-review-next" size="small" :disabled="!store.reviewCount" @click="gotoNextReview">下一个</el-button>
+      <!-- review 工具仅在有待确认项时出现（reviewOnly 已开时保留出口，避免滤空后无法关闭） -->
+      <template v-if="store.reviewCount || store.reviewOnly">
+        <span class="np-review-count">待确认 {{ store.reviewCount }}</span>
+        <el-button
+          class="np-review-toggle"
+          size="small"
+          :type="store.reviewOnly ? 'primary' : 'default'"
+          @click="store.reviewOnly = !store.reviewOnly"
+        >
+          仅看待确认
+        </el-button>
+        <el-button class="np-review-next" size="small" :disabled="!store.reviewCount" @click="gotoNextReview">下一个</el-button>
+      </template>
     </div>
 
     <div v-if="!props.readonly && store.selection.size" class="np-bar">
@@ -186,6 +200,7 @@ function hintFor(row: TreeRow): '' | 'before' | 'after' {
           :row="row"
           :readonly="props.readonly"
           :selected="store.selectedId === row.node.id"
+          :check-visible="store.selection.size > 0"
           :selected-for-mark="states.get(row.node.id) === 'checked'"
           :indeterminate="states.get(row.node.id) === 'indeterminate'"
           :drop-hint="hintFor(row)"
@@ -193,6 +208,7 @@ function hintFor(row: TreeRow): '' | 'before' | 'after' {
           @toggle="store.toggleExpand(row.node.id)"
           @check="(shift: boolean) => onCheck(row.node.id, shift)"
           @chip="(c: string) => onChip(row.node.id, c)"
+          @insert="(c: string) => onInsert(row.node.id, c)"
           @remove="store.removeNode(row.node.id)"
           @indent="(dir: 'in' | 'out') => onIndent(row.node.id, dir)"
           @nav="(dir: 'up' | 'down' | 'left' | 'right') => onNav(row.node.id, dir)"

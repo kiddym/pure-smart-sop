@@ -34,7 +34,7 @@ const nodeStore = useNodeEditorStore()
 // 键盘快捷键（E1）：撤销/重做 + 设层级；仅可编辑时生效（/view 只读时 no-op）。
 useEditorShortcuts({ editable: () => store.editable })
 
-const activeTab = ref<'node' | 'attach' | 'history'>('node')
+const activeTab = ref<'node' | 'info' | 'attach' | 'history'>('node')
 const publishVisible = ref(false)
 const publishing = ref(false)
 const copyVisible = ref(false)
@@ -210,17 +210,21 @@ function goBack(): void {
           <NodeTreePanel :readonly="!store.editable" />
         </div>
         <CollapsiblePanel
-          label="节点详情"
+          label="详情"
           side="right"
           storage-key="smartsop.editor.detail"
           :config="DETAIL_CFG"
         >
           <div class="right-scroll">
-            <ProcedureDetailsPanel />
             <el-tabs v-model="activeTab" class="tabs">
               <el-tab-pane label="节点详情" name="node">
                 <div class="pane">
                   <NodeDetailPanel :readonly="!store.editable" />
+                </div>
+              </el-tab-pane>
+              <el-tab-pane label="程序详情" name="info">
+                <div class="pane">
+                  <ProcedureDetailsPanel />
                 </div>
               </el-tab-pane>
               <el-tab-pane label="附件" name="attach">

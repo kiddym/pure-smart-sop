@@ -54,6 +54,16 @@ describe('NodeTreeRow', () => {
     expect(w.emitted('chip')).toEqual([['l2'], ['step']])
   })
 
+  it('insert dropdown emits insert with the chosen command (l1 / step / l0)', () => {
+    const w = mountRow(treeRow())
+    // 第二个下拉是行级「＋ 新增」菜单（第一个是层级 chip）
+    const dd = w.findAllComponents({ name: 'ElDropdown' })[1]
+    dd.vm.$emit('command', 'l1')
+    dd.vm.$emit('command', 'step')
+    dd.vm.$emit('command', 'l0')
+    expect(w.emitted('insert')).toEqual([['l1'], ['step'], ['l0']])
+  })
+
   it('delete button emits remove', async () => {
     const w = mountRow(treeRow())
     await w.find('.ntr-del').trigger('click')
@@ -95,6 +105,29 @@ describe('NodeTreeRow', () => {
     expect(w.emitted('dragover')).toBeTruthy()
     expect(w.emitted('drop')).toBeTruthy()
     expect(w.emitted('dragend')).toBeTruthy()
+  })
+})
+
+describe('NodeTreeRow — level visual differentiation', () => {
+  it('level label reads 步骤 for a step, 正文 for a body line, L2 for a heading', () => {
+    const step = mountRow(treeRow({ kind: 'step', heading_level: null })).find('.ntr-chip').text()
+    expect(step).toContain('步骤')
+    expect(step).not.toContain('正文') // 不再是「正文·步骤」
+    expect(mountRow(treeRow({ heading_level: null })).find('.ntr-chip').text()).toContain('正文')
+    expect(mountRow(treeRow({ heading_level: 2 })).find('.ntr-chip').text()).toContain('L2')
+  })
+
+  it('title carries a level-keyed class (h1 / h2 / h3 / body / step)', () => {
+    expect(mountRow(treeRow({ heading_level: 1 })).find('.ntr-title').classes()).toContain('ntr-title--h1')
+    expect(mountRow(treeRow({ heading_level: 3 })).find('.ntr-title').classes()).toContain('ntr-title--h3')
+    expect(mountRow(treeRow({ heading_level: null })).find('.ntr-title').classes()).toContain('ntr-title--body')
+    expect(mountRow(treeRow({ kind: 'step', heading_level: null })).find('.ntr-title').classes()).toContain('ntr-title--step')
+  })
+
+  it('badge is a chapter pill for headings, a plain pill for body/step', () => {
+    expect(mountRow(treeRow({ heading_level: 1 })).find('.ntr-chip').classes()).toContain('ntr-chip--chapter')
+    expect(mountRow(treeRow({ heading_level: null })).find('.ntr-chip').classes()).toContain('ntr-chip--plain')
+    expect(mountRow(treeRow({ kind: 'step', heading_level: null })).find('.ntr-chip').classes()).toContain('ntr-chip--plain')
   })
 })
 

@@ -152,6 +152,56 @@ describe('nodeEditor store — structural edits', () => {
     expect(reorderSpy).toHaveBeenCalledWith('p1', ['b', 'a'])
     expect(store.nodes.map((x) => x.id)).toEqual(['b', 'a'])
   })
+
+  it('insertNode creates a node then reorders it under the target chapter, selecting it', async () => {
+    // A(L1) 下挂 b(正文)；在 A 下方插入正文 → 应成为 A 的首个子项：['a','new','b']
+    listSpy.mockResolvedValueOnce([
+      n({ id: 'a', heading_level: 1, body: '<p>a</p>' }),
+      n({ id: 'b', parent_id: 'a', depth: 1, sort_order: 1000, body: '<p>b</p>' }),
+    ])
+    createSpy.mockResolvedValue(n({ id: 'new', sort_order: 9999 }))
+    reorderSpy.mockResolvedValue(undefined)
+    listSpy.mockResolvedValueOnce([
+      n({ id: 'a', heading_level: 1, body: '<p>a</p>' }),
+      n({ id: 'new', parent_id: 'a', depth: 1, sort_order: 1000 }),
+      n({ id: 'b', parent_id: 'a', depth: 1, sort_order: 2000, body: '<p>b</p>' }),
+    ])
+    const store = useNodeEditorStore()
+    await store.load('p1')
+    await store.insertNode('a', { heading_level: null, kind: 'node' })
+    expect(createSpy).toHaveBeenCalledWith('p1', { heading_level: null, kind: 'node' })
+    expect(reorderSpy).toHaveBeenCalledWith('p1', ['a', 'new', 'b'])
+    expect(store.selectedId).toBe('new')
+  })
+
+  it('insertNode of a same-level chapter lands after the target’s whole subtree', async () => {
+    listSpy.mockResolvedValueOnce([
+      n({ id: 'a', heading_level: 1, body: '<p>a</p>' }),
+      n({ id: 'b', parent_id: 'a', depth: 1, sort_order: 1000, body: '<p>b</p>' }),
+    ])
+    createSpy.mockResolvedValue(n({ id: 'new', sort_order: 9999 }))
+    reorderSpy.mockResolvedValue(undefined)
+    listSpy.mockResolvedValueOnce([n({ id: 'a' }), n({ id: 'b' }), n({ id: 'new' })])
+    const store = useNodeEditorStore()
+    await store.load('p1')
+    await store.insertNode('a', { heading_level: 1, kind: 'node' })
+    expect(reorderSpy).toHaveBeenCalledWith('p1', ['a', 'b', 'new'])
+  })
+
+  it('undo of insertNode removes the inserted node (single undo entry)', async () => {
+    listSpy.mockResolvedValueOnce([n({ id: 'a', heading_level: 1, body: '<p>a</p>' })])
+    createSpy.mockResolvedValue(n({ id: 'new', sort_order: 9999 }))
+    reorderSpy.mockResolvedValue(undefined)
+    listSpy.mockResolvedValueOnce([n({ id: 'a', heading_level: 1 }), n({ id: 'new' })])
+    deleteSpy.mockResolvedValue(undefined)
+    listSpy.mockResolvedValueOnce([n({ id: 'a', heading_level: 1 })])
+    const store = useNodeEditorStore()
+    await store.load('p1')
+    await store.insertNode('a', { heading_level: null, kind: 'node' })
+    expect(store.canUndo).toBe(true)
+    await store.undo()
+    expect(deleteSpy).toHaveBeenCalledWith('new')
+  })
 })
 
 describe('nodeEditor store — content edits + undo', () => {

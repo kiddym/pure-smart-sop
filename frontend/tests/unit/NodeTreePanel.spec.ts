@@ -72,6 +72,18 @@ describe('NodeTreePanel', () => {
     expect(create).toHaveBeenCalledWith({ heading_level: null, kind: 'node' })
   })
 
+  it('row insert maps command → insertNode payload (l1 章节 / l0 正文 / step 步骤)', async () => {
+    const { w, store } = setup([n({ id: 'a', heading_level: 1, body: '<p>A</p>' })])
+    const insert = vi.spyOn(store, 'insertNode').mockResolvedValue()
+    const row = w.findComponent({ name: 'NodeTreeRow' })
+    row.vm.$emit('insert', 'l1')
+    row.vm.$emit('insert', 'l0')
+    row.vm.$emit('insert', 'step')
+    expect(insert).toHaveBeenNthCalledWith(1, 'a', { heading_level: 1, kind: 'node' })
+    expect(insert).toHaveBeenNthCalledWith(2, 'a', { heading_level: null, kind: 'node' })
+    expect(insert).toHaveBeenNthCalledWith(3, 'a', { heading_level: null, kind: 'step' })
+  })
+
   it('check builds selection; floating bar 设为L1 calls batchSetLevel then clears selection', async () => {
     const { w, store } = setup([
       n({ id: 'a', body: '<p>A</p>' }),
@@ -96,6 +108,20 @@ describe('NodeTreePanel', () => {
     expect(w.find('.np-review-count').text()).toContain('1')
     await w.find('.np-review-toggle').trigger('click')
     expect(store.reviewOnly).toBe(true)
+  })
+
+  it('review controls hidden when no review nodes (and reviewOnly off)', () => {
+    const { w } = setup([n({ id: 'a', body: '<p>A</p>' })])
+    expect(w.find('.np-review-count').exists()).toBe(false)
+    expect(w.find('.np-review-toggle').exists()).toBe(false)
+    expect(w.find('.np-review-next').exists()).toBe(false)
+  })
+
+  it('review toggle stays visible while reviewOnly is on even if count drops to 0', async () => {
+    const { w, store } = setup([n({ id: 'a', body: '<p>A</p>' })])
+    store.reviewOnly = true
+    await w.vm.$nextTick()
+    expect(w.find('.np-review-toggle').exists()).toBe(true)
   })
 
   it('drop reorders via computeReorder → store.reorder', async () => {
