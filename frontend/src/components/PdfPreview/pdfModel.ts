@@ -108,7 +108,7 @@ export function changeTypeLabel(entry: Record<string, unknown>): string {
   return label
 }
 
-// 15 型执行占位符文案（与后端 sections._form_placeholder 对齐，§6.3）。
+// 12 型执行占位符文案（与后端 sections._form_placeholder 对齐，§6.3）。
 export function execText(step: Node): string {
   const s = step.input_schema as Record<string, unknown>
   const t = String(s.type ?? 'COMMON').toUpperCase()

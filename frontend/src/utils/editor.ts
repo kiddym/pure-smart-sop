@@ -1,4 +1,4 @@
-// 编辑器纯函数工具：表单型元数据、警示/富文本类型判定、已废弃字段历史值。
+// 编辑器纯函数工具：表单型元数据、富文本类型判定、已废弃字段历史值。
 
 import type { FormType } from '@/types/node'
 import type { FieldDetailOut, FieldOption } from '@/types/field'

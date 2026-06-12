@@ -4,7 +4,7 @@
 // 标记态：编辑器三态 + Word 智能解析留下的持久 'review' 态（apply-marks 不碰，M1 修复）。
 export type MarkStatus = 'unmarked' | 'step' | 'content' | 'review'
 
-// 执行表单 15 型（大写枚举，Q261/§40.1）。
+// 执行表单 12 型（大写枚举；警示已下放为富文本内联块，不再是表单类型）。
 export type FormType =
   | 'COMMON'
   | 'CHECK'
