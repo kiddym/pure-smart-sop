@@ -159,7 +159,6 @@ def test_signoff_absent_when_disabled() -> None:
     assert not any("签字" in _text(f) for f in out)
 
 
-
 def test_attachment_mark_kind_document() -> None:
     # 编辑器默认 kind='document' → 文档
     text = sections._attachment_mark_text({"filename": "spec.docx", "kind": "document"})
@@ -282,7 +281,7 @@ def test_empty_content_placeholder() -> None:
 
 
 # --------------------------------------------------------------------------- #
-# 警示型步骤渲染（§6.3 / Q261/§40.1）
+# 步骤正文渲染：COMMON 渲染正文、数据型隐藏正文、内联 warning-block 出警示框（§6.3）
 # --------------------------------------------------------------------------- #
 def test_number_type_step_hides_content() -> None:
     """NUMBER 类型步骤：content 隐藏（数据型不渲染正文），仅渲染表单占位符。"""

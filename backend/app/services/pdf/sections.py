@@ -281,7 +281,7 @@ def _render_step(st: StepData, data: RenderData, out: list[Flowable]) -> None:
     code = "" if st.skip_numbering or not st.code else st.code
     title = f"{_esc(code)}{FULL_SPACE}{_esc(st.title)}" if code else _esc(st.title)
     out.append(_keyed(Paragraph(title or "（步骤）", s("step_title")), ("step", st.id)))
-    # 按 input_schema.type 分发渲染路径（§6.3 / Q261/§40.1）
+    # 按 input_schema.type 分发渲染路径（§6.3）
     ftype = str((st.input_schema or {}).get("type", "COMMON")).upper()
     if ftype == "COMMON":
         out.extend(render_html(st.content, data.assets))
