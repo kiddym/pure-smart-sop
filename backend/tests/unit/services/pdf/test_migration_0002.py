@@ -44,7 +44,8 @@ def test_wrap_rejects_unknown_type() -> None:
 
 
 def test_upgrade_converts_alert_step(tmp_path) -> None:
-    """在临时 SQLite 上建最小表，插一条 WARNING 步骤，跑 upgrade 逻辑断言转换。"""
+    """在临时 SQLite 上建最小表，插 WARNING/NUMBER/NOTE/CAUTION 步骤，
+    调用真实共用 helper _convert_alert_steps，断言转换结果。"""
     eng = sa.create_engine(f"sqlite:///{tmp_path}/m.db")
     meta = sa.MetaData()
     node = sa.Table(
@@ -65,26 +66,29 @@ def test_upgrade_converts_alert_step(tmp_path) -> None:
                  "input_schema": {"type": "WARNING"}, "attachment_marks": [{"filename": "x"}]},
                 {"id": "b", "kind": "step", "body": "<p>读数</p>",
                  "input_schema": {"type": "NUMBER"}, "attachment_marks": []},
+                {"id": "c", "kind": "step", "body": "<p>注意</p>",
+                 "input_schema": {"type": "NOTE"}, "attachment_marks": []},
+                {"id": "d", "kind": "step", "body": "<p>小心</p>",
+                 "input_schema": {"type": "CAUTION"}, "attachment_marks": []},
             ],
         )
-    # 复用迁移的纯逻辑跑一遍 update（不经 alembic context）
+    # 调用真实共用 helper（不经 alembic context）
     with eng.begin() as conn:
-        rows = conn.execute(sa.select(node.c.id, node.c.body, node.c.input_schema)
-                            .where(node.c.kind == "step")).fetchall()
-        for r in rows:
-            schema = mig0002._schema_dict(r.input_schema)
-            ft = str(schema.get("type", "")).upper()
-            if ft not in mig0002._ALERT_TYPE_TO_BLOCK:
-                continue
-            conn.execute(node.update().where(node.c.id == r.id).values(
-                kind="node", body=mig0002.wrap_alert_body(r.body, ft),
-                input_schema={}, attachment_marks=[]))
+        mig0002._convert_alert_steps(conn)
     with eng.connect() as conn:
         a = conn.execute(sa.select(node).where(node.c.id == "a")).one()
         b = conn.execute(sa.select(node).where(node.c.id == "b")).one()
+        c = conn.execute(sa.select(node).where(node.c.id == "c")).one()
+        d = conn.execute(sa.select(node).where(node.c.id == "d")).one()
     assert a.kind == "node"
     assert a.body == '<div class="warning-block"><p>高压</p></div>'
     assert a.input_schema == {}
     assert a.attachment_marks == []
     # 非警示步骤不动
     assert b.kind == "step" and b.input_schema == {"type": "NUMBER"}
+    # NOTE 转换
+    assert c.kind == "node"
+    assert c.body == '<div class="note-block"><p>注意</p></div>'
+    # CAUTION 转换
+    assert d.kind == "node"
+    assert d.body == '<div class="caution-block"><p>小心</p></div>'

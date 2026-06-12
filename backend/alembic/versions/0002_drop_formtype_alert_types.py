@@ -40,8 +40,8 @@ def _schema_dict(raw: object) -> dict:
     return dict(raw) if isinstance(raw, dict) else {}
 
 
-def upgrade() -> None:
-    bind = op.get_bind()
+def _convert_alert_steps(bind) -> None:
+    """把所有 kind='step' 且 type∈警示 的节点改写为内联警示块正文节点。upgrade() 与测试共用此逻辑。"""
     node = sa.table(
         "tb_procedure_node",
         sa.column("id", sa.String),
@@ -68,6 +68,10 @@ def upgrade() -> None:
                 attachment_marks=[],
             )
         )
+
+
+def upgrade() -> None:
+    _convert_alert_steps(op.get_bind())
 
 
 def downgrade() -> None:
