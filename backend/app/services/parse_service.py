@@ -7,6 +7,7 @@ PARSE_NO_HEADINGS（standard 已由模板 error 拦截，此处主要覆盖 smar
 
 from __future__ import annotations
 
+import re
 import time
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import TimeoutError as FuturesTimeout
@@ -104,17 +105,17 @@ def _run_with_timeout(
 
 
 def _rewrite_placeholders(result: ParseResult, mapping: dict[str, str]) -> None:
-    def rewrite_html(value: str) -> str:
-        if not value or not mapping:
-            return value
-        out = value
-        for placeholder, url in mapping.items():
-            out = out.replace(f'"{placeholder}"', f'"{url}"')
-        return out
+    """单遍正则把 ``"media:rid"`` 占位改写为 URL（带引号定界，前缀相近 key 不串扰）。"""
+    if not mapping:
+        return
+    pattern = re.compile('"(' + "|".join(re.escape(k) for k in mapping) + ')"')
 
     def walk(nodes: list[ParsedNode]) -> None:
         for node in nodes:
-            node.rich_content = rewrite_html(node.rich_content)
+            if node.rich_content:
+                node.rich_content = pattern.sub(
+                    lambda m: f'"{mapping[m.group(1)]}"', node.rich_content
+                )
             walk(node.children)
 
     walk(result.chapters)

@@ -61,6 +61,7 @@ class DocxPackage:
         self._names = set(self._zip.namelist())
         self._cache: dict[str, etree._Element | None] = {}
         self._rels: dict[str, str] | None = None
+        self._media_cache: dict[str, bytes] = {}  # 同一图被多处引用时避免重复解压
 
     @classmethod
     def from_path(cls, path: str) -> DocxPackage:
@@ -125,7 +126,14 @@ class DocxPackage:
 
     def read_media(self, rid: str) -> bytes | None:
         part = self.media_part_for_rid(rid)
-        return self.read(part) if part else None
+        if not part:
+            return None
+        cached = self._media_cache.get(part)
+        if cached is None:
+            cached = self.read(part)
+            if cached is not None:
+                self._media_cache[part] = cached
+        return cached
 
     def media_names(self) -> list[str]:
         return sorted(n for n in self._names if n.startswith("word/media/"))

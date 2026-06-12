@@ -67,13 +67,16 @@ def structure(
     # 否则署名 list / 表格行号 等非样式段被升 FP。Tier 1 styled 文档 100% 命中已足够。
     has_style_heading = any(b.style_level is not None for b in blocks)
 
-    # smart：预算启发式候选（供 body_start 兜底链第 3 级）
+    # smart：预算启发式候选（供 body_start 兜底链第 3 级），并缓存评分供主循环复用。
+    # 缓存键用 id(block)：文本框 hoist 块与外层块共享 source_index，不可作键。
+    heuristic_scores: dict[int, tuple[float, int]] = {}
     heuristic_indices: list[int] = []
     if mode == "smart" and not has_style_heading:
         for b in blocks:
             if b.kind != "paragraph" or b.style_level is not None or not b.text.strip():
                 continue
-            score, _lvl, _ = hd.score_block(b, stats)
+            score, lvl, _ = hd.score_block(b, stats)
+            heuristic_scores[id(b)] = (score, lvl)
             if hd.tier_for(score) in ("medium", "low"):
                 heuristic_indices.append(b.source_index)
 
@@ -120,6 +123,7 @@ def structure(
             style_overrides,
             stats,
             allow_heuristic=not has_style_heading,
+            heuristic_scores=heuristic_scores,
         )
         if head is not None:
             raw_level, conf, tier, mark, source = head
@@ -153,6 +157,22 @@ def structure(
             stack.append((h_level, node))
             if mark == "review":
                 review_required += 1
+            # 标题段落内嵌图（锚定在标题上的浮动图/logo）不得静默丢弃：
+            # 保留为该章节首个 content 子节点（标 review 提请确认位置）。
+            if block.images:
+                img_html = "".join(f'<img src="{ref.placeholder}"/>' for ref in block.images)
+                img_node = ParsedNode(
+                    id=_new_id(),
+                    title="",
+                    level=node.level + 1,
+                    content_type="content",
+                    rich_content=f"<p>{img_html}</p>",
+                    mark_status="review",
+                )
+                node.children.append(img_node)
+                review_required += 1
+                image_refs.extend(block.images)
+                image_count += len(block.images)
             continue
 
         # 非标题块 → content 子节点（§19）
@@ -182,7 +202,9 @@ def structure(
         if block.kind == "table":
             table_count += 1
 
-    detected_patterns = hd.detect_patterns(body_blocks) if mode == "smart" else []
+    detected_patterns = (
+        hd.detect_patterns(body_blocks, stats.numbering_overrides) if mode == "smart" else []
+    )
 
     validation = template_validator.validate(chapters, body_blocks) if mode == "standard" else None
 
@@ -318,11 +340,14 @@ def _classify_heading(
     style_overrides: dict[str, int],
     stats: hd.DocStats,
     allow_heuristic: bool = True,
+    heuristic_scores: dict[int, tuple[float, int]] | None = None,
 ) -> tuple[int, float, str, str, str] | None:
     """返回 ``(raw_level, confidence, tier, mark_status, heading_source)`` 或 None。
 
     ``allow_heuristic=False`` 时仅样式 heading 命中（eval r4：已有样式体系的文档
     不需启发式兜底，避免署名 list / 表格行号等被升 FP）。
+    ``heuristic_scores``：structure() 预算阶段的评分缓存（id(block) → (score, level)），
+    避免对每段重复跑 score_block。
     """
     if block.kind != "paragraph":
         return None
@@ -339,7 +364,8 @@ def _classify_heading(
     # 必须保留对这类的 LOW 提升。weak_heading（N、）不在 LOW 提升内（避免非粗长段
     # 噪音；它们要升必须靠 bold 把自己推到 MEDIUM）。
     if mode == "smart" and allow_heuristic and block.text.strip():
-        score, level, _ = hd.score_block(block, stats)
+        cached = (heuristic_scores or {}).get(id(block))
+        score, level = cached if cached is not None else hd.score_block(block, stats)[:2]
         tier = hd.tier_for(score)
         if tier == "medium":
             return level, score, tier, "review", "heuristic"

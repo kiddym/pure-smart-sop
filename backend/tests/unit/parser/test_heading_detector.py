@@ -194,6 +194,64 @@ def test_list_marker_is_hard_veto_regardless_of_other_signals() -> None:
 
 
 # --------------------------------------------------------------------------- #
+# numPr 自动编号信号（文本无编号字样的 Word 自动多级编号文档）
+# --------------------------------------------------------------------------- #
+def _numpr_para(text: str, *, bold: float = 0.0, ilvl: int | None = 0) -> Block:
+    return Block(
+        kind="paragraph",
+        source_index=0,
+        text=text,
+        bold_ratio=bold,
+        numbered=True,
+        num_id="5",
+        num_ilvl=ilvl,
+    )
+
+
+def test_numpr_bold_short_reaches_medium() -> None:
+    """零样式 + Word 自动编号（文本无编号字样）：加粗短段应靠 numPr 信号达 MEDIUM。"""
+    blk = _numpr_para("设备维护要求", bold=1.0, ilvl=1)
+    stats = hd.compute_doc_stats([blk])
+    score, level, _ = hd.score_block(blk, stats)
+    assert hd.tier_for(score) == "medium"
+    assert level == 2  # ilvl 0-based → 1-based
+
+
+def test_numpr_without_bold_stays_content() -> None:
+    """非加粗的自动编号段（普通编号列表项）不得借 numPr 升档。"""
+    blk = _numpr_para("对设备进行月度润滑并做好记录", bold=0.0)
+    stats = hd.compute_doc_stats([blk])
+    score, _, _ = hd.score_block(blk, stats)
+    assert hd.tier_for(score) is None
+
+
+def test_numpr_long_paragraph_vetoed() -> None:
+    """加粗长段（>30 字）即便有 numPr 也不计编号信号（对齐 weak_heading 长段 veto）。"""
+    blk = _numpr_para(
+        "本条款要求对全部生产设备执行月度润滑保养并将结果记录至台账以备审核追溯", bold=1.0
+    )
+    stats = hd.compute_doc_stats([blk])
+    score, _, _ = hd.score_block(blk, stats)
+    assert score < hd.MEDIUM
+
+
+def test_literal_numbering_takes_precedence_over_numpr() -> None:
+    """文本已有编号字样时走原词典路径，numPr 不叠加、不改层级。"""
+    blk = Block(
+        kind="paragraph",
+        source_index=0,
+        text="1.1 厂内管理",
+        bold_ratio=1.0,
+        numbered=True,
+        num_id="5",
+        num_ilvl=3,
+    )
+    stats = hd.compute_doc_stats([blk])
+    _, level, _ = hd.score_block(blk, stats)
+    assert level == 2  # 来自文本 "1.1"，而非 ilvl+1=4
+
+
+# --------------------------------------------------------------------------- #
 # detected_patterns（按编号前缀归组）
 # --------------------------------------------------------------------------- #
 def test_detected_patterns_groups_by_prefix() -> None:
@@ -214,3 +272,17 @@ def test_detected_patterns_groups_by_prefix() -> None:
     l2 = next(p for p in patterns if p.suggested_level == 2)
     assert l2.count == 2
     assert by_key  # 非空
+
+
+def test_detected_patterns_respects_numbering_overrides() -> None:
+    """组织已压制（heading→list）的编号模式不应再出现在批量提升建议中（口径对齐分类）。"""
+    blocks = [
+        _para("一、目的", bold=1.0),
+        _para("一、范围", bold=1.0),
+        _para("1.1 厂内", bold=1.0),
+    ]
+    keys = {p.pattern for p in hd.detect_patterns(blocks)}
+    assert "一、" in keys  # 无覆盖时正常出现
+    suppressed = {p.pattern for p in hd.detect_patterns(blocks, {"一、": ("list", None)})}
+    assert "一、" not in suppressed
+    assert "N.N" in suppressed  # 其余模式不受影响

@@ -53,6 +53,39 @@ def test_parse_unknown_mode(storage_tmp: Path) -> None:
     assert exc.value.detail["code"] == "PARSE_FAILED"  # type: ignore[index]
 
 
+def test_rewrite_placeholders_maps_known_and_leaves_unknown() -> None:
+    """占位改写：命中映射的全部替换（含前缀相近 key 不串扰），未命中保持原样。"""
+    from app.parser.result import ParsedNode
+
+    content = ParsedNode(
+        id="n1",
+        title="",
+        level=2,
+        content_type="content",
+        rich_content=(
+            '<p><img src="media:rId1"/><img src="media:rId12"/><img src="media:rId9"/></p>'
+        ),
+    )
+    chapter = ParsedNode(id="c1", title="目的", level=1, content_type="chapter", children=[content])
+    result = ParseResult(
+        metadata=ParseMetadata(
+            total_chapters=1,
+            image_count=3,
+            table_count=0,
+            body_start_index=0,
+            body_start_detected_by="x",
+        ),
+        chapters=[chapter],
+        parse_method="smart",
+    )
+    parse_service._rewrite_placeholders(
+        result, {"media:rId1": "/u/1.png", "media:rId12": "/u/12.png"}
+    )
+    assert 'src="/u/1.png"' in content.rich_content
+    assert 'src="/u/12.png"' in content.rich_content  # rId1 不得吞掉 rId12 的前缀
+    assert 'src="media:rId9"' in content.rich_content  # 无映射者保持原样
+
+
 def test_swap_failed_vectors_inserts_placeholder_and_review() -> None:
     from app.parser.result import ParsedNode
 

@@ -63,6 +63,29 @@ def test_inline_image_one_content_node() -> None:
     assert "所示。" in img_nodes[0].rich_content
 
 
+def test_heading_image_preserved_as_content_child() -> None:
+    """标题段落内的图片不得静默丢弃：保留为该章节首个 content 子节点并标 review。"""
+    data = (
+        DocxBuilder()
+        .heading_with_image("目的")
+        .para("本程序规定了设备维护要求。")
+        .build()
+    )
+    for mode in ("standard", "smart"):
+        res = _structure(data, mode)
+        purpose = next(c for c in res.chapters if c.title == "目的")
+        img_children = [c for c in purpose.children if "<img" in c.rich_content]
+        assert len(img_children) == 1, mode
+        node = img_children[0]
+        assert node.content_type == "content"
+        assert node.mark_status == "review"  # 图片脱离标题行需人工复核位置
+        assert purpose.children[0] is node  # 紧随标题，先于后续正文
+        assert res.metadata.image_count == 1
+        assert len(res.image_refs) == 1  # 进入 asset 抽取管线
+        assert res.image_refs[0].placeholder in node.rich_content
+        assert res.review_required >= 1
+
+
 def test_table_becomes_content_node() -> None:
     res = _structure(styled_sop(), "standard")
     nodes = _all_nodes(res)
@@ -100,6 +123,26 @@ def test_smart_emits_detected_patterns() -> None:
     assert len(res.detected_patterns) >= 1
     l1 = next(p for p in res.detected_patterns if p.suggested_level == 1)
     assert l1.count >= 2
+
+
+def test_detected_patterns_excludes_org_suppressed_pattern() -> None:
+    """numbering_overrides 压制为 list 的模式不应再进 detected_patterns（与分类口径一致）。"""
+    data = unstyled_numbered_sop()
+    pkg = DocxPackage(data)
+    nd = normalizer.normalize(pkg, synonyms=SYN, style_overrides={})
+    baseline = structurer.structure(nd, pkg=pkg, mode="smart", synonyms=SYN, style_overrides={})
+    # 取二级模式（"N.N"）：压制它不影响 body_start（首个一级标题仍在），
+    # 从而真正验证 detect_patterns 的口径而非 body 裁剪的副作用。
+    target = next(p.pattern for p in baseline.detected_patterns if p.suggested_level == 2)
+    res = structurer.structure(
+        nd,
+        pkg=pkg,
+        mode="smart",
+        synonyms=SYN,
+        style_overrides={},
+        numbering_overrides={target: ("list", None)},
+    )
+    assert target not in {p.pattern for p in res.detected_patterns}
 
 
 def test_empty_doc_no_chapters_both_modes() -> None:

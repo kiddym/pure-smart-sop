@@ -169,6 +169,15 @@ class DocxBuilder:
         run.add_picture(io.BytesIO(png), width=Pt(width_pt))
         return self
 
+    def heading_with_image(
+        self, text: str, level: int = 1, png: bytes | None = None
+    ) -> DocxBuilder:
+        """标题段落内嵌一张图（模拟锚定在章节标题上的浮动图/logo）。"""
+        png = png or tiny_png()
+        h = self.doc.add_heading(text, level=level)
+        h.add_run().add_picture(io.BytesIO(png), width=Pt(20))
+        return self
+
     def vml_image_para(self, png: bytes | None = None) -> DocxBuilder:
         """段落 run 内嵌一张 VML 老格式图（v:imagedata），同时复用 docx 的图片关系。"""
         png = png or tiny_png()

@@ -200,21 +200,22 @@ def _numbering_signal(ctx: SignalContext) -> float:
       depth≥2 长段保留全额（融合式 unambiguous 结构）。
     - weak_heading kind（N、 顿号）：仅 bold≥0.5 才计 0.25；长段完全 veto
       （'1、设有消防...' 危险源 body 条款噪音 / Q217）。
+    - numPr 自动编号回退：文本无编号字样但段落带 Word numPr（自动多级编号渲染
+      编号不进 w:t）。歧义程度同 weak_heading（自动编号列表项居多）→ 同款门控：
+      仅 bold≥0.5 且短段才计 0.25。
     - list kind：永远 0（实际由 score_block 入口 hard veto 短路，这里不到达）。
     - 末尾 +0.10 单字号补偿（仅 num_points > 0 时叠加）。
     """
     num = ctx.num
-    if num is None or num.kind == "list":
-        return 0.0
-    if num.kind == "heading":
+    if num is not None and num.kind == "heading":
         base = 0.25
         if not ctx.is_short and num.level == 1:
             base = 0.125
-    elif num.kind == "weak_heading":
-        base = 0.25 if ctx.block.bold_ratio >= 0.5 else 0.0
-        if not ctx.is_short:
-            base = 0.0
-    else:  # 防御：未来若加新 kind
+    elif (num is not None and num.kind == "weak_heading") or (
+        num is None and ctx.block.numbered
+    ):
+        base = 0.25 if ctx.block.bold_ratio >= 0.5 and ctx.is_short else 0.0
+    else:  # 无编号信号 / list kind / 防御未来新 kind
         return 0.0
     if base > 0 and ctx.stats.single_font:
         base += 0.10
@@ -237,7 +238,8 @@ SIGNALS: list[Signal] = [
     Signal(
         "numbering",
         _numbering_signal,
-        "heading 全/半额（depth=1 长段半额）；weak_heading 仅 bold；list veto；单字号补偿 +0.10",
+        "heading 全/半额（depth=1 长段半额）；weak_heading/numPr 仅 bold+短段；"
+        "list veto；单字号补偿 +0.10",
     ),
     Signal("short", _short_signal, "短段 ≤30 字 +0.10"),
     Signal("center", _center_signal, "居中对齐 +0.05"),
@@ -269,7 +271,12 @@ def score_block(block: Block, stats: DocStats) -> tuple[float, int, str]:
         stats=stats,
         is_short=len(text) <= _SHORT_LEN,
     )
-    level = num.level if num else 1
+    if num is not None:
+        level = num.level
+    elif block.numbered and block.num_ilvl is not None:
+        level = block.num_ilvl + 1  # numPr 回退：ilvl 0-based → 1-based
+    else:
+        level = 1
     total = sum(sig.score(ctx) for sig in SIGNALS)
     return min(total, _HEURISTIC_CAP), min(level, 3), "heuristic"
 
@@ -281,8 +288,13 @@ class _PatternAcc:
     samples: list[str] = field(default_factory=list)
 
 
-def detect_patterns(blocks: list[Block]) -> list[DetectedPattern]:
-    """扫描全部正文段（含融合式长段）按编号前缀归组，供前端按组批量提升（Q200）。"""
+def detect_patterns(
+    blocks: list[Block], overrides: dict[str, tuple[str, int | None]] | None = None
+) -> list[DetectedPattern]:
+    """扫描全部正文段（含融合式长段）按编号前缀归组，供前端按组批量提升（Q200）。
+
+    ``overrides``（M4b 编号体例）与分类口径一致：被压制为 list 的模式不再建议。
+    """
     groups: dict[str, _PatternAcc] = {}
     for block in blocks:
         if block.kind != "paragraph":
@@ -290,7 +302,7 @@ def detect_patterns(blocks: list[Block]) -> list[DetectedPattern]:
         text = block.text.strip()
         if not text:
             continue
-        num = classify_numbering(text)
+        num = classify_numbering(text, overrides)
         if num is None or num.kind == "list":
             continue
         acc = groups.setdefault(num.pattern_key, _PatternAcc(level=num.level))
