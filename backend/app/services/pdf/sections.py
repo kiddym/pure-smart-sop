@@ -283,23 +283,18 @@ def _render_step(st: StepData, data: RenderData, out: list[Flowable]) -> None:
     out.append(_keyed(Paragraph(title or "（步骤）", s("step_title")), ("step", st.id)))
     # 按 input_schema.type 分发渲染路径（§6.3 / Q261/§40.1）
     ftype = str((st.input_schema or {}).get("type", "COMMON")).upper()
-    if ftype in ("NOTE", "CAUTION", "WARNING"):
-        body = render_html(st.content, data.assets, base_style="alert_body")
-        if body:
-            out.append(fl.alert_box(ftype.lower(), body))
-    elif ftype == "COMMON":
+    if ftype == "COMMON":
         out.extend(render_html(st.content, data.assets))
     # 数据型 / NONE：正文隐藏，不渲染 content
     # 附件标记（§6.3/Q203）
     for mark in st.attachment_marks:
         out.append(Paragraph(_attachment_mark_text(mark), s("step_mark")))
-    # 执行记录区（15 型占位符）；警示型不渲染占位符
-    if ftype not in ("NOTE", "CAUTION", "WARNING"):
-        placeholder = _form_placeholder(st.input_schema)
-        if placeholder:
-            out.append(placeholder)
-    # 签字栏：程序级开关开启 且 非警示型（右对齐手写签字，§6.3 顺序 6）
-    if data.procedure.signoff_enabled and ftype not in ("NOTE", "CAUTION", "WARNING"):
+    # 执行记录区（12 型占位符）
+    placeholder = _form_placeholder(st.input_schema)
+    if placeholder:
+        out.append(placeholder)
+    # 签字栏：程序级开关开启即渲染（右对齐手写签字，§6.3 顺序 6）
+    if data.procedure.signoff_enabled:
         out.append(
             Paragraph(
                 "签字: __________   日期: __________",

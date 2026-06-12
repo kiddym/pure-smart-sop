@@ -159,12 +159,6 @@ def test_signoff_absent_when_disabled() -> None:
     assert not any("签字" in _text(f) for f in out)
 
 
-def test_signoff_absent_for_alert_type_even_when_enabled() -> None:
-    step = _step(input_schema={"type": "WARNING"}, content="<p>危险</p>")
-    out: list = []
-    sections._render_step(step, _data(_proc(signoff_enabled=True)), out)
-    assert not any("签字" in _text(f) for f in out)
-
 
 def test_attachment_mark_kind_document() -> None:
     # 编辑器默认 kind='document' → 文档
@@ -290,31 +284,6 @@ def test_empty_content_placeholder() -> None:
 # --------------------------------------------------------------------------- #
 # 警示型步骤渲染（§6.3 / Q261/§40.1）
 # --------------------------------------------------------------------------- #
-def test_warning_type_step_renders_alert_box() -> None:
-    """WARNING 类型步骤：content 以 alert_box 渲染，返回 Table（警示框）。"""
-    step = _step(
-        content="<p>危险</p>",
-        input_schema={"type": "WARNING"},
-    )
-    out: list = []
-    sections._render_step(step, _data(_proc()), out)
-    tables = [f for f in out if isinstance(f, Table)]
-    # 应有一个 alert box（Table），且无普通正文段落（content 走 alert 渲染路径）
-    assert len(tables) == 1
-
-
-def test_note_type_step_renders_alert_box() -> None:
-    """NOTE 类型步骤：content 以 alert_box 渲染，不渲染普通正文。"""
-    step = _step(
-        content="<p>提示内容</p>",
-        input_schema={"type": "NOTE"},
-    )
-    out: list = []
-    sections._render_step(step, _data(_proc()), out)
-    tables = [f for f in out if isinstance(f, Table)]
-    assert len(tables) == 1
-
-
 def test_number_type_step_hides_content() -> None:
     """NUMBER 类型步骤：content 隐藏（数据型不渲染正文），仅渲染表单占位符。"""
     step = _step(
@@ -330,32 +299,6 @@ def test_number_type_step_hides_content() -> None:
     assert "压力" in texts
 
 
-def test_warning_type_step_no_form_placeholder() -> None:
-    """WARNING 类型步骤：不渲染执行表单占位符。"""
-    step = _step(
-        content="<p>危险操作</p>",
-        input_schema={"type": "WARNING"},
-    )
-    out: list = []
-    sections._render_step(step, _data(_proc()), out)
-    # 没有「已完成」占位文字
-    texts = " ".join(_text(f) for f in out if isinstance(f, Paragraph))
-    assert "已完成" not in texts
-
-
-def test_caution_type_step_renders_alert_box() -> None:
-    """CAUTION 类型步骤：content 以 alert_box 渲染，返回 Table（警示框）。"""
-    step = _step(
-        content="<p>小心操作</p>",
-        input_schema={"type": "CAUTION"},
-    )
-    out: list = []
-    sections._render_step(step, _data(_proc()), out)
-    tables = [f for f in out if isinstance(f, Table)]
-    # 应有一个 alert box（Table），且无普通正文段落（content 走 alert 渲染路径）
-    assert len(tables) == 1
-
-
 def test_common_type_step_renders_content_body() -> None:
     """COMMON 类型步骤：content 正文文字出现在渲染输出中（正向断言正文被渲染）。"""
     step = _step(
@@ -366,3 +309,14 @@ def test_common_type_step_renders_content_body() -> None:
     sections._render_step(step, _data(_proc()), out)
     texts = " ".join(_text(f) for f in out if isinstance(f, Paragraph))
     assert "正文渲染验证" in texts
+
+
+def test_content_node_with_warning_block_renders_alert_box() -> None:
+    """正文节点 body 内的 warning-block → render_html 产出 alert_box（Table）。守护内联块路径未被误伤。"""
+    from reportlab.platypus import Table
+
+    node = _step(kind="content", title="", content='<div class="warning-block"><p>高压危险</p></div>',
+                 input_schema={})
+    out: list = []
+    sections._render_step(node, _data(_proc()), out)
+    assert any(isinstance(f, Table) for f in out)
