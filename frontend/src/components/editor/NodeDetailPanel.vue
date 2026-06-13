@@ -7,6 +7,7 @@ import { errorMessage } from '@/api/http'
 import RichTextEditor from './RichTextEditor.vue'
 import StepFormFields from './StepFormFields.vue'
 import FormFieldPreview from './FormFieldPreview.vue'
+import NodeCheckPanel from './NodeCheckPanel.vue'
 import { useNodeEditorStore } from '@/store/nodeEditor'
 import { FORM_TYPE_META, isRichTextType } from '@/utils/editor'
 import { FORM_TYPES } from '@/types/node'
@@ -155,6 +156,10 @@ const openSections = ref<string[]>(['body'])
           <el-button v-if="!props.readonly" size="small" text @click="removeMark(i)">✕</el-button>
         </div>
         <el-button v-if="!props.readonly" class="add-mark" size="small" @click="addMark">+ 附件标记</el-button>
+      </el-collapse-item>
+
+      <el-collapse-item v-if="node.kind === 'step'" title="监护" name="checks">
+        <NodeCheckPanel :node-id="node.id" :readonly="props.readonly" />
       </el-collapse-item>
 
       <!-- 结构操作主入口在左侧树行 chip；此处折叠收纳，避免同屏三处重复（含树上没有的「跳号」） -->
