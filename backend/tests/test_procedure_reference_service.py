@@ -45,3 +45,24 @@ def test_create_and_query_reference(db):
     assert rows[0].relation_type == "exec_ref"
     assert rows[0].target_procedure_group_id == tgt.procedure_group_id
     assert rows[0].company_id  # before_flush 自动注入
+
+
+from pydantic import ValidationError
+
+from app.schemas.procedure_reference import ReferenceCreateIn
+
+
+def test_schema_accepts_valid():
+    m = ReferenceCreateIn(target_procedure_group_id=str(uuid.uuid4()), relation_type="authoring_ref")
+    assert m.relation_type == "authoring_ref"
+    assert m.note == ""  # 默认
+
+
+def test_schema_rejects_unknown_relation_type():
+    with pytest.raises(ValidationError):
+        ReferenceCreateIn(target_procedure_group_id=str(uuid.uuid4()), relation_type="sibling")
+
+
+def test_schema_rejects_missing_target():
+    with pytest.raises(ValidationError):
+        ReferenceCreateIn(relation_type="related")
