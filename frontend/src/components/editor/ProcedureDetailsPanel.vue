@@ -5,6 +5,7 @@ import { listFields } from '@/api/fields'
 import { collectDeprecatedFieldValues } from '@/utils/editor'
 import { LEVEL_OF_USE_LABELS } from '@/utils/format'
 import CustomFieldInput from './CustomFieldInput.vue'
+import ReferencePanel from './ReferencePanel.vue'
 import type { LevelOfUse } from '@/types/procedure'
 import type { FieldDetailOut } from '@/types/field'
 
@@ -98,6 +99,17 @@ function customVal(key: string): unknown {
         </el-form>
       </el-collapse-item>
     </el-collapse>
+
+    <el-divider />
+    <div class="ref-section">
+      <div class="ref-title">参考关系</div>
+      <ReferencePanel
+        v-if="p"
+        :procedure-id="p.id"
+        :source-group-id="p.procedure_group_id"
+        :readonly="ro"
+      />
+    </div>
   </div>
 </template>
 
@@ -113,4 +125,6 @@ function customVal(key: string): unknown {
 .deprecated-title {
   color: var(--el-text-color-secondary);
 }
+.ref-section { margin-top: 8px; }
+.ref-title { font-weight: 600; font-size: 13px; margin-bottom: 6px; }
 </style>
