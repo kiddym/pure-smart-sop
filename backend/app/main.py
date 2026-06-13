@@ -34,6 +34,7 @@ from app.routers import (
     parse,
     platform,
     procedure_groups,
+    procedure_references,
     procedures,
     roles,
     teams,
@@ -117,6 +118,7 @@ app.include_router(fields.router)
 app.include_router(settings_router.router)
 app.include_router(nodes.router)
 app.include_router(node_checks.router)
+app.include_router(procedure_references.router)
 app.include_router(company.router)
 app.include_router(company_settings.router)
 app.include_router(roles.router)
