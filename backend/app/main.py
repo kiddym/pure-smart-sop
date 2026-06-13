@@ -29,6 +29,7 @@ from app.routers import (
     fields,
     folders,
     heading_rules,
+    node_checks,
     nodes,
     parse,
     platform,
@@ -115,6 +116,7 @@ app.include_router(attachments.router)
 app.include_router(fields.router)
 app.include_router(settings_router.router)
 app.include_router(nodes.router)
+app.include_router(node_checks.router)
 app.include_router(company.router)
 app.include_router(company_settings.router)
 app.include_router(roles.router)
