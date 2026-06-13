@@ -66,3 +66,80 @@ def test_schema_rejects_unknown_relation_type():
 def test_schema_rejects_missing_target():
     with pytest.raises(ValidationError):
         ReferenceCreateIn(relation_type="related")
+
+
+from fastapi import HTTPException
+
+from app.services import procedure_reference_service
+
+
+def test_create_and_serialize(db):
+    src = _proc(db)
+    tgt = _proc(db)  # 独立 group，is_current=True
+    ref = procedure_reference_service.create_reference(db, src.id, {
+        "target_procedure_group_id": tgt.procedure_group_id,
+        "relation_type": "exec_ref",
+        "note": "先隔离上游",
+    })
+    db.commit()
+    rows = procedure_reference_service.list_references(db, src.id)
+    assert [r.id for r in rows] == [ref.id]
+    out = procedure_reference_service.serialize(db, rows[0])
+    assert out["target_code"] == "QC-00001"
+    assert out["target_procedure_id"] == tgt.id
+    assert out["target_version"] == 1
+
+
+def test_create_rejects_self_reference(db):
+    src = _proc(db)
+    with pytest.raises(HTTPException) as ei:
+        procedure_reference_service.create_reference(db, src.id, {
+            "target_procedure_group_id": src.procedure_group_id, "relation_type": "related",
+        })
+    assert ei.value.status_code == 422
+    assert ei.value.detail["code"] == "REFERENCE_SELF"
+
+
+def test_create_rejects_unknown_target(db):
+    src = _proc(db)
+    with pytest.raises(HTTPException) as ei:
+        procedure_reference_service.create_reference(db, src.id, {
+            "target_procedure_group_id": str(uuid.uuid4()), "relation_type": "related",
+        })
+    assert ei.value.status_code == 422
+    assert ei.value.detail["code"] == "REFERENCE_TARGET_NOT_FOUND"
+
+
+def test_create_rejects_duplicate(db):
+    src = _proc(db)
+    tgt = _proc(db)
+    payload = {"target_procedure_group_id": tgt.procedure_group_id, "relation_type": "related"}
+    procedure_reference_service.create_reference(db, src.id, dict(payload))
+    db.commit()
+    with pytest.raises(HTTPException) as ei:
+        procedure_reference_service.create_reference(db, src.id, dict(payload))
+    assert ei.value.status_code == 409
+    assert ei.value.detail["code"] == "REFERENCE_DUPLICATE"
+
+
+def test_create_rejects_on_published_source(db):
+    src = _proc(db, status="PUBLISHED")
+    tgt = _proc(db)
+    with pytest.raises(HTTPException) as ei:
+        procedure_reference_service.create_reference(db, src.id, {
+            "target_procedure_group_id": tgt.procedure_group_id, "relation_type": "related",
+        })
+    assert ei.value.status_code == 400
+    assert ei.value.detail["code"] == "PROCEDURE_READONLY"
+
+
+def test_delete_soft(db):
+    src = _proc(db)
+    tgt = _proc(db)
+    ref = procedure_reference_service.create_reference(db, src.id, {
+        "target_procedure_group_id": tgt.procedure_group_id, "relation_type": "related",
+    })
+    db.commit()
+    procedure_reference_service.delete_reference(db, ref.id)
+    db.commit()
+    assert procedure_reference_service.list_references(db, src.id) == []
