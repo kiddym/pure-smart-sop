@@ -30,7 +30,7 @@ class ReferenceCreateIn(BaseModel):
 
     target_procedure_group_id: str = Field(min_length=1)
     relation_type: RelationType
-    note: str = ""
+    note: str = Field(default="", max_length=500)
     sort_order: int | None = None
 
 
@@ -38,5 +38,5 @@ class ReferencePatchIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     relation_type: RelationType | None = None
-    note: str | None = None
+    note: str | None = Field(default=None, max_length=500)
     sort_order: int | None = None

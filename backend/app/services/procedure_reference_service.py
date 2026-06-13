@@ -32,6 +32,25 @@ def _get_reference(db: Session, reference_id: str) -> ProcedureReference:
     return ref
 
 
+def _find_duplicate(
+    db: Session,
+    source_procedure_id: str,
+    target_group: str,
+    relation_type: str,
+    exclude_id: str | None = None,
+) -> ProcedureReference | None:
+    """同源+同目标 group+同类型的现存活动引用（唯一性约束）；exclude_id 用于 patch 自身排除。"""
+    stmt = select(ProcedureReference).where(
+        ProcedureReference.source_procedure_id == source_procedure_id,
+        ProcedureReference.target_procedure_group_id == target_group,
+        ProcedureReference.relation_type == relation_type,
+        ProcedureReference.is_active.is_(True),
+    )
+    if exclude_id is not None:
+        stmt = stmt.where(ProcedureReference.id != exclude_id)
+    return db.execute(stmt).scalars().first()
+
+
 def list_references(db: Session, source_procedure_id: str) -> list[ProcedureReference]:
     stmt = (
         select(ProcedureReference)
@@ -72,15 +91,7 @@ def create_reference(db: Session, source_procedure_id: str, data: dict[str, Any]
         raise unprocessable("REFERENCE_TARGET_NOT_FOUND", "目标 SOP 不存在或无当前版本")
 
     relation_type = data["relation_type"]
-    dup = db.execute(
-        select(ProcedureReference).where(
-            ProcedureReference.source_procedure_id == source_procedure_id,
-            ProcedureReference.target_procedure_group_id == target_group,
-            ProcedureReference.relation_type == relation_type,
-            ProcedureReference.is_active.is_(True),
-        )
-    ).scalars().first()
-    if dup is not None:
+    if _find_duplicate(db, source_procedure_id, target_group, relation_type) is not None:
         raise conflict("REFERENCE_DUPLICATE", "同一目标的同类型引用已存在")
 
     if data.get("sort_order") is not None:
@@ -104,6 +115,13 @@ def create_reference(db: Session, source_procedure_id: str, data: dict[str, Any]
 def patch_reference(db: Session, reference_id: str, changes: dict[str, Any]) -> ProcedureReference:
     ref = _get_reference(db, reference_id)
     procedure_service.assert_node_host_editable(db, ref.source_procedure_id)
+    # 改 relation_type 时复查去重，使 patch 与 create 的唯一性不变量一致（目标 group 不可改）。
+    new_type = changes.get("relation_type")
+    if new_type is not None and new_type != ref.relation_type:
+        if _find_duplicate(
+            db, ref.source_procedure_id, ref.target_procedure_group_id, new_type, exclude_id=ref.id
+        ) is not None:
+            raise conflict("REFERENCE_DUPLICATE", "同一目标的同类型引用已存在")
     for key in ("relation_type", "note", "sort_order"):
         if key in changes and changes[key] is not None:
             setattr(ref, key, changes[key])

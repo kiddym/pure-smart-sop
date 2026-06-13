@@ -143,3 +143,33 @@ def test_delete_soft(db):
     procedure_reference_service.delete_reference(db, ref.id)
     db.commit()
     assert procedure_reference_service.list_references(db, src.id) == []
+
+
+def test_patch_relation_type_rejects_duplicate(db):
+    # 同源同目标的两条不同类型引用；把 related 那条 patch 成 exec_ref 会撞上已存在的 exec_ref。
+    src = _proc(db)
+    tgt = _proc(db)
+    procedure_reference_service.create_reference(db, src.id, {
+        "target_procedure_group_id": tgt.procedure_group_id, "relation_type": "exec_ref",
+    })
+    other = procedure_reference_service.create_reference(db, src.id, {
+        "target_procedure_group_id": tgt.procedure_group_id, "relation_type": "related",
+    })
+    db.commit()
+    with pytest.raises(HTTPException) as ei:
+        procedure_reference_service.patch_reference(db, other.id, {"relation_type": "exec_ref"})
+    assert ei.value.status_code == 409
+    assert ei.value.detail["code"] == "REFERENCE_DUPLICATE"
+
+
+def test_patch_note_and_same_type_ok(db):
+    # patch note、或把 relation_type 设回自身原值，均不应误判去重。
+    src = _proc(db)
+    tgt = _proc(db)
+    ref = procedure_reference_service.create_reference(db, src.id, {
+        "target_procedure_group_id": tgt.procedure_group_id, "relation_type": "exec_ref",
+    })
+    db.commit()
+    procedure_reference_service.patch_reference(db, ref.id, {"relation_type": "exec_ref", "note": "改说明"})
+    db.commit()
+    assert procedure_reference_service.list_references(db, src.id)[0].note == "改说明"
