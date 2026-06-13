@@ -22,6 +22,7 @@ from app.models.node_check import ProcedureNodeCheck
 from app.models.numbering_profile import NumberingProfile
 from app.models.password_reset_token import PasswordResetToken
 from app.models.procedure import Procedure
+from app.models.procedure_reference import ProcedureReference
 from app.models.role import Role
 from app.models.sequence import Sequence
 from app.models.settings import ProcedureSettings
@@ -54,6 +55,7 @@ __all__ = [
     "ProcedureField",
     "ProcedureNode",
     "ProcedureNodeCheck",
+    "ProcedureReference",
     "ProcedureSettings",
     "ProcedureSourceDocx",
     "Role",
